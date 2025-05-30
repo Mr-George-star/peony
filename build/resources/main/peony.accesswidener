@@ -1,4 +1,0 @@
-accessWidener v2 named
-
-accessible field net/minecraft/util/shape/VoxelShape voxels Lnet/minecraft/util/shape/VoxelSet;
-accessible method net/minecraft/util/shape/SimpleVoxelShape <init> (Lnet/minecraft/util/shape/VoxelSet;)V
