@@ -1,0 +1,101 @@
+[12:28:44] [Render thread/INFO] ========================================
+[12:28:44] [Render thread/INFO] Minecraft: 1.21.1
+[12:28:44] [Render thread/INFO] Side: client
+[12:28:44] [Render thread/INFO] Development: true
+[12:28:44] [Render thread/INFO] Version: 16.0.799
+[12:28:44] [Render thread/INFO] Loader:
+[12:28:44] [Render thread/INFO] - Fabric: 0.16.14
+[12:28:44] [Render thread/INFO] - Fabric API: 0.115.6+1.21.1
+[12:28:44] [Render thread/INFO] Dependencies:
+[12:28:44] [Render thread/INFO] - Cloth Config: 15.0.130
+[12:28:44] [Render thread/INFO] - Architectury: 13.0.6
+[12:28:44] [Render thread/INFO] Mixin: 0.8.7
+[12:28:44] [Render thread/INFO] OS: Windows 11 10.0 (amd64)
+[12:28:44] [Render thread/INFO] Java: 21.0.6 (Oracle Corporation)
+[12:28:44] [Render thread/INFO] ========================================
+[12:28:44] [Render thread/INFO] Mods:
+[12:28:44] [Render thread/INFO] - architectury: 13.0.6
+[12:28:44] [Render thread/INFO] - cloth-basic-math: 0.6.1
+[12:28:44] [Render thread/INFO] - cloth-config: 15.0.130
+[12:28:44] [Render thread/INFO] - cloth-config: 15.0.130
+[12:28:44] [Render thread/INFO] - error_notifier: 1.0.11
+[12:28:44] [Render thread/INFO] - fabric-api: 0.115.6+1.21.1
+[12:28:44] [Render thread/INFO] - fabric-api: 0.115.6+1.21.1
+[12:28:44] [Render thread/INFO] - fabric-api-base: 0.4.42+6573ed8cd1
+[12:28:44] [Render thread/INFO] - fabric-api-lookup-api-v1: 1.6.70+b559734419
+[12:28:44] [Render thread/INFO] - fabric-biome-api-v1: 13.0.31+d527f9fd19
+[12:28:44] [Render thread/INFO] - fabric-block-api-v1: 1.0.22+0af3f5a719
+[12:28:44] [Render thread/INFO] - fabric-block-view-api-v2: 1.0.11+ebb2264e19
+[12:28:44] [Render thread/INFO] - fabric-blockrenderlayer-v1: 1.1.52+0af3f5a719
+[12:28:44] [Render thread/INFO] - fabric-client-tags-api-v1: 1.1.15+6573ed8cd1
+[12:28:44] [Render thread/INFO] - fabric-command-api-v1: 1.2.49+f71b366fd1
+[12:28:44] [Render thread/INFO] - fabric-command-api-v2: 2.2.28+6ced4dd919
+[12:28:44] [Render thread/INFO] - fabric-commands-v0: 0.2.66+df3654b319
+[12:28:44] [Render thread/INFO] - fabric-content-registries-v0: 8.0.18+b559734419
+[12:28:44] [Render thread/INFO] - fabric-convention-tags-v1: 2.1.4+7f945d5b19
+[12:28:44] [Render thread/INFO] - fabric-convention-tags-v2: 2.11.0+a406e79519
+[12:28:44] [Render thread/INFO] - fabric-crash-report-info-v1: 0.2.29+0af3f5a719
+[12:28:44] [Render thread/INFO] - fabric-data-attachment-api-v1: 1.4.3+a15b7ead19
+[12:28:44] [Render thread/INFO] - fabric-data-generation-api-v1: 20.2.28+16c4ae2519
+[12:28:44] [Render thread/INFO] - fabric-dimensions-v1: 4.0.0+6fc22b9919
+[12:28:44] [Render thread/INFO] - fabric-entity-events-v1: 1.7.0+2122d82819
+[12:28:44] [Render thread/INFO] - fabric-events-interaction-v0: 0.7.13+ba9dae0619
+[12:28:44] [Render thread/INFO] - fabric-game-rule-api-v1: 1.0.53+6ced4dd919
+[12:28:44] [Render thread/INFO] - fabric-gametest-api-v1: 2.0.5+6fc22b9919
+[12:28:44] [Render thread/INFO] - fabric-item-api-v1: 11.1.1+d5debaed19
+[12:28:44] [Render thread/INFO] - fabric-item-group-api-v1: 4.1.7+def88e3a19
+[12:28:44] [Render thread/INFO] - fabric-key-binding-api-v1: 1.0.47+0af3f5a719
+[12:28:44] [Render thread/INFO] - fabric-keybindings-v0: 0.2.45+df3654b319
+[12:28:44] [Render thread/INFO] - fabric-lifecycle-events-v1: 2.5.0+01d9a51c19
+[12:28:44] [Render thread/INFO] - fabric-loot-api-v2: 3.0.15+3f89f5a519
+[12:28:44] [Render thread/INFO] - fabric-loot-api-v3: 1.0.3+3f89f5a519
+[12:28:44] [Render thread/INFO] - fabric-message-api-v1: 6.0.13+6573ed8cd1
+[12:28:44] [Render thread/INFO] - fabric-model-loading-api-v1: 2.0.0+fe474d6bd1
+[12:28:44] [Render thread/INFO] - fabric-networking-api-v1: 4.3.0+c7469b2119
+[12:28:44] [Render thread/INFO] - fabric-object-builder-api-v1: 15.2.1+40875a9319
+[12:28:44] [Render thread/INFO] - fabric-particles-v1: 4.0.2+6573ed8cd1
+[12:28:44] [Render thread/INFO] - fabric-recipe-api-v1: 5.0.14+248df81c19
+[12:28:44] [Render thread/INFO] - fabric-registry-sync-v0: 5.2.0+34f5d91419
+[12:28:44] [Render thread/INFO] - fabric-renderer-api-v1: 3.4.0+c705a49cd1
+[12:28:44] [Render thread/INFO] - fabric-renderer-indigo: 1.7.0+c705a49cd1
+[12:28:44] [Render thread/INFO] - fabric-renderer-registries-v1: 3.2.68+df3654b319
+[12:28:44] [Render thread/INFO] - fabric-rendering-data-attachment-v1: 0.3.49+73761d2e19
+[12:28:44] [Render thread/INFO] - fabric-rendering-fluids-v1: 3.1.6+1daea21519
+[12:28:44] [Render thread/INFO] - fabric-rendering-v0: 1.1.71+df3654b319
+[12:28:44] [Render thread/INFO] - fabric-rendering-v1: 5.0.5+df16efd019
+[12:28:44] [Render thread/INFO] - fabric-resource-conditions-api-v1: 4.3.0+8dc279b119
+[12:28:44] [Render thread/INFO] - fabric-resource-loader-v0: 1.3.1+5b5275af19
+[12:28:44] [Render thread/INFO] - fabric-screen-api-v1: 2.0.25+8b68f1c719
+[12:28:44] [Render thread/INFO] - fabric-screen-handler-api-v1: 1.3.88+b559734419
+[12:28:44] [Render thread/INFO] - fabric-sound-api-v1: 1.0.23+6573ed8cd1
+[12:28:44] [Render thread/INFO] - fabric-transfer-api-v1: 5.4.2+c24bd99419
+[12:28:44] [Render thread/INFO] - fabric-transitive-access-wideners-v1: 6.2.0+45b9699719
+[12:28:44] [Render thread/INFO] - fabricloader: 0.16.14
+[12:28:44] [Render thread/INFO] - java: 21
+[12:28:44] [Render thread/INFO] - minecraft: 1.21.1
+[12:28:44] [Render thread/INFO] - mixinextras: 0.4.1
+[12:28:44] [Render thread/INFO] - peony: 1.0.0
+[12:28:44] [Render thread/INFO] - roughlyenoughitems: 16.0.799
+[12:28:44] [Render thread/INFO] ========================================
+[12:28:44] [Render thread/DEBUG] [REI] Added filtering rule [roughlyenoughitems:search]: INSTANCE
+[12:28:44] [Render thread/DEBUG] [REI] Added filtering rule [roughlyenoughitems:manual]: INSTANCE
+[12:28:44] [Render thread/DEBUG] [REI] Added filtering rule [roughlyenoughitems:basic]: INSTANCE
+[12:28:44] [Render thread/INFO] [REI] Config loaded
+[12:28:44] [Render thread/DEBUG] [REI] Config saved
+[12:28:44] [Render thread/DEBUG] [REI] Config saved
+[12:28:44] [Render thread/DEBUG] [REI] Config saved
+[12:28:44] [Render thread/INFO] [REI] Registered plugin provider DefaultPlugin [roughlyenoughitems] for REIPlugin
+[12:28:44] [Render thread/INFO] [REI] Registered plugin provider DefaultRuntimePlugin [roughlyenoughitems] for REIPlugin
+[12:28:44] [Render thread/INFO] [REI] Registered plugin provider DefaultClientPlugin [roughlyenoughitems] for REIPlugin
+[12:28:44] [Render thread/INFO] [REI] Registered plugin provider DefaultClientRuntimePlugin [roughlyenoughitems] for REIPlugin
+[12:28:44] [Render thread/DEBUG] [REI] Added filtering rule [roughlyenoughitems:hidden_from_recipe_viewers]: INSTANCE
+[12:28:44] [Render thread/INFO] [REI] Registered plugin provider HideIngredientsFromTagsPlugin [roughlyenoughitems] for REIPlugin
+[12:28:44] [Render thread/INFO] [REI] Registered plugin provider PeonyREISupport [peony] for REIPlugin
+[12:28:44] [Render thread/INFO] [REI] Registered plugin provider DefaultPlugin [roughlyenoughitems] for REIServerPlugin
+[12:28:44] [Render thread/INFO] [REI] Registered plugin provider DefaultRuntimePlugin [roughlyenoughitems] for REIServerPlugin
+[12:28:44] [Render thread/INFO] [REI] Registered plugin provider FabricFluidAPISupportPlugin for REIServerPlugin
+[12:28:44] [Render thread/INFO] [REI] Registered plugin provider FabricFluidAPISupportPlugin for REIPlugin
+[12:28:44] [Render thread/INFO] [REI] Registered plugin provider DefaultClientPlugin [roughlyenoughitems] for REIClientPlugin
+[12:28:44] [Render thread/INFO] [REI] Registered plugin provider DefaultClientRuntimePlugin [roughlyenoughitems] for REIClientPlugin
+[12:28:44] [Render thread/INFO] [REI] Registered plugin provider HideIngredientsFromTagsPlugin [roughlyenoughitems] for REIClientPlugin
+[12:28:44] [Render thread/INFO] [REI] Registered plugin provider PeonyREISupport [peony] for REIClientPlugin

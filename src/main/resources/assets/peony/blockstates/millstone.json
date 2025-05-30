@@ -1,0 +1,244 @@
+{
+  "variants": {
+    "facing=east,rotation_times=0": {
+      "model": "peony:block/millstone",
+      "y": 270
+    },
+    "facing=east,rotation_times=1": {
+      "model": "peony:block/millstone_rotated_1",
+      "y": 270
+    },
+    "facing=east,rotation_times=2": {
+      "model": "peony:block/millstone_rotated_2",
+      "y": 270
+    },
+    "facing=east,rotation_times=3": {
+      "model": "peony:block/millstone_rotated_3",
+      "y": 270
+    },
+    "facing=east,rotation_times=4": {
+      "model": "peony:block/millstone_rotated_4",
+      "y": 270
+    },
+    "facing=east,rotation_times=5": {
+      "model": "peony:block/millstone_rotated_5",
+      "y": 270
+    },
+    "facing=east,rotation_times=6": {
+      "model": "peony:block/millstone_rotated_6",
+      "y": 270
+    },
+    "facing=east,rotation_times=7": {
+      "model": "peony:block/millstone_rotated_7",
+      "y": 270
+    },
+    "facing=east,rotation_times=8": {
+      "model": "peony:block/millstone_rotated_8",
+      "y": 270
+    },
+    "facing=east,rotation_times=9": {
+      "model": "peony:block/millstone_rotated_9",
+      "y": 270
+    },
+    "facing=east,rotation_times=10": {
+      "model": "peony:block/millstone_rotated_10",
+      "y": 270
+    },
+    "facing=east,rotation_times=11": {
+      "model": "peony:block/millstone_rotated_11",
+      "y": 270
+    },
+    "facing=east,rotation_times=12": {
+      "model": "peony:block/millstone_rotated_12",
+      "y": 270
+    },
+    "facing=east,rotation_times=13": {
+      "model": "peony:block/millstone_rotated_13",
+      "y": 270
+    },
+    "facing=east,rotation_times=14": {
+      "model": "peony:block/millstone_rotated_14",
+      "y": 270
+    },
+    "facing=east,rotation_times=15": {
+      "model": "peony:block/millstone_rotated_15",
+      "y": 270
+    },
+    "facing=north,rotation_times=0": {
+      "model": "peony:block/millstone",
+      "y": 180
+    },
+    "facing=north,rotation_times=1": {
+      "model": "peony:block/millstone_rotated_1",
+      "y": 180
+    },
+    "facing=north,rotation_times=2": {
+      "model": "peony:block/millstone_rotated_2",
+      "y": 180
+    },
+    "facing=north,rotation_times=3": {
+      "model": "peony:block/millstone_rotated_3",
+      "y": 180
+    },
+    "facing=north,rotation_times=4": {
+      "model": "peony:block/millstone_rotated_4",
+      "y": 180
+    },
+    "facing=north,rotation_times=5": {
+      "model": "peony:block/millstone_rotated_5",
+      "y": 180
+    },
+    "facing=north,rotation_times=6": {
+      "model": "peony:block/millstone_rotated_6",
+      "y": 180
+    },
+    "facing=north,rotation_times=7": {
+      "model": "peony:block/millstone_rotated_7",
+      "y": 180
+    },
+    "facing=north,rotation_times=8": {
+      "model": "peony:block/millstone_rotated_8",
+      "y": 180
+    },
+    "facing=north,rotation_times=9": {
+      "model": "peony:block/millstone_rotated_9",
+      "y": 180
+    },
+    "facing=north,rotation_times=10": {
+      "model": "peony:block/millstone_rotated_10",
+      "y": 180
+    },
+    "facing=north,rotation_times=11": {
+      "model": "peony:block/millstone_rotated_11",
+      "y": 180
+    },
+    "facing=north,rotation_times=12": {
+      "model": "peony:block/millstone_rotated_12",
+      "y": 180
+    },
+    "facing=north,rotation_times=13": {
+      "model": "peony:block/millstone_rotated_13",
+      "y": 180
+    },
+    "facing=north,rotation_times=14": {
+      "model": "peony:block/millstone_rotated_14",
+      "y": 180
+    },
+    "facing=north,rotation_times=15": {
+      "model": "peony:block/millstone_rotated_15",
+      "y": 180
+    },
+    "facing=south,rotation_times=0": {
+      "model": "peony:block/millstone"
+    },
+    "facing=south,rotation_times=1": {
+      "model": "peony:block/millstone_rotated_1"
+    },
+    "facing=south,rotation_times=2": {
+      "model": "peony:block/millstone_rotated_2"
+    },
+    "facing=south,rotation_times=3": {
+      "model": "peony:block/millstone_rotated_3"
+    },
+    "facing=south,rotation_times=4": {
+      "model": "peony:block/millstone_rotated_4"
+    },
+    "facing=south,rotation_times=5": {
+      "model": "peony:block/millstone_rotated_5"
+    },
+    "facing=south,rotation_times=6": {
+      "model": "peony:block/millstone_rotated_6"
+    },
+    "facing=south,rotation_times=7": {
+      "model": "peony:block/millstone_rotated_7"
+    },
+    "facing=south,rotation_times=8": {
+      "model": "peony:block/millstone_rotated_8"
+    },
+    "facing=south,rotation_times=9": {
+      "model": "peony:block/millstone_rotated_9"
+    },
+    "facing=south,rotation_times=10": {
+      "model": "peony:block/millstone_rotated_10"
+    },
+    "facing=south,rotation_times=11": {
+      "model": "peony:block/millstone_rotated_11"
+    },
+    "facing=south,rotation_times=12": {
+      "model": "peony:block/millstone_rotated_12"
+    },
+    "facing=south,rotation_times=13": {
+      "model": "peony:block/millstone_rotated_13"
+    },
+    "facing=south,rotation_times=14": {
+      "model": "peony:block/millstone_rotated_14"
+    },
+    "facing=south,rotation_times=15": {
+      "model": "peony:block/millstone_rotated_15"
+    },
+    "facing=west,rotation_times=0": {
+      "model": "peony:block/millstone",
+      "y": 90
+    },
+    "facing=west,rotation_times=1": {
+      "model": "peony:block/millstone_rotated_1",
+      "y": 90
+    },
+    "facing=west,rotation_times=2": {
+      "model": "peony:block/millstone_rotated_2",
+      "y": 90
+    },
+    "facing=west,rotation_times=3": {
+      "model": "peony:block/millstone_rotated_3",
+      "y": 90
+    },
+    "facing=west,rotation_times=4": {
+      "model": "peony:block/millstone_rotated_4",
+      "y": 90
+    },
+    "facing=west,rotation_times=5": {
+      "model": "peony:block/millstone_rotated_5",
+      "y": 90
+    },
+    "facing=west,rotation_times=6": {
+      "model": "peony:block/millstone_rotated_6",
+      "y": 90
+    },
+    "facing=west,rotation_times=7": {
+      "model": "peony:block/millstone_rotated_7",
+      "y": 90
+    },
+    "facing=west,rotation_times=8": {
+      "model": "peony:block/millstone_rotated_8",
+      "y": 90
+    },
+    "facing=west,rotation_times=9": {
+      "model": "peony:block/millstone_rotated_9",
+      "y": 90
+    },
+    "facing=west,rotation_times=10": {
+      "model": "peony:block/millstone_rotated_10",
+      "y": 90
+    },
+    "facing=west,rotation_times=11": {
+      "model": "peony:block/millstone_rotated_11",
+      "y": 90
+    },
+    "facing=west,rotation_times=12": {
+      "model": "peony:block/millstone_rotated_12",
+      "y": 90
+    },
+    "facing=west,rotation_times=13": {
+      "model": "peony:block/millstone_rotated_13",
+      "y": 90
+    },
+    "facing=west,rotation_times=14": {
+      "model": "peony:block/millstone_rotated_14",
+      "y": 90
+    },
+    "facing=west,rotation_times=15": {
+      "model": "peony:block/millstone_rotated_15",
+      "y": 90
+    }
+  }
+}

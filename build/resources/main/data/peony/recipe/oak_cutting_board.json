@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "peony-blocks",
+  "key": {
+    "L": {
+      "item": "minecraft:oak_log"
+    }
+  },
+  "pattern": [
+    "LL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "peony:oak_cutting_board"
+  }
+}

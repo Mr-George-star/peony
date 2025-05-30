@@ -1,0 +1,23 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"dough": "peony:block/dough",
+		"particle": "peony:block/dough"
+	},
+	"elements": [
+		{
+			"name": "main",
+			"from": [4, 0, 5],
+			"to": [12, 3, 11],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4, 0, 5]},
+			"faces": {
+				"north": {"uv": [8, 0, 16, 3], "texture": "#dough"},
+				"east": {"uv": [8, 3, 14, 6], "texture": "#dough"},
+				"south": {"uv": [8, 0, 16, 3], "texture": "#dough"},
+				"west": {"uv": [8, 3, 14, 6], "texture": "#dough"},
+				"up": {"uv": [8, 6, 0, 0], "texture": "#dough"},
+				"down": {"uv": [0, 6, 8, 12], "texture": "#dough"}
+			}
+		}
+	]
+}

@@ -1,0 +1,11 @@
+{
+  "type": "peony:milling",
+  "ingredient": {
+    "item": "minecraft:hay_block"
+  },
+  "milling_times": 2,
+  "output": {
+    "count": 9,
+    "id": "minecraft:wheat"
+  }
+}
