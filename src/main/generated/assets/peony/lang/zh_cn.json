@@ -1,0 +1,18 @@
+{
+  "block.peony.acacia_cutting_board": "金合欢木菜板",
+  "block.peony.barley_crop": "大麦作物",
+  "block.peony.birch_cutting_board": "白桦木菜板",
+  "block.peony.dark_oak_cutting_board": "深色橡木菜板",
+  "block.peony.dough": "面团",
+  "block.peony.flour": "面粉",
+  "block.peony.jungle_cutting_board": "丛林木菜板",
+  "block.peony.mangrove_cutting_board": "红树木菜板",
+  "block.peony.millstone": "石磨",
+  "block.peony.oak_cutting_board": "橡木菜板",
+  "block.peony.spruce_cutting_board": "云杉木菜板",
+  "category.peony.milling": "磨制",
+  "category.peony.milling.milling.times": "研磨%d次",
+  "item.peony.barley": "大麦",
+  "item.peony.barley_seeds": "大麦种子",
+  "itemGroup.peony.item_group": "牡丹"
+}

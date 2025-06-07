@@ -1,0 +1,18 @@
+{
+  "block.peony.acacia_cutting_board": "Acacia Cutting Board",
+  "block.peony.barley_crop": "Barley Crop",
+  "block.peony.birch_cutting_board": "Birch Cutting Board",
+  "block.peony.dark_oak_cutting_board": "Dark Oak Cutting Board",
+  "block.peony.dough": "Dough",
+  "block.peony.flour": "Flour",
+  "block.peony.jungle_cutting_board": "Jungle Cutting Board",
+  "block.peony.mangrove_cutting_board": "Mangrove Cutting Board",
+  "block.peony.millstone": "Millstone",
+  "block.peony.oak_cutting_board": "Oak Cutting Board",
+  "block.peony.spruce_cutting_board": "Spruce Cutting Board",
+  "category.peony.milling": "Milling",
+  "category.peony.milling.milling.times": "Mill %d Times",
+  "item.peony.barley": "Barley",
+  "item.peony.barley_seeds": "Barley Seeds",
+  "itemGroup.peony.item_group": "Peony"
+}
