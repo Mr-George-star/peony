@@ -8,7 +8,8 @@
 		"Mr.George"
 	],
 	"contact": {
-		"sources": ""
+		"sources": "https://github.com/Mr-George-star/peony",
+		"issues": "https://github.com/Mr-George-star/peony/issues"
 	},
 	"license": "MIT License",
 	"icon": "assets/peony/icon.png",
