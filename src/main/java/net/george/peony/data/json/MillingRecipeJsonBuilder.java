@@ -63,13 +63,15 @@ public class MillingRecipeJsonBuilder implements RecipeJsonBuilder {
         return this;
     }
 
+    @Override
     public Item getOutputItem() {
         return this.output.getItem();
     }
 
+    @Override
     public void offerTo(RecipeExporter exporter, Identifier recipeId) {
         if (this.criteria.isEmpty()) {
-            throw new IllegalStateException("No way of obtaining recipe " + recipeId);
+            this.criterion(this.getOutputItem());
         }
         Advancement.Builder builder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
         Objects.requireNonNull(this.criteria).forEach(builder::criterion);

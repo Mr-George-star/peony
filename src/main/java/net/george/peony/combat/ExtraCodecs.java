@@ -1,11 +1,15 @@
 package net.george.peony.combat;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.BitSetVoxelSet;
 import net.minecraft.util.shape.SimpleVoxelShape;
+
+import java.util.List;
+import java.util.function.Function;
 
 public class ExtraCodecs {
     public static final MapCodec<BitSetVoxelSet> BIT_SET_VOXEL_SET = RecordCodecBuilder.mapCodec(instance ->
@@ -30,4 +34,13 @@ public class ExtraCodecs {
             instance.group(
                     BIT_SET_VOXEL_SET.fieldOf("voxelSet").forGetter(shape -> (BitSetVoxelSet) shape.voxels)
             ).apply(instance, SimpleVoxelShape::new));
+
+    public static Codec<String> limitedString(List<String> limits, Function<String, String> messageFactory) {
+        return Codec.STRING.validate(value ->
+                limits.contains(value) ? DataResult.success(value) : DataResult.error(() -> messageFactory.apply(value)));
+    }
+
+    public static Codec<String> limitedString(List<String> limits) {
+        return limitedString(limits, value -> "Value must be contained in list " + limits + " : " + value);
+    }
 }

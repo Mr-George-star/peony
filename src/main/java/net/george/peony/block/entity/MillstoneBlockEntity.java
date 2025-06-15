@@ -182,12 +182,12 @@ public class MillstoneBlockEntity extends BlockEntity implements StackTransforma
     }
 
     protected Optional<RecipeEntry<MillingRecipe>> getCurrentRecipe(World world) {
-        return getCurrentRecipe(world, this.getInputStack());
+        return this.getCurrentRecipe(world, this.getInputStack());
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
         updateMillingTimes(state);
-        Optional<RecipeEntry<MillingRecipe>> recipe = getCurrentRecipe(world);
+        Optional<RecipeEntry<MillingRecipe>> recipe = this.getCurrentRecipe(world);
 
         if (recipe.isPresent()) {
             if (this.milled && this.millingTimes >= this.requiredMillingTimes) {

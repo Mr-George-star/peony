@@ -2,6 +2,7 @@ package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.george.peony.block.data.ItemDecrementBehaviour;
 import net.george.peony.block.entity.AccessibleInventory;
 import net.george.peony.block.entity.CuttingBoardBlockEntity;
 import net.george.peony.block.entity.PeonyBlockEntities;
@@ -112,7 +113,8 @@ public class CuttingBoardBlock extends BlockWithEntity implements SolidBlockChec
         if (!world.isClient) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof CuttingBoardBlockEntity board) {
-                return AccessibleInventory.access(board, world, pos, player, hand);
+                return AccessibleInventory.access(board, world, pos, player, hand,
+                        ItemDecrementBehaviour.createCuttingBoard(board));
             }
         }
         return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

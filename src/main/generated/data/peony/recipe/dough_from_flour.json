@@ -1,0 +1,24 @@
+{
+  "type": "peony:sequential_crafting",
+  "output": {
+    "count": 1,
+    "id": "peony:dough"
+  },
+  "steps": [
+    {
+      "ingredient": {
+        "item": "peony:flour"
+      },
+      "procedure": "kneading"
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:potion"
+      },
+      "procedure": "kneading"
+    },
+    {
+      "procedure": "kneading"
+    }
+  ]
+}

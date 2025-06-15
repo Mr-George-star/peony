@@ -22,24 +22,23 @@ public class PeonyModels {
     }
 
     public static void registerCuttingBoard(BlockStateModelGenerator generator, Block block) {
-//        generator.blockStateCollector.accept(VariantsBlockStateSupplier.create(block,
-//                BlockStateVariant.create().put(VariantSettings.MODEL, getUploaded(block, generator, PeonyModelFactories.CUTTING_BOARD))));
+        Identifier board = getUploadedBoard(block, generator);
         generator.blockStateCollector.accept(MultipartBlockStateSupplier.create(block)
                 .with(When.create().set(CuttingBoardBlock.FACING, Direction.NORTH),
                         BlockStateVariant.create()
-                                .put(VariantSettings.MODEL, getUploadedBoard(block, generator))
+                                .put(VariantSettings.MODEL, board)
                                 .put(VariantSettings.Y, VariantSettings.Rotation.R0))
                 .with(When.create().set(CuttingBoardBlock.FACING, Direction.EAST),
                         BlockStateVariant.create()
-                                .put(VariantSettings.MODEL, getUploadedBoard(block, generator))
+                                .put(VariantSettings.MODEL, board)
                                 .put(VariantSettings.Y, VariantSettings.Rotation.R90))
                 .with(When.create().set(CuttingBoardBlock.FACING, Direction.SOUTH),
                         BlockStateVariant.create()
-                                .put(VariantSettings.MODEL, getUploadedBoard(block, generator))
+                                .put(VariantSettings.MODEL, board)
                                 .put(VariantSettings.Y, VariantSettings.Rotation.R180))
                 .with(When.create().set(CuttingBoardBlock.FACING, Direction.WEST),
                         BlockStateVariant.create()
-                                .put(VariantSettings.MODEL, getUploadedBoard(block, generator))
+                                .put(VariantSettings.MODEL, board)
                                 .put(VariantSettings.Y, VariantSettings.Rotation.R270)));
     }
 }

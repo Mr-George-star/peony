@@ -2,6 +2,7 @@ package net.george.peony.block;
 
 import net.george.peony.Peony;
 import net.george.peony.PeonyItemGroups;
+import net.george.peony.block.data.ItemExchangeBehaviour;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.item.SolidModelProvider;
 import net.george.peony.util.DoubleParamsFunction;
@@ -85,6 +86,7 @@ public class PeonyBlocks {
     }
 
     public static void register() {
+        ItemExchangeBehaviour.registerBehaviours();
         Peony.debug("Blocks");
     }
 

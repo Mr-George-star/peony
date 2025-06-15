@@ -20,6 +20,8 @@ public class PeonyItems {
     public static final Item BARLEY_SEEDS = register("barley_seeds", settings ->
             new AliasedBlockItem(PeonyBlocks.BARLEY_CROP, settings), createDefaultSettings());
 
+    public static final Item PLACEHOLDER = register("placeholder", Item::new, createDefaultSettings(), false);
+
     public static Item register(String name, Function<Item.Settings, Item> itemFactory, Item.Settings settings) {
         return register(name, itemFactory, settings, true);
     }

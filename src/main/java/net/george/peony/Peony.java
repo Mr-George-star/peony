@@ -24,8 +24,8 @@ public class Peony implements ModInitializer {
 		PeonyBlocks.register();
 		PeonyBlockEntities.register();
 		PeonyItemGroups.register();
-		PeonyRecipes.register();
 		PeonyCombat.register();
+		PeonyRecipes.register();
 
 		LOGGER.info("Hello Fabric world!");
 	}

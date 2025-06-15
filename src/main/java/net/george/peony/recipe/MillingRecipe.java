@@ -44,12 +44,12 @@ public record MillingRecipe(Ingredient input, int millingTimes, ItemStack output
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<MillingRecipe> getSerializer() {
         return PeonyRecipes.MILLING;
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public RecipeType<MillingRecipe> getType() {
         return PeonyRecipes.MILLING_TYPE;
     }
 

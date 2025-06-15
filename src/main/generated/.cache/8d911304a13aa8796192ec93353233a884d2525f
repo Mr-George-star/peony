@@ -1,4 +1,4 @@
-// 1.21.1	2025-05-29T12:28:45.120077	Peony/Recipes
+// 1.21.1	2025-06-15T20:51:43.9260052	Peony/Recipes
 3c45db91218e197c51c0f1bad3695155a0e5bbba data\peony\recipe\millstone.json
 be3144515345d48a81c5d009cd64c436affea328 data\peony\advancement\recipes\misc\millstone.json
 09a010365d5a9765838c526c6a53b3bd7b56f0d9 data\peony\advancement\recipes\misc\spruce_cutting_board.json
@@ -6,6 +6,7 @@ da1a987f79d09e3c3c154fea272dc6132de1d780 data\peony\advancement\recipes\misc\flo
 16b3a0d25798b440a7afcd9ab9dc06bcaa512f03 data\peony\advancement\recipes\misc\jungle_cutting_board.json
 db283eb9c3fc9ab964330f140475148b4af4b650 data\peony\recipe\mangrove_cutting_board.json
 ade3d65b3a0b14d270eaddade9e67887ed351eeb data\peony\advancement\recipes\misc\wheat_from_hay_block.json
+011ac9b5971ee2a05c79ffa693cc1f29fef86ad8 data\peony\recipe\dough_from_flour.json
 0124bfb3279efe31d9482884aa99f693ab11c91c data\peony\recipe\dark_oak_cutting_board.json
 84ee04c8f56df28ca7b6efc8bb2e38f01cb92602 data\peony\advancement\recipes\misc\acacia_cutting_board.json
 d68f0f888791cb745d82cf12d2b83528d1aebf67 data\peony\advancement\recipes\misc\oak_cutting_board.json
@@ -15,6 +16,7 @@ ac37e7bdbac4610f3e806b38679467a8591790b7 data\peony\recipe\oak_cutting_board.jso
 74acbe4417622789c9186ae4aabfc90784a72a1a data\peony\recipe\spruce_cutting_board.json
 1d2d78baaa336f0bb38f029b0c9b0cb862233c3f data\peony\recipe\birch_cutting_board.json
 be926a1f9d74b6b9904fb090062dca4900de120d data\peony\advancement\recipes\misc\mangrove_cutting_board.json
+04d04092141fc955d4b09f25359bde17c420e024 data\peony\advancement\recipes\misc\dough_from_flour.json
 99446e6a86ec4cd869c316c4838452b041a8f6f3 data\peony\advancement\recipes\misc\birch_cutting_board.json
 057348e787cee97e2ecf7e32b63d6731d7245d86 data\peony\recipe\jungle_cutting_board.json
 c6e817b2facb14d3b514dc8614e8a12c4deb2059 data\peony\recipe\flour_from_wheat.json

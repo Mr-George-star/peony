@@ -1,11 +1,13 @@
 {
-	"required": true,
-	"package": "net.george.peony.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"ExampleMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	}
+  "required": true,
+  "package": "net.george.peony.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+  ],
+  "client": [
+    "ClientRecipeBookMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

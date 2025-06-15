@@ -6,6 +6,7 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
+@SuppressWarnings("unused")
 public interface RecipeJsonBuilder {
     Item getOutputItem();
 
