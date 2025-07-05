@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 public interface StackTransformableInventory extends ImplementedInventory {
     int[][] AVAILABLE_SLOTS_CACHE = new int[54][];
 
-    Direction getCurrentDirection();
+    Direction getDirection();
 
     default boolean insert(@Nullable Inventory to, ItemStack stack) {
         return insert(this, to, stack);
@@ -17,7 +17,7 @@ public interface StackTransformableInventory extends ImplementedInventory {
 
     static boolean insert(StackTransformableInventory from, @Nullable Inventory to, ItemStack stack) {
         if (to != null) {
-            Direction direction = from.getCurrentDirection().getOpposite();
+            Direction direction = from.getDirection().getOpposite();
             if (!isInventoryFull(to, direction)) {
                 if (!stack.isEmpty()) {
                     ItemStack transferred = transfer(to, stack, direction);

@@ -3,6 +3,7 @@ package net.george.peony.data;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.george.peony.block.PeonyBlocks;
+import net.george.peony.block.data.CraftingSteps;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.util.PeonyTranslationKeys;
 import net.minecraft.registry.RegistryWrapper;
@@ -18,6 +19,7 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
     public void generateTranslations(RegistryWrapper.WrapperLookup wrapperLookup, TranslationBuilder translationBuilder) {
         translationBuilder.add(PeonyItems.BARLEY, "Barley");
         translationBuilder.add(PeonyItems.BARLEY_SEEDS, "Barley Seeds");
+        translationBuilder.add(PeonyItems.KITCHEN_KNIFE, "Kitchen Knife");
 
         translationBuilder.add(PeonyBlocks.MILLSTONE, "Millstone");
         translationBuilder.add(PeonyBlocks.BARLEY_CROP, "Barley Crop");
@@ -31,8 +33,13 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.DOUGH, "Dough");
         translationBuilder.add(PeonyBlocks.FLOUR, "Flour");
 
+        translationBuilder.add(CraftingSteps.Procedure.KNEADING.getTranslationKey(), "Kneading");
+        translationBuilder.add(CraftingSteps.Procedure.CUTTING.getTranslationKey(), "Cutting");
+
         translationBuilder.add(PeonyTranslationKeys.ITEM_GROUP_KEY, "Peony");
+
         translationBuilder.add(PeonyTranslationKeys.MILLING_RECIPE_CATEGORY_TITLE, "Milling");
         translationBuilder.add(PeonyTranslationKeys.MILLING_RECIPE_MILLING_TIMES, "Mill %d Times");
+        translationBuilder.add(PeonyTranslationKeys.SEQUENTIAL_CRAFTING_RECIPE_CATEGORY_TITLE, "Sequential Crafting");
     }
 }

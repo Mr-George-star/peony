@@ -30,5 +30,6 @@ public class PeonyModelProvider extends FabricModelProvider {
     @Override
     public void generateItemModels(ItemModelGenerator generator) {
         generator.register(PeonyItems.BARLEY, Models.GENERATED);
+        generator.register(PeonyItems.KITCHEN_KNIFE, Models.HANDHELD);
     }
 }

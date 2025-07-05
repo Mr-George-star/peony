@@ -48,9 +48,9 @@ public class MillstoneCategory implements DisplayCategory<MillstoneDisplay> {
         // rotation times tooltip
         widgets.add(Widgets.createTexturedWidget(TEXTURE, startPoint.x + 85, startPoint.y + 34, 22, 20, 9, 9, 64, 64));
         // rotation times tooltip
-        widgets.add(Widgets.createDrawableWidget((graphics, mouseX, mouseY, delta) -> {
+        widgets.add(Widgets.createDrawableWidget((context, mouseX, mouseY, delta) -> {
             TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
-            graphics.drawText(renderer,
+            context.drawText(renderer,
                     Text.translatable(PeonyTranslationKeys.MILLING_RECIPE_MILLING_TIMES, display.getMillingTimes()),
                     startPoint.x + 100, startPoint.y + 35, 1325400064, false);
         }));

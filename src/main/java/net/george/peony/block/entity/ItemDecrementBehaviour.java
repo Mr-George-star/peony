@@ -1,6 +1,5 @@
-package net.george.peony.block.data;
+package net.george.peony.block.entity;
 
-import net.george.peony.block.entity.CuttingBoardBlockEntity;
 import net.george.peony.util.ThreeParamsFunction;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -9,11 +8,11 @@ import net.minecraft.util.Unit;
 import net.minecraft.world.World;
 
 public interface ItemDecrementBehaviour extends ThreeParamsFunction<World, PlayerEntity, Hand, Unit> {
-    void interact(World world, PlayerEntity user, Hand hand);
+    void effective(World world, PlayerEntity user, Hand hand);
 
     @Override
     default Unit apply(World world, PlayerEntity user, Hand hand) {
-        this.interact(world, user, hand);
+        this.effective(world, user, hand);
         return Unit.INSTANCE;
     }
 

@@ -12,7 +12,11 @@
   "block.peony.spruce_cutting_board": "云杉木菜板",
   "category.peony.milling": "磨制",
   "category.peony.milling.milling.times": "研磨%d次",
+  "category.peony.sequential.crafting": "顺序合成",
+  "crafting_procedure.peony.cutting": "切",
+  "crafting_procedure.peony.kneading": "揉捏",
   "item.peony.barley": "大麦",
   "item.peony.barley_seeds": "大麦种子",
+  "item.peony.kitchen_knife": "菜刀",
   "itemGroup.peony.item_group": "牡丹"
 }

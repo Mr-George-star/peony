@@ -30,7 +30,7 @@ public record ClearInventoryS2CPayload(BlockPos pos) implements CustomPayload {
     };
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Id<ClearInventoryS2CPayload> getId() {
         return ID;
     }
 }

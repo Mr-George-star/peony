@@ -34,11 +34,11 @@ public class Peony implements ModInitializer {
 		LOGGER.debug("Initializing " + moduleName + " for " + MOD_ID);
 	}
 
-	public static Identifier id(String name) {
-		return Identifier.of(MOD_ID, name);
+	public static Identifier id(String path) {
+		return Identifier.of(MOD_ID, path);
 	}
 
-	public static <T> RegistryKey<T> key(RegistryKey<Registry<T>> registry, String name) {
-		return RegistryKey.of(registry, id(name));
+	public static <T> RegistryKey<T> key(RegistryKey<Registry<T>> registry, String path) {
+		return RegistryKey.of(registry, id(path));
 	}
 }

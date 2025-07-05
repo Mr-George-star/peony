@@ -62,7 +62,7 @@ public class MillstoneBlockEntity extends BlockEntity implements StackTransforma
     }
 
     @Override
-    public Direction getCurrentDirection() {
+    public Direction getDirection() {
         return Objects.requireNonNull(this.world).getBlockState(this.pos).get(MillstoneBlock.FACING);
     }
 
@@ -94,7 +94,7 @@ public class MillstoneBlockEntity extends BlockEntity implements StackTransforma
     }
 
     @Override
-    public boolean insertItem(World world, PlayerEntity user, Hand hand, ItemStack givenStack) {
+    public boolean insertItem(World world, PlayerEntity user, Hand hand, ItemStack givenStack, boolean isSneaking) {
         ItemStack itemStack = getInputStack();
         Optional<RecipeEntry<MillingRecipe>> recipe = getCurrentRecipe(world, givenStack);
         if (recipe.isPresent()) {

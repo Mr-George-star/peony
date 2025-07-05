@@ -1,4 +1,4 @@
-package net.george.peony.block.data;
+package net.george.peony.block.entity;
 
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;

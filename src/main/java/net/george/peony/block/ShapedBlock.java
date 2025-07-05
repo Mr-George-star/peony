@@ -1,9 +1,10 @@
 package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.george.peony.combat.ExtraCodecs;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.ShapeContext;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
@@ -12,12 +13,10 @@ import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.SimpleVoxelShape;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
-import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ShapedBlock extends Block implements SolidBlockChecker {
@@ -33,13 +32,6 @@ public abstract class ShapedBlock extends Block implements SolidBlockChecker {
 
     @NotNull
     public abstract VoxelShape getShapeFromDirection(@NotNull Direction direction);
-
-    @Experimental
-    @SuppressWarnings("unused")
-    protected static <B extends ShapedBlock> RecordCodecBuilder<B, SimpleVoxelShape> createShapeCodec(Direction direction) {
-        return ExtraCodecs.SIMPLE_VOXEL_SHAPE.fieldOf("shape_" + direction.toString())
-                .forGetter(block -> (SimpleVoxelShape) block.getShapeFromDirection(direction));
-    }
 
     @Override
     protected BlockState rotate(BlockState state, BlockRotation rotation) {

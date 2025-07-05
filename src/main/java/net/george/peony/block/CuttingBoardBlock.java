@@ -2,7 +2,7 @@ package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.george.peony.block.data.ItemDecrementBehaviour;
+import net.george.peony.block.entity.ItemDecrementBehaviour;
 import net.george.peony.block.entity.AccessibleInventory;
 import net.george.peony.block.entity.CuttingBoardBlockEntity;
 import net.george.peony.block.entity.PeonyBlockEntities;
@@ -107,6 +107,14 @@ public class CuttingBoardBlock extends BlockWithEntity implements SolidBlockChec
     }
 
     /* BLOCK ENTITY */
+
+    @Override
+    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
+        if (!player.isSneaking()) {
+            return ActionResult.CONSUME;
+        }
+        return ActionResult.PASS;
+    }
 
     @Override
     protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {

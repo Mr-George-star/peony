@@ -2,7 +2,7 @@ package net.george.peony.block;
 
 import net.george.peony.Peony;
 import net.george.peony.PeonyItemGroups;
-import net.george.peony.block.data.ItemExchangeBehaviour;
+import net.george.peony.block.entity.ItemExchangeBehaviour;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.item.SolidModelProvider;
 import net.george.peony.util.DoubleParamsFunction;
@@ -59,11 +59,11 @@ public class PeonyBlocks {
         return instance;
     }
 
-    public static Block register(String name, Function<AbstractBlock.Settings, Block> blockFactory, AbstractBlock.Settings settings, DoubleParamsFunction<Item.Settings, Block, Item> blockItemFactory) {
+    public static Block register(String name, Function<AbstractBlock.Settings, Block> blockFactory, AbstractBlock.Settings settings, DoubleParamsFunction<Block, Item.Settings, Item> blockItemFactory) {
         return register(name, blockFactory, settings, blockItemFactory, PeonyItems.createDefaultSettings());
     }
 
-    public static Block register(String name, Function<AbstractBlock.Settings, Block> blockFactory, AbstractBlock.Settings settings, DoubleParamsFunction<Item.Settings, Block, Item> blockItemFactory, Item.Settings itemSettings) {
+    public static Block register(String name, Function<AbstractBlock.Settings, Block> blockFactory, AbstractBlock.Settings settings, DoubleParamsFunction<Block, Item.Settings, Item> blockItemFactory, Item.Settings itemSettings) {
         Block instance = Registry.register(Registries.BLOCK, key(name), blockFactory.apply(settings));
         PeonyItems.register(name, blockItemFactory, itemSettings, instance);
         PeonyItemGroups.BLOCK_LIST.add(instance);
@@ -91,7 +91,7 @@ public class PeonyBlocks {
     }
 
     static class DoughItem extends BlockItem implements SolidModelProvider {
-        public DoughItem(Settings settings, Block dough) {
+        public DoughItem(Block dough, Settings settings) {
             super(dough, settings);
         }
 
@@ -102,7 +102,7 @@ public class PeonyBlocks {
     }
 
     static class FlourItem extends BlockItem implements SolidModelProvider {
-        public FlourItem(Settings settings, Block flour) {
+        public FlourItem(Block flour, Settings settings) {
             super(flour, settings);
         }
 

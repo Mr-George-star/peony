@@ -41,7 +41,7 @@ public record ItemStackSyncS2CPayload(int inventorySize, List<ItemStack> stacks,
     };
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Id<ItemStackSyncS2CPayload> getId() {
         return ID;
     }
 }

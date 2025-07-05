@@ -19,6 +19,8 @@ public class PeonyItems {
     public static final Item BARLEY = register("barley", Item::new, createDefaultSettings());
     public static final Item BARLEY_SEEDS = register("barley_seeds", settings ->
             new AliasedBlockItem(PeonyBlocks.BARLEY_CROP, settings), createDefaultSettings());
+    public static final Item KITCHEN_KNIFE = register("kitchen_knife", settings ->
+            new KitchenKnifeItem(PeonyToolMaterials.KITCHEN_KNIFE, settings), createDefaultSettings().maxCount(1));
 
     public static final Item PLACEHOLDER = register("placeholder", Item::new, createDefaultSettings(), false);
 
@@ -26,8 +28,8 @@ public class PeonyItems {
         return register(name, itemFactory, settings, true);
     }
 
-    public static Item register(String name, DoubleParamsFunction<Item.Settings, Block, Item> itemFactory, Item.Settings settings, Block block) {
-        return Registry.register(Registries.ITEM, key(name), itemFactory.apply(settings, block));
+    public static Item register(String name, DoubleParamsFunction<Block, Item.Settings, Item> itemFactory, Item.Settings settings, Block block) {
+        return Registry.register(Registries.ITEM, key(name), itemFactory.apply(block, settings));
     }
 
     public static Item register(String name, Function<Item.Settings, Item> itemFactory, Item.Settings settings, boolean shouldAddToItemGroup) {

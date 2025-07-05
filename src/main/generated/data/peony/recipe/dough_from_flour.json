@@ -9,16 +9,16 @@
       "ingredient": {
         "item": "peony:flour"
       },
-      "procedure": "kneading"
+      "procedure": "peony:kneading"
     },
     {
       "ingredient": {
         "item": "minecraft:potion"
       },
-      "procedure": "kneading"
+      "procedure": "peony:kneading"
     },
     {
-      "procedure": "kneading"
+      "procedure": "peony:kneading"
     }
   ]
 }

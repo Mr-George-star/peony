@@ -12,7 +12,11 @@
   "block.peony.spruce_cutting_board": "Spruce Cutting Board",
   "category.peony.milling": "Milling",
   "category.peony.milling.milling.times": "Mill %d Times",
+  "category.peony.sequential.crafting": "Sequential Crafting",
+  "crafting_procedure.peony.cutting": "Cutting",
+  "crafting_procedure.peony.kneading": "Kneading",
   "item.peony.barley": "Barley",
   "item.peony.barley_seeds": "Barley Seeds",
+  "item.peony.kitchen_knife": "Kitchen Knife",
   "itemGroup.peony.item_group": "Peony"
 }

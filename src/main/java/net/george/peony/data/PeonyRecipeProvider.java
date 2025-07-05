@@ -21,6 +21,7 @@ import net.minecraft.registry.RegistryWrapper;
 import java.util.concurrent.CompletableFuture;
 
 public class PeonyRecipeProvider extends FabricRecipeProvider {
+    public static final String PEONY_ITEMS = "peony-items";
     public static final String PEONY_BLOCKS = "peony-blocks";
 
     public PeonyRecipeProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
@@ -37,6 +38,25 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .group(PEONY_BLOCKS)
                 .criterion(hasItem(Blocks.SMOOTH_STONE), conditionsFromItem(Blocks.SMOOTH_STONE))
                 .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, PeonyItems.KITCHEN_KNIFE)
+                .input('I', Items.IRON_INGOT)
+                .input('S', Items.STICK)
+                .pattern("II")
+                .pattern("II")
+                .pattern("S ")
+                .group(PEONY_ITEMS)
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .offerTo(exporter, Peony.id("kitchen_knife_right"));
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, PeonyItems.KITCHEN_KNIFE)
+                .input('I', Items.IRON_INGOT)
+                .input('S', Items.STICK)
+                .pattern("II")
+                .pattern("II")
+                .pattern(" S")
+                .group(PEONY_ITEMS)
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .offerTo(exporter, Peony.id("kitchen_knife_left"));
+
         Registries.BLOCK.stream().forEach(block -> {
             if (block instanceof CuttingBoardBlock board) {
                 createCuttingBoardRecipe(board, exporter);

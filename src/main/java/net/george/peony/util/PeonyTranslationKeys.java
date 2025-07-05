@@ -8,6 +8,7 @@ public class PeonyTranslationKeys {
     public static final String ITEM_GROUP_KEY = createTranslationKey("itemGroup", "item_group");
     public static final String MILLING_RECIPE_CATEGORY_TITLE = createTranslationKey("category", "milling");
     public static final String MILLING_RECIPE_MILLING_TIMES = createTranslationKey("category", "milling", "milling", "times");
+    public static final String SEQUENTIAL_CRAFTING_RECIPE_CATEGORY_TITLE = createTranslationKey("category", "sequential", "crafting");
 
     public static String createTranslationKey(String type, String... items) {
         return createTranslationKey(type, StringUtils.join(items, "/"));
