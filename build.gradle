@@ -39,6 +39,10 @@ dependencies {
 	modImplementation include("net.george:networking-hooks:1.0.0")
 }
 
+loom {
+	accessWidenerPath = file("src/main/resources/peony.accesswidener")
+}
+
 processResources {
 	inputs.property "version", project.version
 

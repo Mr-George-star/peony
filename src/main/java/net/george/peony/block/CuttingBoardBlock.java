@@ -2,9 +2,9 @@ package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.george.peony.block.entity.ItemDecrementBehaviour;
 import net.george.peony.block.entity.AccessibleInventory;
 import net.george.peony.block.entity.CuttingBoardBlockEntity;
+import net.george.peony.block.entity.ItemDecrementBehaviour;
 import net.george.peony.block.entity.PeonyBlockEntities;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -31,24 +31,24 @@ import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 
-public class CuttingBoardBlock extends BlockWithEntity implements SolidBlockChecker, Waterloggable {
+public class CuttingBoardBlock extends BlockWithEntity implements Waterloggable {
     public static final MapCodec<CuttingBoardBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
-            instance.group(createSettingsCodec(), createLogMadeFromCodec()).apply(instance, CuttingBoardBlock::new));
+            instance.group(createSettingsCodec(), createLogCodec()).apply(instance, CuttingBoardBlock::new));
     public static final VoxelShape SHAPE = Block.createCuboidShape(1, 0, 1, 15, 3, 15);
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
-    protected final Block madeFrom;
+    protected final Block log;
 
-    public CuttingBoardBlock(Settings settings, Block madeFrom) {
+    public CuttingBoardBlock(Settings settings, Block log) {
         super(settings);
-        this.madeFrom = madeFrom;
+        this.log = log;
         this.setDefaultState(this.getDefaultState()
                 .with(FACING, Direction.NORTH)
                 .with(WATERLOGGED, false));
     }
 
-    public Block getLogMadeFrom() {
-        return this.madeFrom;
+    public Block getLog() {
+        return this.log;
     }
 
     @Override
@@ -56,8 +56,8 @@ public class CuttingBoardBlock extends BlockWithEntity implements SolidBlockChec
         return CODEC;
     }
 
-    protected static <B extends CuttingBoardBlock> RecordCodecBuilder<B, Block> createLogMadeFromCodec() {
-        return Block.CODEC.fieldOf("logMadeFrom").forGetter(CuttingBoardBlock::getLogMadeFrom);
+    protected static <B extends CuttingBoardBlock> RecordCodecBuilder<B, Block> createLogCodec() {
+        return Block.CODEC.fieldOf("log").forGetter(CuttingBoardBlock::getLog);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class CuttingBoardBlock extends BlockWithEntity implements SolidBlockChec
 
     @Override
     protected boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        return checkIsSolid(world, pos);
+        return world.getBlockState(pos.down()).isFullCube(world, pos);
     }
 
     @Override
@@ -121,8 +121,8 @@ public class CuttingBoardBlock extends BlockWithEntity implements SolidBlockChec
         if (!world.isClient) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof CuttingBoardBlockEntity board) {
-                return AccessibleInventory.access(board, world, pos, player, hand,
-                        ItemDecrementBehaviour.createCuttingBoard(board));
+                AccessibleInventory.InteractionContext context = AccessibleInventory.createContext(world, pos, player, hand);
+                return AccessibleInventory.access(board, context, ItemDecrementBehaviour.createCuttingBoard(board));
             }
         }
         return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

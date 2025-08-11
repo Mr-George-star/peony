@@ -7,6 +7,8 @@ import net.george.peony.combat.PeonyCombat;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.networking.PeonyNetworking;
 import net.george.peony.recipe.PeonyRecipes;
+import net.george.peony.world.PeonyFeatures;
+import net.george.peony.world.gen.PeonyWorldGeneration;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
@@ -26,6 +28,8 @@ public class Peony implements ModInitializer {
 		PeonyItemGroups.register();
 		PeonyCombat.register();
 		PeonyRecipes.register();
+		PeonyFeatures.register();
+		PeonyWorldGeneration.generate();
 
 		LOGGER.info("Hello Fabric world!");
 	}

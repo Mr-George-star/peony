@@ -1,0 +1,72 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"gui_light": "front",
+	"textures": {
+		"1": "peony:block/millstone"
+	},
+	"elements": [
+		{
+			"name": "millstone_top",
+			"from": [3, 0, 3],
+			"to": [13, 3, 13],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 1.5, 8]},
+			"faces": {
+				"north": {"uv": [0, 7, 2.5, 7.75], "texture": "#1"},
+				"east": {"uv": [0, 7, 2.5, 7.75], "texture": "#1"},
+				"south": {"uv": [0, 7, 2.5, 7.75], "texture": "#1"},
+				"west": {"uv": [0, 7, 2.5, 7.75], "texture": "#1"},
+				"up": {"uv": [2.5, 9.5, 0, 7], "texture": "#1"},
+				"down": {"uv": [2.5, 9.5, 0, 12], "texture": "#1"}
+			}
+		},
+		{
+			"name": "millstone_handle",
+			"from": [7, 1, -5],
+			"to": [9, 2, 3],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 1.5, 8]},
+			"faces": {
+				"north": {"uv": [3.5, 4.5, 4.5, 5], "texture": "#1"},
+				"east": {"uv": [3.5, 4, 7.5, 4.5], "texture": "#1"},
+				"west": {"uv": [3.5, 4, 7.5, 4.5], "texture": "#1"},
+				"up": {"uv": [4.5, 4, 3.5, 0], "texture": "#1"},
+				"down": {"uv": [4.5, 0, 3.5, 4], "texture": "#1"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"translation": [0, 4, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"thirdperson_lefthand": {
+			"translation": [0, 4, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"ground": {
+			"translation": [0, 3, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"gui": {
+			"rotation": [30, -135, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"head": {
+			"translation": [0, 14.25, 0]
+		},
+		"fixed": {
+			"rotation": [-90, 0, 0],
+			"translation": [0, 0, -4],
+			"scale": [0.5, 0.5, 0.5]
+		}
+	},
+	"groups": [
+		{
+			"name": "main",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [0, 1]
+		}
+	]
+}

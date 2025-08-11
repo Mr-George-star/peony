@@ -1,5 +1,7 @@
-// 1.21.1	2025-06-28T20:35:05.5582267	Peony/Tags for minecraft:block
+// 1.21.1	2025-08-11T21:28:08.5549298	Peony/Tags for minecraft:block
 4540fd33d1c9131af1c4f67dbddb4d10373c3634 data\minecraft\tags\block\mineable\pickaxe.json
-1ef20c5e8e8e641059c23729e3af375d19bd8fbe data\minecraft\tags\block\mineable\axe.json
+d05bbb18ec7419733ec0f1a66f99a32072ccd46f data\peony\tags\block\burnable_blocks.json
+d6b6c183f2ea86a69940c07be7328e269588e05b data\minecraft\tags\block\campfires.json
+37c1570f40d3927ef2e7a646de494e90a3e30b8f data\minecraft\tags\block\mineable\axe.json
 4540fd33d1c9131af1c4f67dbddb4d10373c3634 data\minecraft\tags\block\needs_stone_tool.json
 cfde3185dfa6e6a0e09ea3be0b7dacfcb2b9724c data\peony\tags\block\incorrect_for_kitchen_knife.json

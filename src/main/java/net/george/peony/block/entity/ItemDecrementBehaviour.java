@@ -1,13 +1,14 @@
 package net.george.peony.block.entity;
 
-import net.george.peony.util.ThreeParamsFunction;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Unit;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.function.TriFunction;
 
-public interface ItemDecrementBehaviour extends ThreeParamsFunction<World, PlayerEntity, Hand, Unit> {
+@FunctionalInterface
+public interface ItemDecrementBehaviour extends TriFunction<World, PlayerEntity, Hand, Unit> {
     void effective(World world, PlayerEntity user, Hand hand);
 
     @Override
@@ -25,10 +26,10 @@ public interface ItemDecrementBehaviour extends ThreeParamsFunction<World, Playe
     }
 
     static ItemDecrementBehaviour createCuttingBoard(CuttingBoardBlockEntity board) {
-        boolean previous = board.isHasBeenPlacedIngredient();
+        boolean previous = board.hasPlacedIngredient();
         return (world, user, hand) -> {
             ItemStack heldStack = user.getStackInHand(hand);
-            if (!previous && board.isHasBeenPlacedIngredient()) {
+            if (!previous && board.hasPlacedIngredient()) {
                 user.setStackInHand(hand, ItemExchangeBehaviour.get(heldStack.getItem()).exchange(world, user, heldStack));
                 return;
             }

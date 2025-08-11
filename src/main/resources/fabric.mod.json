@@ -28,6 +28,7 @@
 			"net.george.peony.combat.rei.PeonyREISupport"
 		]
 	},
+	"accessWidener": "peony.accesswidener",
 	"mixins": [
 		"peony.mixins.json"
 	],

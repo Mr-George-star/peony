@@ -28,7 +28,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 
-public class MillstoneBlock extends BlockWithEntity implements SolidBlockChecker {
+public class MillstoneBlock extends BlockWithEntity {
     public static final MapCodec<MillstoneBlock> CODEC = createCodec(MillstoneBlock::new);
     public static final VoxelShape SHAPE = Block.createCuboidShape(1, 0, 1, 15, 8, 15);
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
@@ -71,7 +71,7 @@ public class MillstoneBlock extends BlockWithEntity implements SolidBlockChecker
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing());
+        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }
 
     @Override
@@ -82,7 +82,7 @@ public class MillstoneBlock extends BlockWithEntity implements SolidBlockChecker
 
     @Override
     protected boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        return checkIsSolid(world, pos) || world.getBlockState(pos.down()).getBlock() instanceof ChestBlock;
+        return world.getBlockState(pos.down()).isFullCube(world, pos) || world.getBlockState(pos.down()).getBlock() instanceof ChestBlock;
     }
 
     @Override
@@ -111,7 +111,8 @@ public class MillstoneBlock extends BlockWithEntity implements SolidBlockChecker
         if (!world.isClient) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof MillstoneBlockEntity millstone) {
-                return AccessibleInventory.access(millstone, world, pos, player, hand);
+                AccessibleInventory.InteractionContext context = AccessibleInventory.createContext(world, pos, player, hand);
+                return AccessibleInventory.access(millstone, context);
             }
         }
         return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

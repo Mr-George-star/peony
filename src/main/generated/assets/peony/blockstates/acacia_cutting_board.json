@@ -1,40 +1,19 @@
 {
-  "multipart": [
-    {
-      "apply": {
-        "model": "peony:block/acacia_cutting_board",
-        "y": 0
-      },
-      "when": {
-        "facing": "north"
-      }
+  "variants": {
+    "facing=east": {
+      "model": "peony:block/acacia_cutting_board",
+      "y": 90
     },
-    {
-      "apply": {
-        "model": "peony:block/acacia_cutting_board",
-        "y": 90
-      },
-      "when": {
-        "facing": "east"
-      }
+    "facing=north": {
+      "model": "peony:block/acacia_cutting_board"
     },
-    {
-      "apply": {
-        "model": "peony:block/acacia_cutting_board",
-        "y": 180
-      },
-      "when": {
-        "facing": "south"
-      }
+    "facing=south": {
+      "model": "peony:block/acacia_cutting_board",
+      "y": 180
     },
-    {
-      "apply": {
-        "model": "peony:block/acacia_cutting_board",
-        "y": 270
-      },
-      "when": {
-        "facing": "west"
-      }
+    "facing=west": {
+      "model": "peony:block/acacia_cutting_board",
+      "y": 270
     }
-  ]
+  }
 }

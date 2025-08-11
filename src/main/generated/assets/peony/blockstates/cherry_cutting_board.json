@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "peony:block/cherry_cutting_board",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "peony:block/cherry_cutting_board"
+    },
+    "facing=south": {
+      "model": "peony:block/cherry_cutting_board",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "peony:block/cherry_cutting_board",
+      "y": 270
+    }
+  }
+}

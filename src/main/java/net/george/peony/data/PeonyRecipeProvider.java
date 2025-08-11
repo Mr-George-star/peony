@@ -3,12 +3,12 @@ package net.george.peony.data;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.george.peony.Peony;
-import net.george.peony.block.CuttingBoardBlock;
-import net.george.peony.block.PeonyBlocks;
+import net.george.peony.block.*;
 import net.george.peony.block.data.CraftingSteps;
 import net.george.peony.data.json.MillingRecipeJsonBuilder;
 import net.george.peony.data.json.SequentialCraftingRecipeJsonBuilder;
 import net.george.peony.item.PeonyItems;
+import net.george.peony.util.PeonyTags;
 import net.minecraft.block.Blocks;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
@@ -38,6 +38,27 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .group(PEONY_BLOCKS)
                 .criterion(hasItem(Blocks.SMOOTH_STONE), conditionsFromItem(Blocks.SMOOTH_STONE))
                 .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PeonyBlocks.SKILLET)
+                .input('S', PeonyTags.Items.LOG_STICKS)
+                .input('I', Items.IRON_INGOT)
+                .pattern("S  ")
+                .pattern(" II")
+                .pattern(" II")
+                .group(PEONY_BLOCKS)
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .offerTo(exporter, Peony.id("skillet_right"));
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PeonyBlocks.SKILLET)
+                .input('S', PeonyTags.Items.LOG_STICKS)
+                .input('I', Items.IRON_INGOT)
+                .pattern("  S")
+                .pattern("II ")
+                .pattern("II ")
+                .group(PEONY_BLOCKS)
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .offerTo(exporter, Peony.id("skillet_left"));
+
+        /* ITEMS */
+
         ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, PeonyItems.KITCHEN_KNIFE)
                 .input('I', Items.IRON_INGOT)
                 .input('S', Items.STICK)
@@ -56,12 +77,28 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .group(PEONY_ITEMS)
                 .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
                 .offerTo(exporter, Peony.id("kitchen_knife_left"));
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PeonyItems.NATURE_GAS_DETECTOR)
+                .input('I', Items.IRON_INGOT)
+                .input('R', Items.REDSTONE)
+                .input('L', Items.LIGHTNING_ROD)
+                .pattern(" L ")
+                .pattern("IRI")
+                .pattern("IRI")
+                .group(PEONY_ITEMS)
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .offerTo(exporter);
 
         Registries.BLOCK.stream().forEach(block -> {
             if (block instanceof CuttingBoardBlock board) {
                 createCuttingBoardRecipe(board, exporter);
+            } else if (block instanceof LogStickBlock logStick) {
+                createLogStickRecipe(logStick, exporter);
+            } else if (block instanceof PotStandBlock potStand && !(block instanceof PotStandWithCampfireBlock)) {
+                createPotStandRecipe(potStand, exporter);
             }
         });
+
+        /* CUSTOM RECIPE */
 
         generateMillingRecipe(Blocks.HAY_BLOCK, Items.WHEAT, 9, 2, exporter);
         generateMillingRecipe(Items.WHEAT, PeonyBlocks.FLOUR, 2, 2, exporter);
@@ -79,10 +116,33 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
 
     public static void createCuttingBoardRecipe(CuttingBoardBlock board, RecipeExporter exporter) {
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, board)
-                .input('L', board.getLogMadeFrom())
+                .input('L', board.getLog())
                 .pattern("LL")
                 .group(PEONY_BLOCKS)
-                .criterion(hasItem(board.getLogMadeFrom()), conditionsFromItem(board.getLogMadeFrom()))
+                .criterion(hasItem(board.getLog()), conditionsFromItem(board.getLog()))
+                .offerTo(exporter);
+    }
+
+    public static void createLogStickRecipe(LogStickBlock logStick, RecipeExporter exporter) {
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, logStick, 4)
+                .input('L', logStick.getLog())
+                .pattern("L")
+                .pattern("L")
+                .group(PEONY_BLOCKS)
+                .criterion(hasItem(logStick.getLog()), conditionsFromItem(logStick.getLog()))
+                .offerTo(exporter);
+    }
+
+    public static void createPotStandRecipe(PotStandBlock potStand, RecipeExporter exporter) {
+        LogStickBlock logStick = potStand.getLogStick();
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, potStand)
+                .input('O', logStick.getLog())
+                .input('S', logStick)
+                .pattern("OOO")
+                .pattern("S S")
+                .group(PEONY_BLOCKS)
+                .criterion(hasItem(logStick.getLog()), conditionsFromItem(logStick.getLog()))
                 .offerTo(exporter);
     }
 }

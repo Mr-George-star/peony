@@ -5,7 +5,11 @@
     "peony:birch_cutting_board",
     "peony:jungle_cutting_board",
     "peony:acacia_cutting_board",
+    "peony:cherry_cutting_board",
     "peony:dark_oak_cutting_board",
-    "peony:mangrove_cutting_board"
+    "peony:mangrove_cutting_board",
+    "peony:oak_log_stick",
+    "peony:oak_pot_stand",
+    "peony:oak_pot_stand_with_campfire"
   ]
 }

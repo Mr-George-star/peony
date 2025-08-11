@@ -8,16 +8,18 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -25,17 +27,19 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class MillstoneBlockEntity extends BlockEntity implements StackTransformableInventory, AccessibleInventory {
+public class MillstoneBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, AccessibleInventory {
     protected final DefaultedList<ItemStack> itemBeingMilled;
     protected final RecipeManager.MatchGetter<MillingRecipeInput, MillingRecipe> matchGetter;
     protected int previousRotationTimes = 15;
     protected int rotationTimes = 0;
     protected int millingTimes = 0;
     protected int requiredMillingTimes = 0;
-    protected boolean milled = false;
+    protected int usageCountdown = 0;
 
     public MillstoneBlockEntity(BlockPos pos, BlockState state) {
         super(PeonyBlockEntities.MILLSTONE, pos, state);
@@ -63,7 +67,13 @@ public class MillstoneBlockEntity extends BlockEntity implements StackTransforma
 
     @Override
     public Direction getDirection() {
-        return Objects.requireNonNull(this.world).getBlockState(this.pos).get(MillstoneBlock.FACING);
+        if (this.world != null) {
+            BlockState state = this.world.getBlockState(this.pos);
+            if (state.contains(MillstoneBlock.FACING)) {
+                return state.get(MillstoneBlock.FACING);
+            }
+        }
+        return Direction.NORTH;
     }
 
     @Override
@@ -74,7 +84,7 @@ public class MillstoneBlockEntity extends BlockEntity implements StackTransforma
         nbt.putInt("RotationTimes", this.rotationTimes);
         nbt.putInt("MillingTimes", this.millingTimes);
         nbt.putInt("RequiredMillingTimes", this.requiredMillingTimes);
-        nbt.putBoolean("Milled", this.milled);
+        nbt.putInt("UsageCountdown", this.usageCountdown);
     }
 
     @Override
@@ -84,7 +94,7 @@ public class MillstoneBlockEntity extends BlockEntity implements StackTransforma
         this.rotationTimes = nbt.getInt("RotationTimes");
         this.millingTimes = nbt.getInt("MillingTimes");
         this.requiredMillingTimes = nbt.getInt("RequiredMillingTimes");
-        this.milled = nbt.getBoolean("Milled");
+        this.usageCountdown = nbt.getInt("UsageCountdown");
         super.readNbt(nbt, registryLookup);
     }
 
@@ -94,9 +104,21 @@ public class MillstoneBlockEntity extends BlockEntity implements StackTransforma
     }
 
     @Override
-    public boolean insertItem(World world, PlayerEntity user, Hand hand, ItemStack givenStack, boolean isSneaking) {
+    protected void readComponents(BlockEntity.ComponentsAccess components) {
+        super.readComponents(components);
+        components.getOrDefault(DataComponentTypes.CONTAINER, ContainerComponent.DEFAULT).copyTo(this.getItems());
+    }
+
+    @Override
+    protected void addComponents(ComponentMap.Builder builder) {
+        super.addComponents(builder);
+        builder.add(DataComponentTypes.CONTAINER, ContainerComponent.fromStacks(this.getItems()));
+    }
+
+    @Override
+    public boolean insertItem(InteractionContext context, ItemStack givenStack) {
         ItemStack itemStack = getInputStack();
-        Optional<RecipeEntry<MillingRecipe>> recipe = getCurrentRecipe(world, givenStack);
+        Optional<RecipeEntry<MillingRecipe>> recipe = getCurrentRecipe(context.world, givenStack);
         if (recipe.isPresent()) {
             if (itemStack.isEmpty()) {
                 this.requiredMillingTimes = recipe.get().value().millingTimes();
@@ -116,17 +138,28 @@ public class MillstoneBlockEntity extends BlockEntity implements StackTransforma
     }
 
     @Override
-    public boolean extractItem(World world, PlayerEntity user, Hand hand) {
+    public boolean extractItem(InteractionContext context) {
         ItemStack itemStack = getInputStack();
         if (itemStack.isEmpty()) {
             return false;
         } else {
-            user.setStackInHand(hand, itemStack);
+            context.user.setStackInHand(context.hand, itemStack);
             this.requiredMillingTimes = 0;
             this.millingTimes = 0;
             this.setInputStack(ItemStack.EMPTY);
             this.markDirty();
             return true;
+        }
+    }
+
+    @Override
+    public boolean useEmptyHanded(InteractionContext context) {
+        if (this.isCountdownOver()) {
+            context.world.setBlockState(context.pos, context.world.getBlockState(context.pos).cycle(MillstoneBlock.ROTATION_TIMES));
+            this.resetCountdown();
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -163,16 +196,21 @@ public class MillstoneBlockEntity extends BlockEntity implements StackTransforma
         return false;
     }
 
+    protected void resetCountdown() {
+        this.usageCountdown = 2;
+    }
+
+    protected boolean isCountdownOver() {
+        return this.usageCountdown <= 0;
+    }
+
     /* CRAFTING */
 
     protected void updateMillingTimes(BlockState state) {
         this.rotationTimes = state.get(MillstoneBlock.ROTATION_TIMES);
         if (this.rotationTimes != this.previousRotationTimes)  {
-            if (this.rotationTimes == 0 && this.previousRotationTimes == 15 && !this.milled) {
-                this.milled = true;
-                this.millingTimes += 1;
-            } else if (this.rotationTimes == 1 && this.previousRotationTimes == 0 && this.milled) {
-                this.milled = false;
+            if (this.rotationTimes == 0 && this.previousRotationTimes >= 15) {
+                this.millingTimes++;
             }
         }
     }
@@ -185,28 +223,56 @@ public class MillstoneBlockEntity extends BlockEntity implements StackTransforma
         return this.getCurrentRecipe(world, this.getInputStack());
     }
 
+    protected List<ItemStack> getOutputStacks(MillingRecipe recipe) {
+        ItemStack inputStack = this.getInputStack();
+
+        int inputCount = inputStack.getCount();
+
+        Item outputItem = recipe.output().getItem();
+        int totalOutputCount = inputCount * recipe.output().getCount();
+
+        int maxStackSize = outputItem.getMaxCount();
+
+        List<ItemStack> outputStacks = new ArrayList<>();
+
+        while (totalOutputCount > 0) {
+            int stackSize = Math.min(maxStackSize, totalOutputCount);
+            ItemStack stack = new ItemStack(outputItem, stackSize);
+            outputStacks.add(stack);
+            totalOutputCount -= stackSize;
+        }
+        return outputStacks;
+    }
+
     public void tick(World world, BlockPos pos, BlockState state) {
         updateMillingTimes(state);
         Optional<RecipeEntry<MillingRecipe>> recipe = this.getCurrentRecipe(world);
 
-        if (recipe.isPresent()) {
-            if (this.milled && this.millingTimes >= this.requiredMillingTimes) {
-                ItemStack result = new ItemStack(recipe.get().value().output().getItem(), this.getInputStack().getCount() * recipe.get().value().output().getCount());
+        if (recipe.isPresent() && this.millingTimes >= this.requiredMillingTimes) {
+            List<ItemStack> outputStacks = this.getOutputStacks(recipe.get().value());
 
-                if (world.getBlockState(pos.down()).getBlock() instanceof ChestBlock) {
-                    Inventory chest = HopperBlockEntity.getInventoryAt(world, pos.down());
-                    boolean inserted = insert(chest, result);
-                    if (!inserted) {
-                        ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), result);
+            Inventory container = null;
+            if (world.getBlockState(pos.down()).getBlock() instanceof ChestBlock) {
+                container = HopperBlockEntity.getInventoryAt(world, pos.down());
+            }
+
+            for (ItemStack stack : outputStacks) {
+                if (container != null) {
+                    ItemStack remainder = HopperBlockEntity.transfer(null, container, stack, Direction.UP);
+                    if (!remainder.isEmpty()) {
+                        ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), remainder);
                     }
                 } else {
-                    ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), result);
+                    ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), stack);
                 }
-
-                this.itemBeingMilled.clear();
-                markDirty();
             }
+
+            this.itemBeingMilled.clear();
+            this.millingTimes = 0;
+            this.requiredMillingTimes = 0;
+            markDirty();
         }
         this.previousRotationTimes = this.rotationTimes;
+        this.usageCountdown--;
     }
 }

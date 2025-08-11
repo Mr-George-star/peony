@@ -1,0 +1,7 @@
+{
+  "parent": "peony:block/cutting_board",
+  "textures": {
+    "particle": "minecraft:block/cherry_log",
+    "texture": "peony:block/cherry_cutting_board"
+  }
+}

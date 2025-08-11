@@ -1,0 +1,6 @@
+accessWidener v2 named
+
+accessible field net/minecraft/block/CampfireBlock emitsParticles Z
+accessible field net/minecraft/block/CampfireBlock fireDamage I
+accessible method net/minecraft/data/client/TexturedModel <init> (Lnet/minecraft/data/client/TextureMap;Lnet/minecraft/data/client/Model;)V
+accessible method net/minecraft/block/CampfireBlock isSignalFireBaseBlock (Lnet/minecraft/block/BlockState;)Z

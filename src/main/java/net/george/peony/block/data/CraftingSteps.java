@@ -15,7 +15,6 @@ import net.minecraft.util.Util;
 
 import java.util.*;
 
-@SuppressWarnings("unused")
 public class CraftingSteps {
     public static final MapCodec<CraftingSteps> CODEC;
     public static final PacketCodec<RegistryByteBuf, CraftingSteps> PACKET_CODEC;
@@ -26,25 +25,12 @@ public class CraftingSteps {
         this.steps = steps;
     }
 
-    @SuppressWarnings("unused")
-    public CraftingSteps(Step... steps) {
-        this(Arrays.stream(steps).toList());
-    }
-
     public List<Step> getSteps() {
         return this.steps;
     }
 
-    public int getLength() {
-        return this.steps.size();
-    }
-
-    public CraftingStepsFetcher createFetcher(int currentIndex) {
-        if (currentIndex <= (this.getSteps().size() - 1)) {
-            return new CraftingStepsFetcher(this.steps, currentIndex);
-        } else {
-            return new CraftingStepsFetcher(this.steps, this.getSteps().size() - 1);
-        }
+    public CraftingStepsCursor createCursor(int currentIndex) {
+        return new CraftingStepsCursor(this.steps, Math.min(currentIndex, this.getSteps().size() - 1));
     }
 
     public List<Ingredient> getIngredients() {
@@ -65,14 +51,6 @@ public class CraftingSteps {
             steps.add(Step.PACKET_CODEC.decode(buf));
         }
         return new CraftingSteps(steps);
-    }
-
-    public static boolean areEqual(Procedure a, Procedure b) {
-        return Objects.equals(a.id, b.id);
-    }
-
-    public static boolean areEqual(Procedure a, Procedure... others) {
-        return Arrays.stream(others).allMatch(procedure -> areEqual(a, procedure));
     }
 
     @Override

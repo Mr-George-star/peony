@@ -1,0 +1,14 @@
+{
+  "type": "peony:nature_gas_lake",
+  "config": {
+    "natureGas": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "peony:nature_gas",
+        "Properties": {
+          "level": "0"
+        }
+      }
+    }
+  }
+}

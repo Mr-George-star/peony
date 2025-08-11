@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "peony:block/oak_pot_stand",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "peony:block/oak_pot_stand"
+    },
+    "facing=south": {
+      "model": "peony:block/oak_pot_stand",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "peony:block/oak_pot_stand",
+      "y": 270
+    }
+  }
+}

@@ -20,6 +20,11 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyItems.BARLEY, "Barley");
         translationBuilder.add(PeonyItems.BARLEY_SEEDS, "Barley Seeds");
         translationBuilder.add(PeonyItems.KITCHEN_KNIFE, "Kitchen Knife");
+        translationBuilder.add(PeonyItems.LARD, "Lard");
+        translationBuilder.add(PeonyItems.NATURE_GAS_DETECTOR, "Nature Gas Detector");
+
+        translationBuilder.add(PeonyItems.NATURE_GAS_BUCKET, "Nature Gas Bucket");
+        translationBuilder.add(PeonyItems.LARD_BUCKET, "Lard Bucket");
 
         translationBuilder.add(PeonyBlocks.MILLSTONE, "Millstone");
         translationBuilder.add(PeonyBlocks.BARLEY_CROP, "Barley Crop");
@@ -28,15 +33,23 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.BIRCH_CUTTING_BOARD, "Birch Cutting Board");
         translationBuilder.add(PeonyBlocks.JUNGLE_CUTTING_BOARD, "Jungle Cutting Board");
         translationBuilder.add(PeonyBlocks.ACACIA_CUTTING_BOARD, "Acacia Cutting Board");
+        translationBuilder.add(PeonyBlocks.CHERRY_CUTTING_BOARD, "Cherry Cutting Board");
         translationBuilder.add(PeonyBlocks.DARK_OAK_CUTTING_BOARD, "Dark Oak Cutting Board");
         translationBuilder.add(PeonyBlocks.MANGROVE_CUTTING_BOARD, "Mangrove Cutting Board");
         translationBuilder.add(PeonyBlocks.DOUGH, "Dough");
         translationBuilder.add(PeonyBlocks.FLOUR, "Flour");
+        translationBuilder.add(PeonyBlocks.OAK_LOG_STICK, "Oak Log Stick");
+        translationBuilder.add(PeonyBlocks.OAK_POT_STAND, "Oak Pot Stand");
+        translationBuilder.add(PeonyBlocks.OAK_POT_STAND_WITH_CAMPFIRE, "Oak Pot Stand With Campfire");
+        translationBuilder.add(PeonyBlocks.SKILLET, "Skillet");
 
         translationBuilder.add(CraftingSteps.Procedure.KNEADING.getTranslationKey(), "Kneading");
         translationBuilder.add(CraftingSteps.Procedure.CUTTING.getTranslationKey(), "Cutting");
 
         translationBuilder.add(PeonyTranslationKeys.ITEM_GROUP_KEY, "Peony");
+
+        translationBuilder.add(PeonyTranslationKeys.NATURE_GAS_DETECTOR_ITEM_FOUND, "§bThere is natural gas down here!");
+        translationBuilder.add(PeonyTranslationKeys.NATURE_GAS_DETECTOR_ITEM_NOTHING, "§7There is no natural gas down here.");
 
         translationBuilder.add(PeonyTranslationKeys.MILLING_RECIPE_CATEGORY_TITLE, "Milling");
         translationBuilder.add(PeonyTranslationKeys.MILLING_RECIPE_MILLING_TIMES, "Mill %d Times");

@@ -5,7 +5,9 @@ import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.george.peony.Peony;
 import net.george.peony.block.CuttingBoardBlock;
+import net.george.peony.block.LogStickBlock;
 import net.george.peony.block.PeonyBlocks;
+import net.george.peony.block.PotStandBlock;
 import net.george.peony.item.PeonyItems;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
@@ -34,6 +36,12 @@ public class PeonyCombat {
         Registries.BLOCK.stream().forEach(block -> {
             if (block instanceof CuttingBoardBlock board) {
                 instance.add(board, 5, 5);
+            }
+            if (block instanceof LogStickBlock logStick) {
+                instance.add(logStick, 10, 5);
+            }
+            if (block instanceof PotStandBlock potStand) {
+                instance.add(potStand, 5, 5);
             }
         });
     }

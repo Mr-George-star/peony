@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "peony-blocks",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "S": {
+      "tag": "peony:log_sticks"
+    }
+  },
+  "pattern": [
+    "  S",
+    "II ",
+    "II "
+  ],
+  "result": {
+    "count": 1,
+    "id": "peony:skillet"
+  }
+}

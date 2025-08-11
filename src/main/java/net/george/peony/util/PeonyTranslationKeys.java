@@ -6,6 +6,10 @@ import org.apache.commons.lang3.StringUtils;
 
 public class PeonyTranslationKeys {
     public static final String ITEM_GROUP_KEY = createTranslationKey("itemGroup", "item_group");
+
+    public static final String NATURE_GAS_DETECTOR_ITEM_FOUND = createTranslationKey("item", "nature", "gas", "detector", "found");
+    public static final String NATURE_GAS_DETECTOR_ITEM_NOTHING = createTranslationKey("item", "nature", "gas", "detector", "nothing");
+
     public static final String MILLING_RECIPE_CATEGORY_TITLE = createTranslationKey("category", "milling");
     public static final String MILLING_RECIPE_MILLING_TIMES = createTranslationKey("category", "milling", "milling", "times");
     public static final String SEQUENTIAL_CRAFTING_RECIPE_CATEGORY_TITLE = createTranslationKey("category", "sequential", "crafting");

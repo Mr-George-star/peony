@@ -24,6 +24,7 @@ import java.util.List;
  * License: <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>
  * @author Juuz
  */
+@SuppressWarnings("unused")
 public interface ImplementedInventory extends SidedInventory {
     /**
      * Gets the item list of this itemBeingMilled.
@@ -209,5 +210,15 @@ public interface ImplementedInventory extends SidedInventory {
     @Override
     default boolean canPlayerUse(PlayerEntity player) {
         return true;
+    }
+
+    // extra useful method
+    default boolean canItemStacksBeStacked(ItemStack basicStack, ItemStack givenStack) {
+        if (ItemStack.areItemsEqual(basicStack, givenStack)) {
+            int count = basicStack.getCount() +  givenStack.getCount();
+            return count <= basicStack.getMaxCount();
+        } else {
+            return false;
+        }
     }
 }

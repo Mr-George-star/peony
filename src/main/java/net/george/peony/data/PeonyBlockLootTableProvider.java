@@ -2,10 +2,9 @@ package net.george.peony.data;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
-import net.george.peony.block.BarleyCropBlock;
-import net.george.peony.block.CuttingBoardBlock;
-import net.george.peony.block.PeonyBlocks;
+import net.george.peony.block.*;
 import net.george.peony.item.PeonyItems;
+import net.minecraft.block.Blocks;
 import net.minecraft.loot.condition.BlockStatePropertyLootCondition;
 import net.minecraft.predicate.StatePredicate;
 import net.minecraft.registry.Registries;
@@ -23,10 +22,17 @@ public class PeonyBlockLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(PeonyBlocks.MILLSTONE);
         addDrop(PeonyBlocks.DOUGH);
         addDrop(PeonyBlocks.FLOUR);
+        addDrop(PeonyBlocks.SKILLET);
 
-        Registries.BLOCK.stream().forEach(block -> {
-            if (block instanceof CuttingBoardBlock board) {
+        Registries.BLOCK.stream().forEach(entry -> {
+            if (entry instanceof CuttingBoardBlock board) {
                 addDrop(board);
+            } else if (entry instanceof LogStickBlock logStick) {
+                addDrop(logStick);
+            } else if (entry instanceof PotStandBlock potStand) {
+                addDrop(potStand);
+            } else if (entry instanceof PotStandWithCampfireBlock potStandWithCampfire) {
+                addDrop(potStandWithCampfire, Blocks.CAMPFIRE);
             }
         });
 

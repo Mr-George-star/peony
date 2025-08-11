@@ -2,9 +2,10 @@ package net.george.peony.block.entity;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.george.networking.api.GameNetworking;
+import net.george.peony.Peony;
 import net.george.peony.block.CuttingBoardBlock;
 import net.george.peony.block.data.CraftingSteps;
-import net.george.peony.block.data.CraftingStepsFetcher;
+import net.george.peony.block.data.CraftingStepsCursor;
 import net.george.peony.item.KitchenKnifeItem;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.networking.payload.ClearInventoryS2CPayload;
@@ -14,11 +15,15 @@ import net.george.peony.recipe.SequentialCraftingRecipe;
 import net.george.peony.recipe.SequentialCraftingRecipeInput;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
@@ -26,12 +31,11 @@ import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
@@ -39,23 +43,22 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class CuttingBoardBlockEntity extends BlockEntity implements StackTransformableInventory, AccessibleInventory {
+public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, AccessibleInventory {
     protected final DefaultedList<ItemStack> inventory;
     protected final RecipeManager.MatchGetter<SequentialCraftingRecipeInput, SequentialCraftingRecipe> matchGetter;
-    protected final Random random;
-    protected final BlockState state;
     protected int currentStepIndex = 0;
-    protected boolean hasBeenPlacedIngredient = false;
-    protected boolean hasBeenProcessed = false;
-    protected boolean hasBeenPlacedInitial = false;
-    protected int usageCooldown = 0;
+    protected boolean placedIngredient = false;
+    protected boolean processed = false;
+    protected boolean placedInitial = false;
+    protected int usageCountdown = 0;
+    @Nullable
+    protected RecipeEntry<SequentialCraftingRecipe> cachedRecipe = null;
+    protected Direction cachedDirection = Direction.NORTH;
 
     public CuttingBoardBlockEntity(BlockPos pos, BlockState state) {
         super(PeonyBlockEntities.CUTTING_BOARD, pos, state);
         this.inventory = DefaultedList.ofSize(1, ItemStack.EMPTY);
         this.matchGetter = RecipeManager.createCachedMatchGetter(PeonyRecipes.SEQUENTIAL_CRAFTING_TYPE);
-        this.random = Random.create();
-        this.state = state;
     }
 
     @Override
@@ -74,15 +77,17 @@ public class CuttingBoardBlockEntity extends BlockEntity implements StackTransfo
 
     public void setInputStack(ItemStack stack) {
         this.inventory.set(0, stack);
+        this.cachedRecipe = null;
+        this.markDirty();
     }
 
     @Override
     public Direction getDirection() {
-        return Objects.requireNonNull(this.world).getBlockState(this.pos).get(CuttingBoardBlock.FACING);
+        return this.cachedDirection;
     }
 
-    public boolean isHasBeenPlacedIngredient() {
-        return this.hasBeenPlacedIngredient;
+    public boolean hasPlacedIngredient() {
+        return this.placedIngredient;
     }
 
     @Override
@@ -90,20 +95,24 @@ public class CuttingBoardBlockEntity extends BlockEntity implements StackTransfo
         super.writeNbt(nbt, registryLookup);
         Inventories.writeNbt(nbt, this.inventory, registryLookup);
         nbt.putInt("CurrentStepIndex", this.currentStepIndex);
-        nbt.putBoolean("HasBeenPlacedIngredient", this.hasBeenPlacedIngredient);
-        nbt.putBoolean("HasBeenProcessed", this.hasBeenProcessed);
-        nbt.putBoolean("HasBeenPlacedInitial", this.hasBeenPlacedInitial);
-        nbt.putInt("UsageCooldown", this.usageCooldown);
+        nbt.putBoolean("PlacedIngredient", this.placedIngredient);
+        nbt.putBoolean("Processed", this.processed);
+        nbt.putBoolean("PlacedInitial", this.placedInitial);
+        nbt.putInt("UsageCountdown", this.usageCountdown);
+        nbt.putString("CachedDirection", this.getDirection().getName());
     }
 
     @Override
     protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         Inventories.readNbt(nbt, this.inventory, registryLookup);
         this.currentStepIndex = nbt.getInt("CurrentStepIndex");
-        this.hasBeenPlacedIngredient = nbt.getBoolean("HasBeenPlacedIngredient");
-        this.hasBeenProcessed = nbt.getBoolean("HasBeenProcessed");
-        this.hasBeenPlacedInitial = nbt.getBoolean("HasBeenPlacedInitial");
-        this.usageCooldown = nbt.getInt("UsageCooldown");
+        this.placedIngredient = nbt.getBoolean("PlacedIngredient");
+        this.processed = nbt.getBoolean("Processed");
+        this.placedInitial = nbt.getBoolean("PlacedInitial");
+        this.usageCountdown = nbt.getInt("UsageCountdown");
+        @Nullable
+        Direction direction = Direction.byName(nbt.getString("CachedDirection"));
+        this.cachedDirection = direction != null ? direction : Direction.NORTH;
         super.readNbt(nbt, registryLookup);
     }
 
@@ -113,32 +122,48 @@ public class CuttingBoardBlockEntity extends BlockEntity implements StackTransfo
     }
 
     @Override
+    protected void readComponents(BlockEntity.ComponentsAccess components) {
+        super.readComponents(components);
+        components.getOrDefault(DataComponentTypes.CONTAINER, ContainerComponent.DEFAULT).copyTo(this.getItems());
+    }
+
+    @Override
+    protected void addComponents(ComponentMap.Builder builder) {
+        super.addComponents(builder);
+        builder.add(DataComponentTypes.CONTAINER, ContainerComponent.fromStacks(this.getItems()));
+    }
+
+    @Override
     public void markDirty() {
         if (!Objects.requireNonNull(this.world).isClient) {
-            if (!this.getInputStack().isEmpty()) {
-                GameNetworking.sendToPlayers(PlayerLookup.world((ServerWorld) this.world),
-                        new ItemStackSyncS2CPayload(this.inventory.size(), this.inventory, this.getPos()));
-            }
+            CustomPayload payload = getInputStack().isEmpty()
+                    ? new ClearInventoryS2CPayload(this.pos)
+                    : new ItemStackSyncS2CPayload(this.inventory.size(), this.inventory, this.pos);
+
+            GameNetworking.sendToPlayers(PlayerLookup.world((ServerWorld) this.world), payload);
         }
         super.markDirty();
     }
 
     @Override
-    public boolean insertItem(World world, PlayerEntity user, Hand hand, ItemStack givenStack, boolean isSneaking) {
+    public boolean insertItem(InteractionContext context, ItemStack givenStack) {
+        World world = context.world;
+        PlayerEntity user = context.user;
+
         ItemStack inputStack = this.getInputStack();
         ItemStack stackToBeInserted = new ItemStack(givenStack.getItem());
         @Nullable
-        CraftingStepsFetcher fetcher = this.getCurrentFetcher(world);
-        boolean isFetcherEmpty = fetcher == null;
+        CraftingStepsCursor cursor = this.getCurrentCursor(world);
+        boolean isCursorEmpty = cursor == null;
 
-        if (!isFetcherEmpty) {
-            CraftingSteps.Procedure procedure = fetcher.getCurrentStep().getProcedure();
-            if (this.isCooldownComplete()) {
-                if (CraftingSteps.areEqual(procedure, CraftingSteps.Procedure.CUTTING) && givenStack.getItem() instanceof KitchenKnifeItem) {
+        if (!isCursorEmpty) {
+            CraftingSteps.Procedure procedure = cursor.getCurrentStep().getProcedure();
+            if (this.isCountdownOver()) {
+                if (Objects.equals(procedure, CraftingSteps.Procedure.CUTTING) && givenStack.getItem() instanceof KitchenKnifeItem) {
                     givenStack.damage(1, user, EquipmentSlot.MAINHAND);
-                    this.hasBeenProcessed = true;
+                    this.processed = true;
                     this.markDirty();
-                    this.resetCooldown();
+                    this.resetCountdown();
                 }
             }
         }
@@ -152,12 +177,12 @@ public class CuttingBoardBlockEntity extends BlockEntity implements StackTransfo
             world.emitGameEvent(GameEvent.BLOCK_CHANGE, this.pos, GameEvent.Emitter.of(user, this.getCachedState()));
             this.updateListeners(world);
             return true;
-        } else if (!isFetcherEmpty) {
-            if (fetcher.getCurrentStep().getIngredient().test(stackToBeInserted)) {
-                if (!this.hasBeenPlacedIngredient && !this.hasBeenProcessed) {
-                    this.hasBeenPlacedIngredient = true;
+        } else if (!isCursorEmpty) {
+            if (cursor.getCurrentStep().getIngredient().test(stackToBeInserted)) {
+                if (!this.placedIngredient && !this.processed) {
+                    this.placedIngredient = true;
                     this.updateListeners(world);
-                    this.resetCooldown();
+                    this.resetCountdown();
                     return true;
                 } else {
                     return false;
@@ -168,14 +193,17 @@ public class CuttingBoardBlockEntity extends BlockEntity implements StackTransfo
     }
 
     @Override
-    public boolean extractItem(World world, PlayerEntity user, Hand hand) {
+    public boolean extractItem(InteractionContext context) {
+        World world = context.world;
+        PlayerEntity user = context.user;
+
         ItemStack inputStack = this.getInputStack();
         if (inputStack.isEmpty()) {
             return false;
         } else {
-            user.setStackInHand(hand, inputStack);
+            user.setStackInHand(context.hand, inputStack);
             this.setInputStack(ItemStack.EMPTY);
-            this.resetDetails();
+            this.resetCraftingState();
             world.emitGameEvent(GameEvent.BLOCK_CHANGE, this.pos, GameEvent.Emitter.of(user, this.getCachedState()));
             world.updateListeners(this.pos, this.getCachedState(), this.getCachedState(), 3);
             return true;
@@ -183,34 +211,36 @@ public class CuttingBoardBlockEntity extends BlockEntity implements StackTransfo
     }
 
     @Override
-    public boolean useEmptyHanded(World world, PlayerEntity user, BlockPos pos, Hand hand) {
+    public boolean useEmptyHanded(InteractionContext context) {
+        World world = context.world;
+        BlockPos pos = context.pos;
+
         @Nullable
-        CraftingStepsFetcher fetcher = this.getCurrentFetcher(world);
-        if (!this.isCooldownComplete() || fetcher == null) {
+        CraftingStepsCursor cursor = this.getCurrentCursor(world);
+        if (!this.isCountdownOver() || cursor == null) {
             return true;
         }
 
-        CraftingSteps.Procedure procedure = fetcher.getCurrentStep().getProcedure();
-        if (CraftingSteps.areEqual(procedure, CraftingSteps.Procedure.KNEADING)) {
-            if (this.hasBeenPlacedIngredient && !this.hasBeenProcessed) {
-                spawnCuttingParticles(world, pos, fetcher.getCurrentStep().getIngredient().getMatchingStacks()[0], 5);
-                this.hasBeenProcessed = true;
-                this.markDirty();
-                this.resetCooldown();
+        CraftingSteps.Procedure procedure = cursor.getCurrentStep().getProcedure();
+        if (Objects.equals(procedure, CraftingSteps.Procedure.KNEADING)) {
+            if (!this.placedIngredient && !this.processed) {
+                if (cursor.getCurrentStep().getIngredient().test(PeonyItems.PLACEHOLDER.getDefaultStack())) {
+                    this.placedIngredient = true;
+                    this.markDirty();
+                    this.resetCountdown();
+                }
             }
-        }
-
-        if (!this.hasBeenPlacedIngredient && !this.hasBeenProcessed) {
-            if (fetcher.getCurrentStep().getIngredient().test(PeonyItems.PLACEHOLDER.getDefaultStack())) {
-                this.hasBeenPlacedIngredient = true;
+            if (this.placedIngredient && !this.processed) {
+                spawnCraftingParticles(world, pos, cursor.getCurrentStep().getIngredient().getMatchingStacks()[0], 5);
+                this.processed = true;
                 this.markDirty();
-                this.resetCooldown();
+                this.resetCountdown();
             }
         }
         return true;
     }
 
-    public static void spawnCuttingParticles(World world, BlockPos pos, ItemStack stack, int count) {
+    public static void spawnCraftingParticles(World world, BlockPos pos, ItemStack stack, int count) {
         for (int i = 0; i < count; ++i) {
             Vec3d vec3d = new Vec3d(
                     ((double) world.random.nextFloat() - 0.5D) * 0.1D,
@@ -237,18 +267,24 @@ public class CuttingBoardBlockEntity extends BlockEntity implements StackTransfo
         world.updateListeners(this.pos, this.getCachedState(), this.getCachedState(), 3);
     }
 
-    protected void resetCooldown() {
-        this.usageCooldown = 10;
+    protected void resetCountdown() {
+        this.usageCountdown = 10;
     }
 
-    protected boolean isCooldownComplete() {
-        return this.usageCooldown <= 0;
+    protected boolean isCountdownOver() {
+        return this.usageCountdown <= 0;
     }
 
     /* CRAFTING */
 
     protected Optional<RecipeEntry<SequentialCraftingRecipe>> getCurrentRecipe(World world, ItemStack input) {
-        return this.matchGetter.getFirstMatch(new SequentialCraftingRecipeInput(input), world);
+        if (this.cachedRecipe != null) {
+            return Optional.of(this.cachedRecipe);
+        }
+        Optional<RecipeEntry<SequentialCraftingRecipe>> recipe =
+                this.matchGetter.getFirstMatch(new SequentialCraftingRecipeInput(input), world);
+        recipe.ifPresent(entry -> this.cachedRecipe = entry);
+        return recipe;
     }
 
     protected Optional<RecipeEntry<SequentialCraftingRecipe>> getCurrentRecipe(World world) {
@@ -262,62 +298,66 @@ public class CuttingBoardBlockEntity extends BlockEntity implements StackTransfo
     }
 
     @Nullable
-    protected CraftingStepsFetcher getCurrentFetcher(World world) {
-        return this.getCurrentFetcher(world, this.currentStepIndex);
+    protected CraftingStepsCursor getCurrentCursor(World world) {
+        return this.getCurrentCursor(world, this.currentStepIndex);
     }
 
     @Nullable
-    protected CraftingStepsFetcher getCurrentFetcher(World world, int index) {
+    protected CraftingStepsCursor getCurrentCursor(World world, int index) {
         @Nullable
         CraftingSteps steps = this.getCurrentCraftingSteps(world);
         if (steps == null) {
             return null;
         } else {
-            return steps.createFetcher(index);
+            int safeIndex = MathHelper.clamp(index, 0, steps.getSteps().size() - 1);
+            return steps.createCursor(safeIndex);
         }
     }
 
-    protected void resetDetails() {
+    protected void resetCraftingState() {
         this.currentStepIndex = 0;
-        this.hasBeenPlacedIngredient = false;
-        this.hasBeenProcessed = false;
-        this.hasBeenPlacedInitial = false;
+        this.placedIngredient = false;
+        this.processed = false;
+        this.placedInitial = false;
+        this.cachedRecipe = null;
     }
 
     @SuppressWarnings("unused")
     public void tick(World world, BlockPos pos, BlockState state) {
-        if (this.getInputStack().isEmpty()) {
-            GameNetworking.sendToPlayers(PlayerLookup.world((ServerWorld) world),
-                    new ClearInventoryS2CPayload(pos));
+        if (state.contains(CuttingBoardBlock.FACING)) {
+            this.cachedDirection = state.get(CuttingBoardBlock.FACING);
         }
 
         Optional<RecipeEntry<SequentialCraftingRecipe>> recipe = this.getCurrentRecipe(world);
         @Nullable
-        CraftingStepsFetcher fetcher = this.getCurrentFetcher(world);
+        CraftingStepsCursor cursor = this.getCurrentCursor(world);
 
-        if (recipe.isPresent() && fetcher != null) {
-            if (!this.hasBeenPlacedInitial) {
-                this.hasBeenPlacedIngredient = true;
-                this.hasBeenProcessed = false;
-                this.hasBeenPlacedInitial = true;
-                this.resetCooldown();
+        if (recipe.isPresent() && cursor != null) {
+            Peony.LOGGER.info(String.valueOf(this.currentStepIndex));
+            Peony.LOGGER.info(String.valueOf(this.placedIngredient));
+            Peony.LOGGER.info(String.valueOf(this.processed));
+            if (!this.placedInitial) {
+                this.placedIngredient = true;
+                this.processed = false;
+                this.placedInitial = true;
+                this.resetCountdown();
             }
 
-            if (this.currentStepIndex >= fetcher.getLastStepIndex()) {
-                this.resetDetails();
+            if (this.currentStepIndex > cursor.getLastStepIndex()) {
+                this.resetCraftingState();
                 this.setInputStack(recipe.get().value().getOutput());
                 this.markDirty();
             }
 
-            if (this.hasBeenPlacedIngredient && this.hasBeenProcessed) {
+            if (this.placedIngredient && this.processed) {
                 this.currentStepIndex++;
-                this.hasBeenPlacedIngredient = false;
-                this.hasBeenProcessed = false;
+                this.placedIngredient = false;
+                this.processed = false;
             }
         } else {
-            this.resetDetails();
+            this.resetCraftingState();
         }
 
-        this.usageCooldown--;
+        this.usageCountdown--;
     }
 }
