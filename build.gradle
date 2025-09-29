@@ -14,6 +14,17 @@ repositories {
 	maven {
 		url "https://maven.shedaniel.me"
 	}
+	maven {
+		name = "Xander Maven"
+		url "https://maven.isxander.dev/releases"
+	}
+	maven {
+		name = "Terraformers"
+		url = "https://maven.terraformersmc.com/"
+	}
+	maven {
+		url = "https://api.modrinth.com/maven"
+	}
 	mavenLocal()
 }
 
@@ -37,6 +48,9 @@ dependencies {
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${project.rei_version}"
 
 	modImplementation include("net.george:networking-hooks:1.0.0")
+	modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}"
+	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modImplementation "maven.modrinth:jade:${project.jade_version}"
 }
 
 loom {

@@ -5,10 +5,7 @@ import net.george.peony.PeonyItemGroups;
 import net.george.peony.block.PeonyBlocks;
 import net.george.peony.fluid.PeonyFluids;
 import net.minecraft.block.Block;
-import net.minecraft.item.AliasedBlockItem;
-import net.minecraft.item.BucketItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -22,9 +19,19 @@ public class PeonyItems {
     public static final Item BARLEY = register("barley", Item::new, createDefaultSettings());
     public static final Item BARLEY_SEEDS = register("barley_seeds", settings ->
             new AliasedBlockItem(PeonyBlocks.BARLEY_CROP, settings), createDefaultSettings());
+    public static final Item PEANUT = register("peanut", PeanutItem::new, createDefaultSettings());
+    public static final Item PEANUT_KERNEL = register("peanut_kernel", settings -> new AliasedBlockItem(PeonyBlocks.PEANUT_CROP, settings),
+            createDefaultSettings().food(PeonyFoodComponents.PEANUT_KERNEL));
+    public static final Item ROASTED_PEANUT_KERNEL = register("roasted_peanut_kernel", Item::new,
+            createDefaultSettings().food(PeonyFoodComponents.ROASTED_PEANUT_KERNEL));
+    public static final Item CRUSHED_PEANUTS = register("crushed_peanuts", Item::new,
+            createDefaultSettings().food(PeonyFoodComponents.CRUSHED_PEANUTS));
+    public static final Item LARD = register("lard", Item::new, createDefaultSettings().food(PeonyFoodComponents.LARD));
+    public static final Item LARD_BOTTLE = register("lard_bottle", Item::new, createDefaultSettings().maxCount(16));
     public static final Item KITCHEN_KNIFE = register("kitchen_knife", settings ->
             new KitchenKnifeItem(PeonyToolMaterials.KITCHEN_KNIFE, settings), createDefaultSettings().maxCount(1));
-    public static final Item LARD = register("lard", Item::new, createDefaultSettings().food(PeonyFoodComponents.LARD));
+    public static final Item SPATULA = register("spatula", settings ->
+            new SpatulaItem(PeonyToolMaterials.SPATULA, settings), createDefaultSettings().maxCount(1));
     public static final Item NATURE_GAS_DETECTOR = register("nature_gas_detector", NatureGasDetectorItem::new, createDefaultSettings().maxCount(1));
 
     public static final Item NATURE_GAS_BUCKET = register("nature_gas_bucket", settings ->

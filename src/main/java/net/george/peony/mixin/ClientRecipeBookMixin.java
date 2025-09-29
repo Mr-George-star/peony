@@ -19,6 +19,8 @@ public abstract class ClientRecipeBookMixin {
             cir.setReturnValue(RecipeBookGroup.UNKNOWN);
         } else if (type == PeonyRecipes.SEQUENTIAL_CRAFTING_TYPE) {
             cir.setReturnValue(RecipeBookGroup.UNKNOWN);
+        } else if (type == PeonyRecipes.SEQUENTIAL_COOKING_TYPE) {
+            cir.setReturnValue(RecipeBookGroup.UNKNOWN);
         }
     }
 }

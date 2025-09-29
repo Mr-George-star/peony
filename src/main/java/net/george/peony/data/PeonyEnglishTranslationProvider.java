@@ -19,15 +19,20 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
     public void generateTranslations(RegistryWrapper.WrapperLookup wrapperLookup, TranslationBuilder translationBuilder) {
         translationBuilder.add(PeonyItems.BARLEY, "Barley");
         translationBuilder.add(PeonyItems.BARLEY_SEEDS, "Barley Seeds");
+        translationBuilder.add(PeonyItems.PEANUT, "Peanut");
+        translationBuilder.add(PeonyItems.PEANUT_KERNEL, "Peanut Kernel");
+        translationBuilder.add(PeonyItems.ROASTED_PEANUT_KERNEL, "Roasted Peanut Kernel");
+        translationBuilder.add(PeonyItems.CRUSHED_PEANUTS, "Crushed Peanuts");
         translationBuilder.add(PeonyItems.KITCHEN_KNIFE, "Kitchen Knife");
         translationBuilder.add(PeonyItems.LARD, "Lard");
+        translationBuilder.add(PeonyItems.LARD_BOTTLE, "Lard Bottle");
+        translationBuilder.add(PeonyItems.SPATULA, "Spatula");
         translationBuilder.add(PeonyItems.NATURE_GAS_DETECTOR, "Nature Gas Detector");
 
         translationBuilder.add(PeonyItems.NATURE_GAS_BUCKET, "Nature Gas Bucket");
         translationBuilder.add(PeonyItems.LARD_BUCKET, "Lard Bucket");
 
         translationBuilder.add(PeonyBlocks.MILLSTONE, "Millstone");
-        translationBuilder.add(PeonyBlocks.BARLEY_CROP, "Barley Crop");
         translationBuilder.add(PeonyBlocks.OAK_CUTTING_BOARD, "Oak Cutting Board");
         translationBuilder.add(PeonyBlocks.SPRUCE_CUTTING_BOARD, "Spruce Cutting Board");
         translationBuilder.add(PeonyBlocks.BIRCH_CUTTING_BOARD, "Birch Cutting Board");
@@ -36,12 +41,18 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.CHERRY_CUTTING_BOARD, "Cherry Cutting Board");
         translationBuilder.add(PeonyBlocks.DARK_OAK_CUTTING_BOARD, "Dark Oak Cutting Board");
         translationBuilder.add(PeonyBlocks.MANGROVE_CUTTING_BOARD, "Mangrove Cutting Board");
-        translationBuilder.add(PeonyBlocks.DOUGH, "Dough");
-        translationBuilder.add(PeonyBlocks.FLOUR, "Flour");
+        translationBuilder.add(PeonyBlocks.SKILLET, "Skillet");
         translationBuilder.add(PeonyBlocks.OAK_LOG_STICK, "Oak Log Stick");
         translationBuilder.add(PeonyBlocks.OAK_POT_STAND, "Oak Pot Stand");
         translationBuilder.add(PeonyBlocks.OAK_POT_STAND_WITH_CAMPFIRE, "Oak Pot Stand With Campfire");
-        translationBuilder.add(PeonyBlocks.SKILLET, "Skillet");
+        translationBuilder.add(PeonyBlocks.DOUGH, "Dough");
+        translationBuilder.add(PeonyBlocks.FLOUR, "Flour");
+        translationBuilder.add(PeonyBlocks.BARLEY_CROP, "Barley Crop");
+        translationBuilder.add(PeonyBlocks.PEANUT_CROP, "Peanut Crop");
+
+        translationBuilder.add(PeonyBlocks.NATURE_GAS, "Nature Gas");
+        translationBuilder.add(PeonyBlocks.LARD_FLUID, "Lard");
+        translationBuilder.add(PeonyBlocks.LARD_CAULDRON, "Lard Cauldron");
 
         translationBuilder.add(CraftingSteps.Procedure.KNEADING.getTranslationKey(), "Kneading");
         translationBuilder.add(CraftingSteps.Procedure.CUTTING.getTranslationKey(), "Cutting");
@@ -52,7 +63,31 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyTranslationKeys.NATURE_GAS_DETECTOR_ITEM_NOTHING, "§7There is no natural gas down here.");
 
         translationBuilder.add(PeonyTranslationKeys.MILLING_RECIPE_CATEGORY_TITLE, "Milling");
-        translationBuilder.add(PeonyTranslationKeys.MILLING_RECIPE_MILLING_TIMES, "Mill %d Times");
+        translationBuilder.add(PeonyTranslationKeys.MILLING_RECIPE_MILLING_TIMES, "Mill %d Time(s)");
         translationBuilder.add(PeonyTranslationKeys.SEQUENTIAL_CRAFTING_RECIPE_CATEGORY_TITLE, "Sequential Crafting");
+
+        /* CONFIG */
+        translationBuilder.add(PeonyTranslationKeys.CONFIG_SCREEN_TITLE, "Peony");
+        translationBuilder.add(PeonyTranslationKeys.CONFIG_CATEGORY_COMMON, "Common");
+        // options
+        translationBuilder.add(PeonyTranslationKeys.OPTION_LARD_SLOWNESS_DURATION_TICKS, "Duration Ticks of Slowness in Lard");
+        translationBuilder.add(PeonyTranslationKeys.OPTION_LARD_FIRE_EXTENSION_TICKS, "Fire Extension Ticks in Lard");
+        // descriptions
+        translationBuilder.add(PeonyTranslationKeys.CONFIG_CATEGORY_DESCRIPTION_COMMON, "Common Configuration Options");
+        translationBuilder.add(PeonyTranslationKeys.OPTION_DESCRIPTION_LARD_SLOWNESS_DURATION_TICKS, "The duration of the slowness effect in lard. When the player is in lard fluid, the slowness effect will be applied. \nThe following durations are in ticks (1 second = 20 ticks).");
+        translationBuilder.add(PeonyTranslationKeys.OPTION_DESCRIPTION_LARD_FIRE_EXTENSION_TICKS, "If the player is on fire, entering or jumping into lard fluid will extend the fire duration (including cauldrons containing lard). \nThe following durations are in ticks (1 second = 20 ticks).");
+
+        translationBuilder.add(PeonyTranslationKeys.SECOND, "%d Second(s)");
+
+        /* JADE */
+        // config
+        translationBuilder.add("config.jade.plugin_peony.skillet_component", "Skillet State Display");
+
+        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_COOKING_TIME, "Cooking, at %d second(s), %d second(s) left");
+        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_COOKING_OVERFLOW_TIME, "Timed Out! At %d seconds(s), %d second(s) left");
+        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_CONTAINER_TOOLTIP, "Cooking is finished, the container to transfer the finished product: ");
+        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_NON_CONTAINER_TOOLTIP, "Cooking is finished");
+        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_MELTING_OIL, "Melting the oil, at %d second(s), %d second(s) left");
+        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_TOOL_USAGE_TOOLTIP, "The tool needed to proceed to the next step: ");
     }
 }

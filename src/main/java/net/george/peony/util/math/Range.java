@@ -32,6 +32,8 @@ public interface Range {
 
     int[] toArray();
 
+    boolean contains(int value);
+
     IntCollection toIntCollection();
 
     IntArrayList toList();
@@ -74,6 +76,11 @@ public interface Range {
         @Override
         public int[] toArray() {
             return this.intStream().toArray();
+        }
+
+        @Override
+        public boolean contains(int value) {
+            return this.min <= value && this.max >= value;
         }
 
         @Override

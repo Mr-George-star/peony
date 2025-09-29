@@ -1,0 +1,20 @@
+{
+  "type": "peony:sequential_cooking",
+  "needOil": true,
+  "output": {
+    "outputStack": {
+      "count": 1,
+      "id": "minecraft:cooked_beef"
+    }
+  },
+  "steps": [
+    {
+      "ingredient": {
+        "item": "minecraft:beef"
+      },
+      "maxTimeOverflow": 20,
+      "requiredTime": 240
+    }
+  ],
+  "temperature": 550
+}

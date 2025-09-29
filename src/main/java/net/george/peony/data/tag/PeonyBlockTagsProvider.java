@@ -32,12 +32,15 @@ public class PeonyBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
 
         getOrCreateTagBuilder(BlockTags.NEEDS_STONE_TOOL)
                 .add(PeonyBlocks.MILLSTONE);
+        getOrCreateTagBuilder(BlockTags.NEEDS_IRON_TOOL)
+                .add(PeonyBlocks.SKILLET);
 
         getOrCreateTagBuilder(PeonyTags.Blocks.INCORRECT_FOR_KITCHEN_KNIFE)
                 .addOptionalTag(BlockTags.INCORRECT_FOR_IRON_TOOL);
 
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
-                .add(PeonyBlocks.MILLSTONE);
+                .add(PeonyBlocks.MILLSTONE)
+                .add(PeonyBlocks.SKILLET);
         getOrCreateTagBuilder(BlockTags.AXE_MINEABLE)
                 .add(RegistryDataUtils.BLOCK.filterToArray(block -> block instanceof CuttingBoardBlock))
                 .add(RegistryDataUtils.BLOCK.filterToArray(block -> block instanceof LogStickBlock))

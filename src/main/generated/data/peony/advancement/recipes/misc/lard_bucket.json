@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_lard": {
+      "conditions": {
+        "items": [
+          {
+            "items": "peony:lard"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "peony:lard_bucket"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_lard"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "peony:lard_bucket"
+    ]
+  }
+}

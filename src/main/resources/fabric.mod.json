@@ -25,7 +25,13 @@
 			"net.george.peony.data.PeonyDataGenerator"
 		],
 		"rei_client": [
-			"net.george.peony.combat.rei.PeonyREISupport"
+			"net.george.peony.compat.rei.PeonyREIPlugin"
+		],
+		"modmenu": [
+			"net.george.peony.compat.PeonyModMenuCompat"
+		],
+		"jade": [
+			"net.george.peony.compat.jade.PeonyJadePlugin"
 		]
 	},
 	"accessWidener": "peony.accesswidener",
@@ -36,7 +42,8 @@
 		"fabricloader": ">=0.16.14",
 		"minecraft": "~1.21.1",
 		"java": ">=21",
-		"fabric-api": "*"
+		"fabric-api": "*",
+		"yet_another_config_lib_v3": ">=3.6.1"
 	},
 	"suggests": {
 		"another-mod": "*"

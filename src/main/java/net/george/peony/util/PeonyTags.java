@@ -16,6 +16,7 @@ public abstract class PeonyTags {
         protected static final Items INSTANCE = new Items();
 
         public static final TagKey<Item> LOG_STICKS = INSTANCE.of("log_sticks");
+        public static final TagKey<Item> COOKING_OIL = INSTANCE.of("cooking_oil");
 
         @Override
         public RegistryKey<Registry<Item>> getRegistryKey() {

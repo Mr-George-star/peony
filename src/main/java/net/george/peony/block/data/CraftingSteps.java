@@ -15,26 +15,12 @@ import net.minecraft.util.Util;
 
 import java.util.*;
 
-public class CraftingSteps {
+public class CraftingSteps extends RecipeSteps<CraftingSteps.Step> {
     public static final MapCodec<CraftingSteps> CODEC;
     public static final PacketCodec<RegistryByteBuf, CraftingSteps> PACKET_CODEC;
 
-    protected List<Step> steps;
-
     public CraftingSteps(List<Step> steps) {
-        this.steps = steps;
-    }
-
-    public List<Step> getSteps() {
-        return this.steps;
-    }
-
-    public CraftingStepsCursor createCursor(int currentIndex) {
-        return new CraftingStepsCursor(this.steps, Math.min(currentIndex, this.getSteps().size() - 1));
-    }
-
-    public List<Ingredient> getIngredients() {
-        return this.steps.stream().map(Step::getIngredient).toList();
+        super(steps);
     }
 
     protected void write(RegistryByteBuf buf) {
@@ -53,28 +39,6 @@ public class CraftingSteps {
         return new CraftingSteps(steps);
     }
 
-    @Override
-    public String toString() {
-        return this.steps.toString();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.steps);
-    }
-
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) {
-            return true;
-        }
-        if (another == null || getClass() != another.getClass()) {
-            return false;
-        }
-        CraftingSteps steps = (CraftingSteps) another;
-        return Objects.equals(this.steps, steps.steps);
-    }
-
     static {
         Codec<List<Step>> stepsCodec = Codec.list(Step.CODEC.codec());
         CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -83,24 +47,18 @@ public class CraftingSteps {
         PACKET_CODEC = PacketCodec.of(CraftingSteps::write, CraftingSteps::read);
     }
 
-    @SuppressWarnings("ClassCanBeRecord")
-    public static class Step {
+    public static class Step extends RecipeStep {
         public static final MapCodec<Step> CODEC;
         public static final PacketCodec<RegistryByteBuf, Step> PACKET_CODEC;
         final Procedure procedure;
-        final Ingredient ingredient;
 
         public Step(Procedure procedure, Ingredient ingredient) {
+            super(ingredient);
             this.procedure = procedure;
-            this.ingredient = ingredient;
         }
 
         public Procedure getProcedure() {
             return this.procedure;
-        }
-
-        public Ingredient getIngredient() {
-            return this.ingredient;
         }
 
         protected void write(RegistryByteBuf buf) {
@@ -141,7 +99,7 @@ public class CraftingSteps {
             CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     Procedure.CODEC.forGetter(Step::getProcedure),
                     Ingredient.DISALLOW_EMPTY_CODEC.optionalFieldOf("ingredient",
-                            Ingredient.ofStacks(PeonyItems.PLACEHOLDER.getDefaultStack())).forGetter(Step::getIngredient)
+                            ofItem(PeonyItems.PLACEHOLDER)).forGetter(Step::getIngredient)
             ).apply(instance, Step::new));
             PACKET_CODEC = PacketCodec.of(Step::write, Step::read);
         }

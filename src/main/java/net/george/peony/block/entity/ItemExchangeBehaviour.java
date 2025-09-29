@@ -16,16 +16,20 @@ import java.util.Map;
 @FunctionalInterface
 public interface ItemExchangeBehaviour {
     Map<Item, ItemExchangeBehaviour> BEHAVIOURS = new HashMap<>();
-    ItemExchangeBehaviour DEFAULT = (world, player, stack) -> {
-        stack.decrementUnlessCreative(1, player);
-        if (!stack.isEmpty()) {
-            return stack;
-        } else {
-            return ItemStack.EMPTY;
-        }
-    };
+    ItemExchangeBehaviour DEFAULT = createDefaultWithCount(1);
 
     ItemStack exchange(World world, PlayerEntity player, ItemStack stack);
+
+    static ItemExchangeBehaviour createDefaultWithCount(int count) {
+        return (world, player, stack) -> {
+            stack.decrementUnlessCreative(count, player);
+            if (!stack.isEmpty()) {
+                return stack;
+            } else {
+                return ItemStack.EMPTY;
+            }
+        };
+    }
 
     static void register(Item item, ItemExchangeBehaviour behaviour) {
         BEHAVIOURS.put(item, behaviour);

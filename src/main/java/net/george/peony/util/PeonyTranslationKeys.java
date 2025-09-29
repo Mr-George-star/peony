@@ -14,6 +14,31 @@ public class PeonyTranslationKeys {
     public static final String MILLING_RECIPE_MILLING_TIMES = createTranslationKey("category", "milling", "milling", "times");
     public static final String SEQUENTIAL_CRAFTING_RECIPE_CATEGORY_TITLE = createTranslationKey("category", "sequential", "crafting");
 
+    /* CONFIG */
+    public static final String CONFIG_SCREEN_TITLE = createConfigTranslationKey("title");
+    public static final String CONFIG_CATEGORY_COMMON = createConfigTranslationKey("category", "common");
+    // options
+    public static final String OPTION_LARD_SLOWNESS_DURATION_TICKS = createConfigTranslationKey("option", "lard", "slowness", "duration", "ticks");
+    public static final String OPTION_LARD_FIRE_EXTENSION_TICKS = createConfigTranslationKey("option", "lard", "fire", "extension", "ticks");
+    // descriptions
+    public static final String CONFIG_CATEGORY_DESCRIPTION_COMMON = createConfigTranslationKey("description", "category", "common");
+    public static final String OPTION_DESCRIPTION_LARD_SLOWNESS_DURATION_TICKS = createConfigTranslationKey("description", "option", "lard", "slowness", "duration", "ticks");
+    public static final String OPTION_DESCRIPTION_LARD_FIRE_EXTENSION_TICKS = createConfigTranslationKey("description", "option", "lard", "fire", "extension", "ticks");
+
+    public static final String SECOND = createTranslationKey("unit", "second");
+
+    /* JADE */
+    public static final String JADE_SKILLET_COOKING_TIME = createTranslationKey("jade", "tooltip", "skillet", "cooking", "time");
+    public static final String JADE_SKILLET_COOKING_OVERFLOW_TIME = createTranslationKey("jade", "tooltip", "skillet", "cooking", "overflow", "time");
+    public static final String JADE_SKILLET_CONTAINER_TOOLTIP = createTranslationKey("jade", "tooltip", "skillet", "container");
+    public static final String JADE_SKILLET_NON_CONTAINER_TOOLTIP = createTranslationKey("jade", "tooltip", "skillet", "non", "container");
+    public static final String JADE_SKILLET_MELTING_OIL = createTranslationKey("jade", "tooltip", "skillet", "melting", "oil");
+    public static final String JADE_SKILLET_TOOL_USAGE_TOOLTIP = createTranslationKey("jade", "tooltip", "skillet", "tool", "usage", "tooltip");
+
+    public static String createConfigTranslationKey(String... items) {
+        return createTranslationKey("config", items);
+    }
+
     public static String createTranslationKey(String type, String... items) {
         return createTranslationKey(type, StringUtils.join(items, "/"));
     }

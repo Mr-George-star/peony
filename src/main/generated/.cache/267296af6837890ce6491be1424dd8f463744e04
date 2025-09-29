@@ -1,9 +1,10 @@
-// 1.21.1	2025-08-11T21:28:08.5549298	Peony/Block Loot Tables
+// 1.21.1	2025-09-28T15:14:40.8000715	Peony/Block Loot Tables
 42ced47d3cbdc6de6804ae2c2cee44418ddadcd3 data\peony\loot_table\blocks\oak_cutting_board.json
 ca439a8441f91873b0defc4acc386f0af9e5edea data\peony\loot_table\blocks\cherry_cutting_board.json
 e95063013a65c701ea2a697f5bc54a32186936cb data\peony\loot_table\blocks\flour.json
 818a8fbf133ad747355f14c545e987241246abbc data\peony\loot_table\blocks\birch_cutting_board.json
 df46e1acc5e6161d2f542938758ec27554207739 data\peony\loot_table\blocks\oak_pot_stand.json
+77ab0a2950398479e02c526d0ec3e4aae8d49654 data\peony\loot_table\blocks\peanut_crop.json
 a3f5b29f42a66430822d24c56a9a3ba7f6642288 data\peony\loot_table\blocks\acacia_cutting_board.json
 474c90359929edef3ca337b9ce75b238aea97ba3 data\peony\loot_table\blocks\jungle_cutting_board.json
 978baab49ebbd12b82763619bf1111035be6f85e data\peony\loot_table\blocks\barley_crop.json

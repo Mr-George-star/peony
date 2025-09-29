@@ -3,6 +3,8 @@ package net.george.peony.networking.payload;
 import net.george.networking.api.GameNetworking;
 import net.george.peony.Peony;
 import net.george.peony.block.entity.CuttingBoardBlockEntity;
+import net.george.peony.block.entity.SkilletBlockEntity;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -34,8 +36,12 @@ public record ItemStackSyncS2CPayload(int inventorySize, List<ItemStack> stacks,
             stacks.set(i, payload.stacks.get(i));
         }
         context.runInClient(client -> {
-            if (Objects.requireNonNull(client.world).getBlockEntity(pos) instanceof CuttingBoardBlockEntity board) {
+            BlockEntity blockEntity = Objects.requireNonNull(client.world).getBlockEntity(pos);
+            if (blockEntity instanceof CuttingBoardBlockEntity board) {
                 board.setInputStack(stacks.getFirst());
+            } else if (blockEntity instanceof SkilletBlockEntity skillet) {
+                skillet.setInputStack(stacks.getFirst());
+                skillet.setOutputStack(stacks.get(1));
             }
         });
     };

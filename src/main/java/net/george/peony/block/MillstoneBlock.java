@@ -2,6 +2,7 @@ package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
 import net.george.peony.block.entity.AccessibleInventory;
+import net.george.peony.block.entity.BlockEntityTickerProvider;
 import net.george.peony.block.entity.MillstoneBlockEntity;
 import net.george.peony.block.entity.PeonyBlockEntities;
 import net.minecraft.block.*;
@@ -145,7 +146,6 @@ public class MillstoneBlock extends BlockWithEntity {
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return world.isClient ? null : validateTicker(type, PeonyBlockEntities.MILLSTONE, (currentWorld, currentPos, currentState, millstoneBlockEntity) ->
-                millstoneBlockEntity.tick(currentWorld, currentPos, currentState));
+        return world.isClient ? null : validateTicker(type, PeonyBlockEntities.MILLSTONE, BlockEntityTickerProvider::tick);
     }
 }

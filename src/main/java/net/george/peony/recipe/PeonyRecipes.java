@@ -13,6 +13,9 @@ public class PeonyRecipes {
     public static final RecipeSerializer<SequentialCraftingRecipe> SEQUENTIAL_CRAFTING = register(
             "sequential_crafting", new SequentialCraftingRecipe.Serializer());
     public static final RecipeType<SequentialCraftingRecipe> SEQUENTIAL_CRAFTING_TYPE = register("sequential_crafting");
+    public static final RecipeSerializer<SequentialCookingRecipe> SEQUENTIAL_COOKING = register(
+            "sequential_cooking", new SequentialCookingRecipe.Serializer());
+    public static final RecipeType<SequentialCookingRecipe> SEQUENTIAL_COOKING_TYPE = register("sequential_cooking");
 
     public static <T extends Recipe<?>> RecipeSerializer<T> register(String name, RecipeSerializer<T> serializer) {
         return Registry.register(Registries.RECIPE_SERIALIZER, Peony.id(name), serializer);

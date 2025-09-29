@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "peony-items",
+  "ingredients": [
+    {
+      "item": "minecraft:bucket"
+    },
+    {
+      "item": "peony:lard"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "peony:lard_bucket"
+  }
+}

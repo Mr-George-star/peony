@@ -3,6 +3,7 @@ package net.george.peony.data.tag;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.george.peony.block.LogStickBlock;
+import net.george.peony.item.PeonyItems;
 import net.george.peony.util.PeonyTags;
 import net.george.peony.util.registry.RegistryDataUtils;
 import net.minecraft.item.BlockItem;
@@ -19,5 +20,7 @@ public class PeonyItemTagsProvider extends FabricTagProvider.ItemTagProvider {
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
         getOrCreateTagBuilder(PeonyTags.Items.LOG_STICKS)
                 .add(RegistryDataUtils.ITEM.filterToArray(item -> item instanceof BlockItem blockItem && blockItem.getBlock() instanceof LogStickBlock));
+        getOrCreateTagBuilder(PeonyTags.Items.COOKING_OIL)
+                .add(PeonyItems.LARD);
     }
 }

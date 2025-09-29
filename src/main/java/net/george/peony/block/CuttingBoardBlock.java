@@ -2,10 +2,7 @@ package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.george.peony.block.entity.AccessibleInventory;
-import net.george.peony.block.entity.CuttingBoardBlockEntity;
-import net.george.peony.block.entity.ItemDecrementBehaviour;
-import net.george.peony.block.entity.PeonyBlockEntities;
+import net.george.peony.block.entity.*;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -31,7 +28,7 @@ import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 
-public class CuttingBoardBlock extends BlockWithEntity implements Waterloggable {
+public class  CuttingBoardBlock extends BlockWithEntity implements Waterloggable {
     public static final MapCodec<CuttingBoardBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(createSettingsCodec(), createLogCodec()).apply(instance, CuttingBoardBlock::new));
     public static final VoxelShape SHAPE = Block.createCuboidShape(1, 0, 1, 15, 3, 15);
@@ -155,7 +152,6 @@ public class CuttingBoardBlock extends BlockWithEntity implements Waterloggable 
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return world.isClient ? null : validateTicker(type, PeonyBlockEntities.CUTTING_BOARD, (currentWorld, currentPos, currentState, cuttingBoardBlockEntity) ->
-                cuttingBoardBlockEntity.tick(currentWorld, currentPos, currentState));
+        return world.isClient ? null : validateTicker(type, PeonyBlockEntities.CUTTING_BOARD, BlockEntityTickerProvider::tick);
     }
 }

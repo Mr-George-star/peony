@@ -5,14 +5,13 @@ import net.george.networking.api.GameNetworking;
 import net.george.peony.Peony;
 import net.george.peony.block.CuttingBoardBlock;
 import net.george.peony.block.data.CraftingSteps;
-import net.george.peony.block.data.CraftingStepsCursor;
+import net.george.peony.block.data.RecipeStepsCursor;
 import net.george.peony.item.KitchenKnifeItem;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.networking.payload.ClearInventoryS2CPayload;
 import net.george.peony.networking.payload.ItemStackSyncS2CPayload;
 import net.george.peony.recipe.PeonyRecipes;
 import net.george.peony.recipe.SequentialCraftingRecipe;
-import net.george.peony.recipe.SequentialCraftingRecipeInput;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.component.ComponentMap;
@@ -29,6 +28,7 @@ import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
+import net.minecraft.recipe.input.SingleStackRecipeInput;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.collection.DefaultedList;
@@ -43,9 +43,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, AccessibleInventory {
+public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, AccessibleInventory, BlockEntityTickerProvider {
     protected final DefaultedList<ItemStack> inventory;
-    protected final RecipeManager.MatchGetter<SequentialCraftingRecipeInput, SequentialCraftingRecipe> matchGetter;
+    protected final RecipeManager.MatchGetter<SingleStackRecipeInput, SequentialCraftingRecipe> matchGetter;
     protected int currentStepIndex = 0;
     protected boolean placedIngredient = false;
     protected boolean processed = false;
@@ -151,9 +151,9 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         PlayerEntity user = context.user;
 
         ItemStack inputStack = this.getInputStack();
-        ItemStack stackToBeInserted = new ItemStack(givenStack.getItem());
+        ItemStack stackToBeInserted = givenStack.copyWithCount(1);
         @Nullable
-        CraftingStepsCursor cursor = this.getCurrentCursor(world);
+        RecipeStepsCursor<CraftingSteps.Step> cursor = this.getCurrentCursor(world);
         boolean isCursorEmpty = cursor == null;
 
         if (!isCursorEmpty) {
@@ -216,7 +216,7 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         BlockPos pos = context.pos;
 
         @Nullable
-        CraftingStepsCursor cursor = this.getCurrentCursor(world);
+        RecipeStepsCursor<CraftingSteps.Step> cursor = this.getCurrentCursor(world);
         if (!this.isCountdownOver() || cursor == null) {
             return true;
         }
@@ -282,7 +282,7 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
             return Optional.of(this.cachedRecipe);
         }
         Optional<RecipeEntry<SequentialCraftingRecipe>> recipe =
-                this.matchGetter.getFirstMatch(new SequentialCraftingRecipeInput(input), world);
+                this.matchGetter.getFirstMatch(new SingleStackRecipeInput(input), world);
         recipe.ifPresent(entry -> this.cachedRecipe = entry);
         return recipe;
     }
@@ -298,12 +298,12 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
     }
 
     @Nullable
-    protected CraftingStepsCursor getCurrentCursor(World world) {
+    protected RecipeStepsCursor<CraftingSteps.Step> getCurrentCursor(World world) {
         return this.getCurrentCursor(world, this.currentStepIndex);
     }
 
     @Nullable
-    protected CraftingStepsCursor getCurrentCursor(World world, int index) {
+    protected RecipeStepsCursor<CraftingSteps.Step> getCurrentCursor(World world, int index) {
         @Nullable
         CraftingSteps steps = this.getCurrentCraftingSteps(world);
         if (steps == null) {
@@ -322,15 +322,14 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         this.cachedRecipe = null;
     }
 
-    @SuppressWarnings("unused")
+    @Override
     public void tick(World world, BlockPos pos, BlockState state) {
         if (state.contains(CuttingBoardBlock.FACING)) {
             this.cachedDirection = state.get(CuttingBoardBlock.FACING);
         }
 
         Optional<RecipeEntry<SequentialCraftingRecipe>> recipe = this.getCurrentRecipe(world);
-        @Nullable
-        CraftingStepsCursor cursor = this.getCurrentCursor(world);
+        RecipeStepsCursor<CraftingSteps.Step> cursor = this.getCurrentCursor(world);
 
         if (recipe.isPresent() && cursor != null) {
             Peony.LOGGER.info(String.valueOf(this.currentStepIndex));

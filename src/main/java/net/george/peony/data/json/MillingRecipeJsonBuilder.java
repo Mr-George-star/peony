@@ -1,5 +1,6 @@
 package net.george.peony.data.json;
 
+import net.george.peony.block.data.Output;
 import net.george.peony.recipe.MillingRecipe;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementCriterion;
@@ -22,14 +23,26 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public class MillingRecipeJsonBuilder implements RecipeJsonBuilder {
     private final ItemConvertible input;
-    private final ItemStack output;
+    private final Output output;
     private int millingTimes = 1;
     private RecipeCategory category = RecipeCategory.MISC;
     private final Map<String, AdvancementCriterion<?>> criteria = new LinkedHashMap<>();
 
-    protected MillingRecipeJsonBuilder(ItemConvertible input, ItemStack output) {
+    protected MillingRecipeJsonBuilder(ItemConvertible input, Output output) {
         this.input = input;
         this.output = output;
+    }
+
+    public static MillingRecipeJsonBuilder create(ItemConvertible input, ItemConvertible outputItem, ItemConvertible container) {
+        return create(input, outputItem, 1,  container);
+    }
+
+    public static MillingRecipeJsonBuilder create(ItemConvertible input, ItemConvertible outputItem, int outputCount, ItemConvertible container) {
+        return create(input, new ItemStack(outputItem, outputCount), container);
+    }
+
+    public static MillingRecipeJsonBuilder create(ItemConvertible input, ItemStack output, ItemConvertible container) {
+        return create(input, Output.create(output, container));
     }
 
     public static MillingRecipeJsonBuilder create(ItemConvertible input, ItemConvertible outputItem) {
@@ -41,6 +54,10 @@ public class MillingRecipeJsonBuilder implements RecipeJsonBuilder {
     }
 
     public static MillingRecipeJsonBuilder create(ItemConvertible input, ItemStack output) {
+        return create(input, Output.noContainer(output));
+    }
+
+    public static MillingRecipeJsonBuilder create(ItemConvertible input, Output output) {
         return new MillingRecipeJsonBuilder(input, output);
     }
 
@@ -65,7 +82,7 @@ public class MillingRecipeJsonBuilder implements RecipeJsonBuilder {
 
     @Override
     public Item getOutputItem() {
-        return this.output.getItem();
+        return this.output.getOutputStack().getItem();
     }
 
     @Override

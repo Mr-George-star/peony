@@ -3,6 +3,8 @@ package net.george.peony.networking.payload;
 import net.george.networking.api.GameNetworking;
 import net.george.peony.Peony;
 import net.george.peony.block.entity.CuttingBoardBlockEntity;
+import net.george.peony.block.entity.SkilletBlockEntity;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -23,8 +25,12 @@ public record ClearInventoryS2CPayload(BlockPos pos) implements CustomPayload {
     public static final GameNetworking.PayloadReceiver<ClearInventoryS2CPayload> RECEIVER = (payload, context) -> {
         BlockPos pos = payload.pos;
         context.runInClient(client -> {
-            if (Objects.requireNonNull(client.world).getBlockEntity(pos) instanceof CuttingBoardBlockEntity board) {
+            BlockEntity blockEntity = Objects.requireNonNull(client.world).getBlockEntity(pos);
+            if (blockEntity instanceof CuttingBoardBlockEntity board) {
                 board.setInputStack(ItemStack.EMPTY);
+            } else if (blockEntity instanceof SkilletBlockEntity skillet) {
+                skillet.setInputStack(ItemStack.EMPTY);
+                skillet.setOutputStack(ItemStack.EMPTY);
             }
         });
     };

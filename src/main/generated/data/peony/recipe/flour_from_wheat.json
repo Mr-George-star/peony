@@ -5,7 +5,9 @@
   },
   "milling_times": 2,
   "output": {
-    "count": 2,
-    "id": "peony:flour"
+    "outputStack": {
+      "count": 2,
+      "id": "peony:flour"
+    }
   }
 }

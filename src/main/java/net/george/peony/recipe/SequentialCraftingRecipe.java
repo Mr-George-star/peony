@@ -10,13 +10,14 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.input.SingleStackRecipeInput;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
 import java.util.List;
 
-public class SequentialCraftingRecipe implements Recipe<SequentialCraftingRecipeInput> {
+public class SequentialCraftingRecipe implements Recipe<SingleStackRecipeInput> {
     protected final CraftingSteps steps;
     protected final ItemStack output;
 
@@ -38,15 +39,15 @@ public class SequentialCraftingRecipe implements Recipe<SequentialCraftingRecipe
     }
 
     @Override
-    public boolean matches(SequentialCraftingRecipeInput input, World world) {
+    public boolean matches(SingleStackRecipeInput input, World world) {
         if (!world.isClient) {
-            return this.steps.getSteps().getFirst().getIngredient().test(input.getInputStack());
+            return this.steps.getSteps().getFirst().getIngredient().test(input.getStackInSlot(0));
         }
         return false;
     }
 
     @Override
-    public ItemStack craft(SequentialCraftingRecipeInput input, RegistryWrapper.WrapperLookup lookup) {
+    public ItemStack craft(SingleStackRecipeInput input, RegistryWrapper.WrapperLookup lookup) {
         return this.output.copy();
     }
 

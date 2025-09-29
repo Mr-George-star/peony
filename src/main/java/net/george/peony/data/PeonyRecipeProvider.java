@@ -4,14 +4,17 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.george.peony.Peony;
 import net.george.peony.block.*;
+import net.george.peony.block.data.CookingSteps;
 import net.george.peony.block.data.CraftingSteps;
 import net.george.peony.data.json.MillingRecipeJsonBuilder;
+import net.george.peony.data.json.SequentialCookingRecipeJsonBuilder;
 import net.george.peony.data.json.SequentialCraftingRecipeJsonBuilder;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.util.PeonyTags;
 import net.minecraft.block.Blocks;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.book.RecipeCategory;
@@ -77,6 +80,15 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .group(PEONY_ITEMS)
                 .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
                 .offerTo(exporter, Peony.id("kitchen_knife_left"));
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, PeonyItems.SPATULA)
+                .input('I', Items.IRON_INGOT)
+                .input('S', Items.STICK)
+                .pattern(" II")
+                .pattern(" II")
+                .pattern("S  ")
+                .group(PEONY_ITEMS)
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PeonyItems.NATURE_GAS_DETECTOR)
                 .input('I', Items.IRON_INGOT)
                 .input('R', Items.REDSTONE)
@@ -86,6 +98,14 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .pattern("IRI")
                 .group(PEONY_ITEMS)
                 .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .offerTo(exporter);
+
+        /* LARD CONVERTING */
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.MISC, PeonyItems.LARD_BUCKET)
+                .input(Items.BUCKET)
+                .input(PeonyItems.LARD)
+                .group(PEONY_ITEMS)
+                .criterion(hasItem(PeonyItems.LARD), conditionsFromItem(PeonyItems.LARD))
                 .offerTo(exporter);
 
         Registries.BLOCK.stream().forEach(block -> {
@@ -99,15 +119,33 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
         });
 
         /* CUSTOM RECIPE */
-
+        /* MILLING */
         generateMillingRecipe(Blocks.HAY_BLOCK, Items.WHEAT, 9, 2, exporter);
         generateMillingRecipe(Items.WHEAT, PeonyBlocks.FLOUR, 2, 2, exporter);
+        generateMillingRecipe(PeonyItems.ROASTED_PEANUT_KERNEL, PeonyItems.CRUSHED_PEANUTS, 2, 1, exporter);
 
+        /* SEQUENTIAL CRAFTING */
         SequentialCraftingRecipeJsonBuilder.create(PeonyBlocks.DOUGH)
                 .step(CraftingSteps.Procedure.KNEADING, PeonyBlocks.FLOUR)
                 .step(CraftingSteps.Procedure.KNEADING, Items.POTION)
                 .step(CraftingSteps.Procedure.KNEADING, PeonyItems.PLACEHOLDER)
                 .offerTo(exporter, Peony.id("dough_from_flour"));
+
+        /* SEQUENTIAL COOKING */
+        SequentialCookingRecipeJsonBuilder.create(550, false, PeonyItems.ROASTED_PEANUT_KERNEL)
+                .step(new CookingSteps.Step(240, 20, PeonyItems.PEANUT_KERNEL))
+                .offerTo(exporter);
+
+        // Vanilla Extend
+        SequentialCookingRecipeJsonBuilder.create(550, true, Items.COOKED_PORKCHOP)
+                .step(new CookingSteps.Step(240, 20, Items.PORKCHOP))
+                .offerTo(exporter);
+        SequentialCookingRecipeJsonBuilder.create(550, true, Items.COOKED_BEEF)
+                .step(new CookingSteps.Step(240, 20, Items.BEEF))
+                .offerTo(exporter);
+        SequentialCookingRecipeJsonBuilder.create(550, true, Items.COOKED_MUTTON)
+                .step(new CookingSteps.Step(240, 20, Items.MUTTON))
+                .offerTo(exporter);
     }
 
     public void generateMillingRecipe(ItemConvertible input, ItemConvertible outputItem, int outputCount, int millingTimes, RecipeExporter exporter) {

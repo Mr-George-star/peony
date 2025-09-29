@@ -1,9 +1,17 @@
 package net.george.peony.block;
 
+import net.fabricmc.fabric.api.transfer.v1.fluid.CauldronFluidContent;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.fluid.base.EmptyItemFluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.fluid.base.FullItemFluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.george.peony.Peony;
 import net.george.peony.PeonyItemGroups;
 import net.george.peony.block.entity.ItemExchangeBehaviour;
 import net.george.peony.event.PotStandFamilyRegistryCallback;
+import net.george.peony.fluid.PeonyFluids;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.item.PotStandItem;
 import net.george.peony.item.SolidModelProvider;
@@ -22,6 +30,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+
+import static net.minecraft.item.Items.BUCKET;
+import static net.minecraft.item.Items.GLASS_BOTTLE;
 
 public class PeonyBlocks {
     public static final Map<Block, Block> POT_STAND_FAMILIES;
@@ -45,13 +56,9 @@ public class PeonyBlocks {
             new CuttingBoardBlock(settings, Blocks.DARK_OAK_LOG), createDefaultWoodSettings(MapColor.BROWN));
     public static final Block MANGROVE_CUTTING_BOARD = register("mangrove_cutting_board", settings ->
             new CuttingBoardBlock(settings, Blocks.MANGROVE_LOG), createDefaultWoodSettings(MapColor.RED));
-    public static final Block SKILLET = register("skillet", SkilletBlock::new, createDefaultSettings().nonOpaque(),
+    public static final Block SKILLET = register("skillet", SkilletBlock::new,
+            createDefaultSettings().nonOpaque().requiresTool().mapColor(MapColor.IRON_GRAY),
             PeonyItems.createDefaultSettings().maxCount(1));
-
-    public static final Block BARLEY_CROP = register("barley_crop", BarleyCropBlock::new,
-            createDefaultSettings().noCollision().ticksRandomly().breakInstantly()
-                    .mapColor(MapColor.DARK_GREEN).sounds(BlockSoundGroup.CROP).pistonBehavior(PistonBehavior.DESTROY),
-            false);
 
     // use log top map color
     public static final Block OAK_LOG_STICK = register("oak_log_stick", settings ->
@@ -73,12 +80,27 @@ public class PeonyBlocks {
     public static final Block FLOUR = register("flour",
                 FlourBlock::new, createDefaultSettings().breakInstantly(), FlourItem::new);
 
+    /* CROPS */
+
+    public static final Block BARLEY_CROP = register("barley_crop", BarleyCropBlock::new,
+            createDefaultSettings().nonOpaque().noCollision().ticksRandomly().breakInstantly()
+                    .mapColor(MapColor.DARK_GREEN).sounds(BlockSoundGroup.CROP).pistonBehavior(PistonBehavior.DESTROY),
+            false);
+    public static final Block PEANUT_CROP = register("peanut_crop", PeanutCropBlock::new,
+            createDefaultSettings().nonOpaque().noCollision().ticksRandomly().breakInstantly()
+                    .mapColor(MapColor.DARK_GREEN).sounds(BlockSoundGroup.CROP).pistonBehavior(PistonBehavior.DESTROY),
+            false);
+
+    /* FLUIDS */
     public static final Block NATURE_GAS = register("nature_gas", NatureGasBlock::new, createDefaultSettings()
             .mapColor(MapColor.LIGHT_GRAY).replaceable().noCollision().strength(100F)
             .pistonBehavior(PistonBehavior.DESTROY).dropsNothing().liquid().sounds(BlockSoundGroup.INTENTIONALLY_EMPTY), false);
     public static final Block LARD_FLUID = register("lard_fluid", LardFluidBlock::new, createDefaultSettings()
             .mapColor(MapColor.TERRACOTTA_YELLOW).replaceable().noCollision().strength(100F)
             .pistonBehavior(PistonBehavior.DESTROY).dropsNothing().liquid().sounds(BlockSoundGroup.INTENTIONALLY_EMPTY), false);
+
+    public static final Block LARD_CAULDRON = register("lard_cauldron", LardCauldronBlock::new,
+            AbstractBlock.Settings.copy(Blocks.CAULDRON), false);
 
 
     public static Block register(String name,
@@ -140,6 +162,20 @@ public class PeonyBlocks {
 
     public static void register() {
         ItemExchangeBehaviour.registerBehaviours();
+        CauldronFluidContent.registerCauldron(LARD_CAULDRON, PeonyFluids.STILL_LARD, FluidConstants.BOTTLE, LeveledCauldronBlock.LEVEL);
+        FluidStorage.combinedItemApiProvider(PeonyItems.LARD_BUCKET).register(context ->
+                new FullItemFluidStorage(context, bucket -> ItemVariant.of(BUCKET), FluidVariant.of(PeonyFluids.STILL_LARD), FluidConstants.BUCKET)
+        );
+        FluidStorage.combinedItemApiProvider(BUCKET).register(context ->
+                new EmptyItemFluidStorage(context, bucket -> ItemVariant.of(PeonyItems.LARD_BUCKET), PeonyFluids.STILL_LARD, FluidConstants.BUCKET)
+        );
+        FluidStorage.combinedItemApiProvider(PeonyItems.LARD_BOTTLE).register(context ->
+                new FullItemFluidStorage(context, bottle -> ItemVariant.of(GLASS_BOTTLE), FluidVariant.of(PeonyFluids.STILL_LARD), FluidConstants.BOTTLE)
+        );
+        FluidStorage.combinedItemApiProvider(GLASS_BOTTLE).register(context ->
+                new EmptyItemFluidStorage(context, bucket -> ItemVariant.of(PeonyItems.LARD_BOTTLE), PeonyFluids.STILL_LARD, FluidConstants.BOTTLE)
+        );
+        LardCauldronBlock.addBehaviours();
         Peony.debug("Blocks");
     }
 

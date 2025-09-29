@@ -12,6 +12,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public interface AccessibleInventory {
+    default InsertResult insertItemSpecified(InteractionContext context, ItemStack givenStack) {
+        return createResult(insertItem(context, givenStack), -1);
+    }
+
     default boolean insertItem(InteractionContext context, ItemStack givenStack) {
         return true;
     }
@@ -42,10 +46,19 @@ public interface AccessibleInventory {
         return new InteractionContext(world, pos, user, hand);
     }
 
+    static InsertResult createResult(boolean result, int decrementCount) {
+        return new InsertResult(result, decrementCount);
+    }
+
     private static ItemActionResult handleInsertAction(AccessibleInventory entity, InteractionContext context, ItemStack heldStack, ItemDecrementBehaviour behaviour) {
-        if (entity.insertItem(context, heldStack)) {
+        InsertResult result = entity.insertItemSpecified(context, heldStack);
+        if (result.isSuccess()) {
             playUsageSound(context, SoundEvents.ENTITY_ITEM_PICKUP, 1F, 2F);
-            behaviour.effective(context.world, context.user, context.hand);
+            if (result.decrementCount > -1) {
+                ItemDecrementBehaviour.createDecreaseSpecified(result.decrementCount).effective(context.world, context.user, context.hand);
+            } else {
+                behaviour.effective(context.world, context.user, context.hand);
+            }
             increaseUsageStat(context.user, heldStack);
             return ItemActionResult.SUCCESS;
         }
@@ -90,7 +103,7 @@ public interface AccessibleInventory {
         public PlayerEntity user;
         public Hand hand;
 
-        public InteractionContext(World world, BlockPos pos, PlayerEntity user, Hand hand) {
+        InteractionContext(World world, BlockPos pos, PlayerEntity user, Hand hand) {
             this.world = world;
             this.pos = pos;
             this.user = user;
@@ -99,6 +112,20 @@ public interface AccessibleInventory {
 
         public boolean isSneaking() {
             return this.user.isSneaking();
+        }
+    }
+
+    class InsertResult {
+        public boolean result;
+        public int decrementCount;
+
+        InsertResult(boolean result, int decrementCount) {
+            this.result = result;
+            this.decrementCount = decrementCount;
+        }
+
+        public boolean isSuccess() {
+            return this.result;
         }
     }
 }

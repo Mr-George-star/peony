@@ -1,0 +1,13 @@
+{
+  "type": "peony:milling",
+  "ingredient": {
+    "item": "peony:roasted_peanut_kernel"
+  },
+  "milling_times": 1,
+  "output": {
+    "outputStack": {
+      "count": 2,
+      "id": "peony:crushed_peanuts"
+    }
+  }
+}

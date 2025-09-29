@@ -7,12 +7,15 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Items;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.TagKey;
 
 import java.util.Objects;
 
 public enum PeonyToolMaterials implements ToolMaterial {
     KITCHEN_KNIFE(PeonyTags.Blocks.INCORRECT_FOR_KITCHEN_KNIFE, 450, 8.0F, 4.0F, 14,
+            () -> Ingredient.ofItems(Items.IRON_INGOT)),
+    SPATULA(BlockTags.INCORRECT_FOR_STONE_TOOL, 500, 10.0F, 3.0F, 16,
             () -> Ingredient.ofItems(Items.IRON_INGOT));
 
     private final TagKey<Block> inverseTag;
