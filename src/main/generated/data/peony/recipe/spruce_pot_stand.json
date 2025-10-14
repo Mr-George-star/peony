@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "peony-blocks",
+  "key": {
+    "O": {
+      "item": "minecraft:spruce_log"
+    },
+    "S": {
+      "item": "peony:spruce_log_stick"
+    }
+  },
+  "pattern": [
+    "OOO",
+    "S S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "peony:spruce_pot_stand"
+  }
+}

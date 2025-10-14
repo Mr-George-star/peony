@@ -1,5 +1,12 @@
 {
   "values": [
-    "peony:oak_pot_stand_with_campfire"
+    "peony:oak_pot_stand_with_campfire",
+    "peony:spruce_pot_stand_with_campfire",
+    "peony:birch_pot_stand_with_campfire",
+    "peony:jungle_pot_stand_with_campfire",
+    "peony:acacia_pot_stand_with_campfire",
+    "peony:cherry_pot_stand_with_campfire",
+    "peony:dark_oak_pot_stand_with_campfire",
+    "peony:mangrove_pot_stand_with_campfire"
   ]
 }

@@ -27,8 +27,14 @@ public class PeonyClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(PeonyBlocks.MILLSTONE, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(PeonyBlocks.SKILLET, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(), PeonyBlocks.BARLEY_CROP, PeonyBlocks.PEANUT_CROP, PeonyBlocks.TOMATO_VINES);
-        BlockRenderLayerMap.INSTANCE.putBlock(PeonyBlocks.OAK_POT_STAND, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(PeonyBlocks.OAK_POT_STAND_WITH_CAMPFIRE, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
+                PeonyBlocks.OAK_POT_STAND, PeonyBlocks.SPRUCE_POT_STAND, PeonyBlocks.BIRCH_POT_STAND,
+                PeonyBlocks.JUNGLE_POT_STAND, PeonyBlocks.ACACIA_POT_STAND, PeonyBlocks.CHERRY_POT_STAND,
+                PeonyBlocks.DARK_OAK_POT_STAND, PeonyBlocks.MANGROVE_POT_STAND);
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
+                PeonyBlocks.OAK_POT_STAND_WITH_CAMPFIRE, PeonyBlocks.SPRUCE_POT_STAND_WITH_CAMPFIRE, PeonyBlocks.BIRCH_POT_STAND_WITH_CAMPFIRE,
+                PeonyBlocks.JUNGLE_POT_STAND_WITH_CAMPFIRE, PeonyBlocks.ACACIA_POT_STAND_WITH_CAMPFIRE, PeonyBlocks.CHERRY_POT_STAND_WITH_CAMPFIRE,
+                PeonyBlocks.DARK_OAK_POT_STAND_WITH_CAMPFIRE, PeonyBlocks.MANGROVE_POT_STAND_WITH_CAMPFIRE);
 
         BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), PeonyFluids.STILL_NATURE_GAS, PeonyFluids.FLOWING_NATURE_GAS);
         BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), PeonyFluids.STILL_LARD, PeonyFluids.FLOWING_LARD);

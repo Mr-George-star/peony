@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "peony-blocks",
+  "key": {
+    "O": {
+      "item": "minecraft:cherry_log"
+    },
+    "S": {
+      "item": "peony:cherry_log_stick"
+    }
+  },
+  "pattern": [
+    "OOO",
+    "S S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "peony:cherry_pot_stand"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "peony:block/log_stick",
+  "textures": {
+    "particle": "minecraft:block/spruce_log",
+    "texture": "peony:block/spruce_log_stick"
+  }
+}

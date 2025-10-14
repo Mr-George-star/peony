@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "peony-blocks",
+  "key": {
+    "O": {
+      "item": "minecraft:jungle_log"
+    },
+    "S": {
+      "item": "peony:jungle_log_stick"
+    }
+  },
+  "pattern": [
+    "OOO",
+    "S S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "peony:jungle_pot_stand"
+  }
+}

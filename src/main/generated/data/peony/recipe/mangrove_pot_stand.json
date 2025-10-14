@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "peony-blocks",
+  "key": {
+    "O": {
+      "item": "minecraft:mangrove_log"
+    },
+    "S": {
+      "item": "peony:mangrove_log_stick"
+    }
+  },
+  "pattern": [
+    "OOO",
+    "S S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "peony:mangrove_pot_stand"
+  }
+}

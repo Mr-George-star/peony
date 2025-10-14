@@ -1,6 +1,5 @@
 package net.george.peony.data;
 
-import dev.architectury.platform.Mod;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.george.peony.block.*;
@@ -27,6 +26,13 @@ public class PeonyModelProvider extends FabricModelProvider {
         Registries.BLOCK.stream().filter(block -> block instanceof LogStickBlock).forEach(logStick ->
                 PeonyModels.registerLogStick(generator, logStick));
         PeonyModels.registerPotStand(generator, PeonyBlocks.OAK_POT_STAND, PeonyBlocks.OAK_POT_STAND_WITH_CAMPFIRE);
+        PeonyModels.registerPotStand(generator, PeonyBlocks.SPRUCE_POT_STAND, PeonyBlocks.SPRUCE_POT_STAND_WITH_CAMPFIRE);
+        PeonyModels.registerPotStand(generator, PeonyBlocks.BIRCH_POT_STAND, PeonyBlocks.BIRCH_POT_STAND_WITH_CAMPFIRE);
+        PeonyModels.registerPotStand(generator, PeonyBlocks.JUNGLE_POT_STAND, PeonyBlocks.JUNGLE_POT_STAND_WITH_CAMPFIRE);
+        PeonyModels.registerPotStand(generator, PeonyBlocks.ACACIA_POT_STAND, PeonyBlocks.ACACIA_POT_STAND_WITH_CAMPFIRE);
+        PeonyModels.registerPotStand(generator, PeonyBlocks.CHERRY_POT_STAND, PeonyBlocks.CHERRY_POT_STAND_WITH_CAMPFIRE);
+        PeonyModels.registerPotStand(generator, PeonyBlocks.DARK_OAK_POT_STAND, PeonyBlocks.DARK_OAK_POT_STAND_WITH_CAMPFIRE);
+        PeonyModels.registerPotStand(generator, PeonyBlocks.MANGROVE_POT_STAND, PeonyBlocks.MANGROVE_POT_STAND_WITH_CAMPFIRE);
 
         generator.registerSimpleState(PeonyBlocks.NATURE_GAS);
         generator.registerSimpleState(PeonyBlocks.LARD_FLUID);

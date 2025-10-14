@@ -1,0 +1,7 @@
+{
+  "parent": "peony:block/pot_stand_with_campfire_off",
+  "textures": {
+    "particle": "minecraft:block/cherry_log",
+    "texture": "peony:block/cherry_pot_stand"
+  }
+}

@@ -61,19 +61,42 @@ public class PeonyBlocks {
             PeonyItems.createDefaultSettings().maxCount(1));
 
     // use log top map color
-    public static final Block OAK_LOG_STICK = register("oak_log_stick", settings ->
-            new LogStickBlock(settings, Blocks.OAK_LOG), createDefaultWoodSettings(MapColor.OAK_TAN));
+    public static final Block OAK_LOG_STICK = registerLogStick("oak", Blocks.OAK_LOG, MapColor.OAK_TAN);
+    public static final Block SPRUCE_LOG_STICK = registerLogStick("spruce", Blocks.SPRUCE_LOG, MapColor.SPRUCE_BROWN);
+    public static final Block BIRCH_LOG_STICK = registerLogStick("birch", Blocks.BIRCH_LOG, MapColor.PALE_YELLOW);
+    public static final Block JUNGLE_LOG_STICK = registerLogStick("jungle", Blocks.JUNGLE_LOG, MapColor.DIRT_BROWN);
+    public static final Block ACACIA_LOG_STICK = registerLogStick("acacia", Blocks.ACACIA_LOG, MapColor.ORANGE);
+    public static final Block CHERRY_LOG_STICK = registerLogStick("cherry", Blocks.CHERRY_LOG, MapColor.TERRACOTTA_WHITE);
+    public static final Block DARK_OAK_LOG_STICK = registerLogStick("dark_oak", Blocks.DARK_OAK_LOG, MapColor.BROWN);
+    public static final Block MANGROVE_LOG_STICK = registerLogStick("mangrove", Blocks.MANGROVE_LOG, MapColor.RED);
 
     // use log side map color
-    public static final Block OAK_POT_STAND = register("oak_pot_stand", settings ->
-            new PotStandBlock(settings, OAK_LOG_STICK), createDefaultWoodSettings(MapColor.SPRUCE_BROWN).nonOpaque(),
-            PotStandItem::new, PeonyItems.createDefaultSettings().maxCount(16));
+    public static final Block OAK_POT_STAND = registerPotStand("oak", OAK_LOG_STICK, MapColor.SPRUCE_BROWN);
+    public static final Block SPRUCE_POT_STAND = registerPotStand("spruce", SPRUCE_LOG_STICK, MapColor.BROWN);
+    public static final Block BIRCH_POT_STAND = registerPotStand("birch", BIRCH_LOG_STICK, MapColor.OFF_WHITE);
+    public static final Block JUNGLE_POT_STAND = registerPotStand("jungle", JUNGLE_LOG_STICK, MapColor.SPRUCE_BROWN);
+    public static final Block ACACIA_POT_STAND = registerPotStand("acacia", ACACIA_LOG_STICK, MapColor.STONE_GRAY);
+    public static final Block CHERRY_POT_STAND = registerPotStand("cherry", CHERRY_LOG_STICK, MapColor.TERRACOTTA_GRAY);
+    public static final Block DARK_OAK_POT_STAND = registerPotStand("dark_oak", DARK_OAK_LOG_STICK, MapColor.BROWN);
+    public static final Block MANGROVE_POT_STAND = registerPotStand("mangrove", MANGROVE_LOG_STICK, MapColor.SPRUCE_BROWN);
 
     // use log side map color
-    public static final Block OAK_POT_STAND_WITH_CAMPFIRE = register("oak_pot_stand_with_campfire", settings ->
-            new PotStandWithCampfireBlock(settings, OAK_LOG_STICK),
-            createDefaultWoodSettings(MapColor.SPRUCE_BROWN).luminance(Blocks.createLightLevelFromLitBlockState(15)).nonOpaque(),
-            false);
+    public static final Block OAK_POT_STAND_WITH_CAMPFIRE = registerPotStandWithCampfire("oak",
+            OAK_LOG_STICK, MapColor.SPRUCE_BROWN);
+    public static final Block SPRUCE_POT_STAND_WITH_CAMPFIRE = registerPotStandWithCampfire("spruce",
+            SPRUCE_LOG_STICK, MapColor.BROWN);
+    public static final Block BIRCH_POT_STAND_WITH_CAMPFIRE = registerPotStandWithCampfire("birch",
+            BIRCH_LOG_STICK, MapColor.OFF_WHITE);
+    public static final Block JUNGLE_POT_STAND_WITH_CAMPFIRE = registerPotStandWithCampfire("jungle",
+            JUNGLE_LOG_STICK, MapColor.SPRUCE_BROWN);
+    public static final Block ACACIA_POT_STAND_WITH_CAMPFIRE = registerPotStandWithCampfire("acacia",
+            ACACIA_LOG_STICK, MapColor.STONE_GRAY);
+    public static final Block CHERRY_POT_STAND_WITH_CAMPFIRE = registerPotStandWithCampfire("cherry",
+            CHERRY_LOG_STICK, MapColor.TERRACOTTA_GRAY);
+    public static final Block DARK_OAK_POT_STAND_WITH_CAMPFIRE = registerPotStandWithCampfire("dark_oak",
+            DARK_OAK_LOG_STICK, MapColor.BROWN);
+    public static final Block MANGROVE_POT_STAND_WITH_CAMPFIRE = registerPotStandWithCampfire("mangrove",
+            MANGROVE_LOG_STICK, MapColor.SPRUCE_BROWN);
 
     public static final Block DOUGH = register("dough",
                 DoughBlock::new, createDefaultSettings().breakInstantly(), DoughItem::new);
@@ -106,6 +129,24 @@ public class PeonyBlocks {
     public static final Block LARD_CAULDRON = register("lard_cauldron", LardCauldronBlock::new,
             AbstractBlock.Settings.copy(Blocks.CAULDRON), false);
 
+
+    public static Block registerLogStick(String variant, Block log, MapColor woodTopColor) {
+        return register(variant + "_log_stick", settings ->
+                new LogStickBlock(settings, log), createDefaultWoodSettings(woodTopColor));
+    }
+
+    public static Block registerPotStand(String variant, Block logStick, MapColor woodSideColor) {
+        return register(variant + "_pot_stand", settings ->
+                        new PotStandBlock(settings, logStick), createDefaultWoodSettings(woodSideColor).nonOpaque(),
+                PotStandItem::new, PeonyItems.createDefaultSettings().maxCount(16));
+    }
+
+    public static Block registerPotStandWithCampfire(String variant, Block logStick, MapColor woodSideColor) {
+        return register(variant + "_pot_stand_with_campfire", settings ->
+                        new PotStandWithCampfireBlock(settings, logStick),
+                createDefaultWoodSettings(woodSideColor).luminance(Blocks.createLightLevelFromLitBlockState(15)).nonOpaque(),
+                false);
+    }
 
     public static Block register(String name,
                                  Function<AbstractBlock.Settings, Block> blockFactory,
@@ -209,6 +250,13 @@ public class PeonyBlocks {
         POT_STAND_FAMILIES = new HashMap<>();
         Map<Block, Block> map = new HashMap<>();
         map.put(OAK_POT_STAND, OAK_POT_STAND_WITH_CAMPFIRE);
+        map.put(SPRUCE_POT_STAND, SPRUCE_POT_STAND_WITH_CAMPFIRE);
+        map.put(BIRCH_POT_STAND, BIRCH_POT_STAND_WITH_CAMPFIRE);
+        map.put(JUNGLE_POT_STAND, JUNGLE_POT_STAND_WITH_CAMPFIRE);
+        map.put(ACACIA_POT_STAND, ACACIA_POT_STAND_WITH_CAMPFIRE);
+        map.put(CHERRY_POT_STAND, CHERRY_POT_STAND_WITH_CAMPFIRE);
+        map.put(DARK_OAK_POT_STAND, DARK_OAK_POT_STAND_WITH_CAMPFIRE);
+        map.put(MANGROVE_POT_STAND, MANGROVE_POT_STAND_WITH_CAMPFIRE);
         PotStandFamilyRegistryCallback.EVENT.invoker().interact(map);
         POT_STAND_FAMILIES.putAll(map);
     }

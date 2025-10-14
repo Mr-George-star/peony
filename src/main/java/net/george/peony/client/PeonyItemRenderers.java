@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.george.peony.block.MillstoneBlock;
 import net.george.peony.block.PeonyBlocks;
 import net.george.peony.block.PotStandBlock;
+import net.george.peony.block.PotStandWithCampfireBlock;
 import net.george.peony.block.entity.MillstoneBlockEntity;
 import net.george.peony.block.entity.PotStandBlockEntity;
 import net.george.peony.util.ItemMatricesTransformers;
@@ -58,7 +59,7 @@ public class PeonyItemRenderers {
     @Environment(EnvType.CLIENT)
     public static void register() {
         BuiltinItemRendererRegistry.INSTANCE.register(PeonyBlocks.MILLSTONE, MILLSTONE);
-        Registries.BLOCK.stream().filter(block -> block instanceof PotStandBlock).forEach(potStand ->
+        Registries.BLOCK.stream().filter(block -> block instanceof PotStandBlock && !(block instanceof PotStandWithCampfireBlock)).forEach(potStand ->
                 BuiltinItemRendererRegistry.INSTANCE.register(potStand.asItem(), POT_STAND));
     }
 
