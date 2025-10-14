@@ -8,9 +8,16 @@ import net.george.peony.block.CuttingBoardBlock;
 import net.george.peony.block.LogStickBlock;
 import net.george.peony.block.PeonyBlocks;
 import net.george.peony.block.PotStandBlock;
+import net.george.peony.block.entity.CarvedRenderingItems;
+import net.george.peony.block.entity.NonBlockRenderingItems;
+import net.george.peony.item.KitchenKnifeItem;
 import net.george.peony.item.PeonyItems;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.item.AliasedBlockItem;
+import net.minecraft.item.HoeItem;
+import net.minecraft.item.PickaxeItem;
+import net.minecraft.item.TridentItem;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
@@ -27,9 +34,14 @@ public class PeonyCompat {
     public static final Identifier PIG_LOOT = Identifier.ofVanilla("entities/pig");
 
     private static void registerCompostingChances() {
-        CompostingChanceRegistry.INSTANCE.add(PeonyItems.BARLEY, 0.65F);
-        CompostingChanceRegistry.INSTANCE.add(PeonyItems.BARLEY_SEEDS, 0.3F);
-        CompostingChanceRegistry.INSTANCE.add(PeonyBlocks.DOUGH, 0.6F);
+        CompostingChanceRegistry registry = CompostingChanceRegistry.INSTANCE;
+
+        registry.add(PeonyItems.BARLEY, 0.65F);
+        registry.add(PeonyItems.BARLEY_SEEDS, 0.3F);
+        registry.add(PeonyItems.PEANUT, 0.2F);
+        registry.add(PeonyItems.PEANUT_KERNEL, 0.1F);
+        registry.add(PeonyItems.TOMATO, 0.5F);
+        registry.add(PeonyBlocks.DOUGH, 0.6F);
     }
 
     private static void registerBurning() {
@@ -44,6 +56,32 @@ public class PeonyCompat {
             }
             if (block instanceof PotStandBlock potStand) {
                 instance.add(potStand, 5, 5);
+            }
+        });
+    }
+
+    private static void registerNonBlockRenderingItems() {
+        NonBlockRenderingItems instance = NonBlockRenderingItems.getInstance();
+
+        Registries.ITEM.stream().forEach(item -> {
+            if (Registries.ITEM.getId(item).getNamespace().equals(Peony.MOD_ID)) {
+                if (item instanceof AliasedBlockItem) {
+                    instance.register(item);
+                }
+            }
+        });
+    }
+
+    private static void registerCarvedRenderingItems() {
+        CarvedRenderingItems instance = CarvedRenderingItems.getInstance();
+
+        Registries.ITEM.stream().forEach(item -> {
+            if (item instanceof PickaxeItem || item instanceof HoeItem) {
+                instance.register(item, 225F);
+            } else if (item instanceof TridentItem) {
+                instance.register(item, 135F);
+            } else if (item instanceof KitchenKnifeItem) {
+                instance.register(item, 180F);
             }
         });
     }
@@ -72,6 +110,8 @@ public class PeonyCompat {
         Peony.debug("Combats");
         registerCompostingChances();
         registerBurning();
+        registerNonBlockRenderingItems();
+        registerCarvedRenderingItems();
         modifyLootTables();
     }
 }

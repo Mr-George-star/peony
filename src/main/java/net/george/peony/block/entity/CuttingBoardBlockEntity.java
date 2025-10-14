@@ -8,7 +8,6 @@ import net.george.peony.block.data.CraftingSteps;
 import net.george.peony.block.data.RecipeStepsCursor;
 import net.george.peony.item.KitchenKnifeItem;
 import net.george.peony.item.PeonyItems;
-import net.george.peony.networking.payload.ClearInventoryS2CPayload;
 import net.george.peony.networking.payload.ItemStackSyncS2CPayload;
 import net.george.peony.recipe.PeonyRecipes;
 import net.george.peony.recipe.SequentialCraftingRecipe;
@@ -26,6 +25,7 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.input.SingleStackRecipeInput;
@@ -136,10 +136,7 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
     @Override
     public void markDirty() {
         if (!Objects.requireNonNull(this.world).isClient) {
-            CustomPayload payload = getInputStack().isEmpty()
-                    ? new ClearInventoryS2CPayload(this.pos)
-                    : new ItemStackSyncS2CPayload(this.inventory.size(), this.inventory, this.pos);
-
+            CustomPayload payload = new ItemStackSyncS2CPayload(this.inventory.size(), this.inventory, this.pos);
             GameNetworking.sendToPlayers(PlayerLookup.world((ServerWorld) this.world), payload);
         }
         super.markDirty();
@@ -157,7 +154,7 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         boolean isCursorEmpty = cursor == null;
 
         if (!isCursorEmpty) {
-            CraftingSteps.Procedure procedure = cursor.getCurrentStep().getProcedure();
+            CraftingSteps.Procedure procedure = cursor.getCurrentStep() == null ? null : cursor.getCurrentStep().getProcedure();
             if (this.isCountdownOver()) {
                 if (Objects.equals(procedure, CraftingSteps.Procedure.CUTTING) && givenStack.getItem() instanceof KitchenKnifeItem) {
                     givenStack.damage(1, user, EquipmentSlot.MAINHAND);
@@ -221,17 +218,29 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
             return true;
         }
 
-        CraftingSteps.Procedure procedure = cursor.getCurrentStep().getProcedure();
+        CraftingSteps.Procedure procedure = cursor.getCurrentStep() == null ? null : cursor.getCurrentStep().getProcedure();
         if (Objects.equals(procedure, CraftingSteps.Procedure.KNEADING)) {
+            Ingredient ingredient = cursor.getCurrentStep().getIngredient();
             if (!this.placedIngredient && !this.processed) {
-                if (cursor.getCurrentStep().getIngredient().test(PeonyItems.PLACEHOLDER.getDefaultStack())) {
+                if (ingredient.test(PeonyItems.PLACEHOLDER.getDefaultStack())) {
                     this.placedIngredient = true;
                     this.markDirty();
                     this.resetCountdown();
                 }
             }
             if (this.placedIngredient && !this.processed) {
-                spawnCraftingParticles(world, pos, cursor.getCurrentStep().getIngredient().getMatchingStacks()[0], 5);
+                ItemStack displayStack;
+                if (ingredient.test(PeonyItems.PLACEHOLDER.getDefaultStack())) {
+                    Optional<RecipeEntry<SequentialCraftingRecipe>> recipe = this.getCurrentRecipe(world);
+                    if (recipe.isPresent()) {
+                        displayStack = recipe.get().value().getOutput();
+                    } else {
+                        displayStack = Ingredient.empty().getMatchingStacks()[0];
+                    }
+                } else {
+                    displayStack = ingredient.getMatchingStacks()[0];
+                }
+                spawnCraftingParticles(world, pos, displayStack, 5);
                 this.processed = true;
                 this.markDirty();
                 this.resetCountdown();
@@ -332,9 +341,6 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         RecipeStepsCursor<CraftingSteps.Step> cursor = this.getCurrentCursor(world);
 
         if (recipe.isPresent() && cursor != null) {
-            Peony.LOGGER.info(String.valueOf(this.currentStepIndex));
-            Peony.LOGGER.info(String.valueOf(this.placedIngredient));
-            Peony.LOGGER.info(String.valueOf(this.processed));
             if (!this.placedInitial) {
                 this.placedIngredient = true;
                 this.processed = false;

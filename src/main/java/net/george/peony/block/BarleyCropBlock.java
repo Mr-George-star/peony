@@ -17,6 +17,7 @@ public class BarleyCropBlock extends CropBlock {
 
     public BarleyCropBlock(Settings settings) {
         super(settings);
+        this.setDefaultState(this.getDefaultState().with(AGE, 0));
     }
 
     @Override

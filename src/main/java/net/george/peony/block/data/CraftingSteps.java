@@ -98,8 +98,11 @@ public class CraftingSteps extends RecipeSteps<CraftingSteps.Step> {
         static {
             CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     Procedure.CODEC.forGetter(Step::getProcedure),
-                    Ingredient.DISALLOW_EMPTY_CODEC.optionalFieldOf("ingredient",
-                            ofItem(PeonyItems.PLACEHOLDER)).forGetter(Step::getIngredient)
+                    Ingredient.DISALLOW_EMPTY_CODEC.optionalFieldOf("ingredient")
+                            .xmap(
+                                    optional -> optional.orElseGet(Step::getDefaultIngredient),
+                                    ingredient -> ingredient.equals(getDefaultIngredient()) ? Optional.empty() : Optional.of(ingredient)
+                            ).forGetter(Step::getIngredient)
             ).apply(instance, Step::new));
             PACKET_CODEC = PacketCodec.of(Step::write, Step::read);
         }

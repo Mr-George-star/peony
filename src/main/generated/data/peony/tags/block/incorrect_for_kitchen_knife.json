@@ -1,8 +1,5 @@
 {
   "values": [
-    {
-      "id": "#minecraft:incorrect_for_iron_tool",
-      "required": false
-    }
+    "#minecraft:incorrect_for_iron_tool"
   ]
 }

@@ -9,10 +9,7 @@ import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry
 import net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler;
 import net.george.peony.block.PeonyBlocks;
 import net.george.peony.block.entity.PeonyBlockEntities;
-import net.george.peony.block.entity.client.PotStandBlockEntityRenderer;
-import net.george.peony.block.entity.client.CuttingBoardBlockEntityRenderer;
-import net.george.peony.block.entity.client.MillstoneBlockEntityRenderer;
-import net.george.peony.block.entity.client.PotStandWithCampfireBlockEntityRenderer;
+import net.george.peony.block.entity.client.*;
 import net.george.peony.client.PeonyItemRenderers;
 import net.george.peony.client.PeonyModelLoaderPlugin;
 import net.george.peony.fluid.PeonyFluids;
@@ -29,7 +26,7 @@ public class PeonyClient implements ClientModInitializer {
 
         BlockRenderLayerMap.INSTANCE.putBlock(PeonyBlocks.MILLSTONE, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(PeonyBlocks.SKILLET, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(), PeonyBlocks.BARLEY_CROP, PeonyBlocks.PEANUT_CROP);
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(), PeonyBlocks.BARLEY_CROP, PeonyBlocks.PEANUT_CROP, PeonyBlocks.TOMATO_VINES);
         BlockRenderLayerMap.INSTANCE.putBlock(PeonyBlocks.OAK_POT_STAND, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(PeonyBlocks.OAK_POT_STAND_WITH_CAMPFIRE, RenderLayer.getCutout());
 
@@ -40,6 +37,7 @@ public class PeonyClient implements ClientModInitializer {
         BlockEntityRendererFactories.register(PeonyBlockEntities.CUTTING_BOARD, CuttingBoardBlockEntityRenderer::new);
         BlockEntityRendererFactories.register(PeonyBlockEntities.POT_STAND, PotStandBlockEntityRenderer::new);
         BlockEntityRendererFactories.register(PeonyBlockEntities.POT_STAND_WITH_CAMPFIRE, PotStandWithCampfireBlockEntityRenderer::new);
+        BlockEntityRendererFactories.register(PeonyBlockEntities.SKILLET, SkilletBlockEntityRenderer::new);
 
         FluidRenderHandlerRegistry.INSTANCE.register(PeonyFluids.STILL_NATURE_GAS, PeonyFluids.FLOWING_NATURE_GAS,
                 SimpleFluidRenderHandler.coloredWater(10066329));

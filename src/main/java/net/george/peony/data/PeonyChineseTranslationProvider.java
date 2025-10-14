@@ -2,6 +2,7 @@ package net.george.peony.data;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.george.peony.api.heat.HeatLevel;
 import net.george.peony.block.PeonyBlocks;
 import net.george.peony.block.data.CraftingSteps;
 import net.george.peony.item.PeonyItems;
@@ -23,10 +24,14 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyItems.PEANUT_KERNEL, "花生仁");
         translationBuilder.add(PeonyItems.ROASTED_PEANUT_KERNEL, "熟花生仁");
         translationBuilder.add(PeonyItems.CRUSHED_PEANUTS, "花生碎");
-        translationBuilder.add(PeonyItems.KITCHEN_KNIFE, "菜刀");
+        translationBuilder.add(PeonyItems.TOMATO, "西红柿");
+        translationBuilder.add(PeonyItems.TOMATO_SEEDS, "西红柿种子");
         translationBuilder.add(PeonyItems.LARD, "猪油");
         translationBuilder.add(PeonyItems.LARD_BOTTLE, "猪油瓶");
+
+        translationBuilder.add(PeonyItems.KITCHEN_KNIFE, "菜刀");
         translationBuilder.add(PeonyItems.SPATULA, "炒菜铲");
+        translationBuilder.add(PeonyItems.IRON_PARING_KNIFE, "铁削皮刀");
         translationBuilder.add(PeonyItems.NATURE_GAS_DETECTOR, "天然气探测器");
 
         translationBuilder.add(PeonyItems.NATURE_GAS_BUCKET, "天然气桶");
@@ -49,11 +54,13 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.FLOUR, "面粉");
         translationBuilder.add(PeonyBlocks.BARLEY_CROP, "大麦作物");
         translationBuilder.add(PeonyBlocks.PEANUT_CROP, "花生作物");
+        translationBuilder.add(PeonyBlocks.TOMATO_VINES, "西红柿藤");
 
         translationBuilder.add(PeonyBlocks.NATURE_GAS, "天然气");
         translationBuilder.add(PeonyBlocks.LARD_FLUID, "猪油");
         translationBuilder.add(PeonyBlocks.LARD_CAULDRON, "装有猪油的炼药锅");
 
+        /* Procedures */
         translationBuilder.add(CraftingSteps.Procedure.KNEADING.getTranslationKey(), "揉捏");
         translationBuilder.add(CraftingSteps.Procedure.CUTTING.getTranslationKey(), "切");
 
@@ -65,6 +72,16 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyTranslationKeys.MILLING_RECIPE_CATEGORY_TITLE, "磨制");
         translationBuilder.add(PeonyTranslationKeys.MILLING_RECIPE_MILLING_TIMES, "研磨%d次");
         translationBuilder.add(PeonyTranslationKeys.SEQUENTIAL_CRAFTING_RECIPE_CATEGORY_TITLE, "顺序合成");
+
+        /* SOUNDS */
+        translationBuilder.add("sound.peony.shear_using", "使用剪刀");
+
+        /* HEATING LEVELS */
+        translationBuilder.add(HeatLevel.NONE.getTranslationKey(), "无");
+        translationBuilder.add(HeatLevel.SMOLDERING.getTranslationKey(), "阴燃");
+        translationBuilder.add(HeatLevel.LOW.getTranslationKey(), "低");
+        translationBuilder.add(HeatLevel.HIGH.getTranslationKey(), "高");
+        translationBuilder.add(HeatLevel.BLAZING.getTranslationKey(), "炽灼");
 
         /* CONFIG */
         translationBuilder.add(PeonyTranslationKeys.CONFIG_SCREEN_TITLE, "牡丹");
@@ -82,6 +99,7 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         /* JADE */
         // config
         translationBuilder.add("config.jade.plugin_peony.skillet_component", "平底锅状态显示");
+        translationBuilder.add("config.jade.plugin_peony.pot_stand_with_campfire_component", "套营火的橡木锅架 - 温度数据显示");
 
         translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_COOKING_TIME, "烹饪中, 在第%d秒，还剩%d秒");
         translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_COOKING_OVERFLOW_TIME, "超时了! 已超时%d秒, 还剩%d秒");
@@ -89,5 +107,7 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_NON_CONTAINER_TOOLTIP, "烹饪已完成");
         translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_MELTING_OIL, "融化油中, 在第%d秒, 还剩%d秒");
         translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_TOOL_USAGE_TOOLTIP, "来进入下一步所需要的工具：");
+        translationBuilder.add(PeonyTranslationKeys.JADE_HEAT_SOURCE_AVAILABLE_HEAT_AMOUNT, "可提供的热量范围：%d°C-%d°C");
+        translationBuilder.add(PeonyTranslationKeys.JADE_HEAT_SOURCE_HEATING_LEVEL, "热量等级：");
     }
 }

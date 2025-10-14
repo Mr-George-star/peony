@@ -55,4 +55,8 @@ public enum HeatLevel implements StringIdentifiable {
     public String asString() {
         return this.name;
     }
+
+    public String getTranslationKey() {
+        return "heatLevel.peony." + this.asString();
+    }
 }

@@ -1,5 +1,6 @@
 package net.george.peony.block.data;
 
+import net.george.peony.item.PeonyItems;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
@@ -22,6 +23,10 @@ public abstract class RecipeStep {
 
     public Ingredient getIngredient() {
         return this.ingredient;
+    }
+
+    protected static Ingredient getDefaultIngredient() {
+        return ofItem(PeonyItems.PLACEHOLDER);
     }
 
     @Override

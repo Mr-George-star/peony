@@ -23,7 +23,7 @@ public record ItemStackSyncS2CPayload(int inventorySize, List<ItemStack> stacks,
     public static final PacketCodec<RegistryByteBuf, ItemStackSyncS2CPayload> CODEC =
             PacketCodec.tuple(
                     PacketCodecs.VAR_INT, ItemStackSyncS2CPayload::inventorySize,
-                    ItemStack.PACKET_CODEC.collect(PacketCodecs.toList()), ItemStackSyncS2CPayload::stacks,
+                    ItemStack.OPTIONAL_PACKET_CODEC.collect(PacketCodecs.toList()), ItemStackSyncS2CPayload::stacks,
                     BlockPos.PACKET_CODEC, ItemStackSyncS2CPayload::pos,
                     ItemStackSyncS2CPayload::new
             );

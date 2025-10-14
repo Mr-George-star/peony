@@ -26,12 +26,19 @@ public class PeonyItems {
             createDefaultSettings().food(PeonyFoodComponents.ROASTED_PEANUT_KERNEL));
     public static final Item CRUSHED_PEANUTS = register("crushed_peanuts", Item::new,
             createDefaultSettings().food(PeonyFoodComponents.CRUSHED_PEANUTS));
+    public static final Item TOMATO = register("tomato", Item::new,
+            createDefaultSettings().food(PeonyFoodComponents.TOMATO));
+    public static final Item TOMATO_SEEDS = register("tomato_seeds", settings ->
+            new AliasedBlockItem(PeonyBlocks.TOMATO_VINES, settings), createDefaultSettings());
     public static final Item LARD = register("lard", Item::new, createDefaultSettings().food(PeonyFoodComponents.LARD));
     public static final Item LARD_BOTTLE = register("lard_bottle", Item::new, createDefaultSettings().maxCount(16));
+
     public static final Item KITCHEN_KNIFE = register("kitchen_knife", settings ->
             new KitchenKnifeItem(PeonyToolMaterials.KITCHEN_KNIFE, settings), createDefaultSettings().maxCount(1));
     public static final Item SPATULA = register("spatula", settings ->
             new SpatulaItem(PeonyToolMaterials.SPATULA, settings), createDefaultSettings().maxCount(1));
+    public static final Item IRON_PARING_KNIFE = register("iron_paring_knife", settings ->
+            new ParingKnifeItem(ToolMaterials.IRON, settings), createDefaultSettings().maxCount(1));
     public static final Item NATURE_GAS_DETECTOR = register("nature_gas_detector", NatureGasDetectorItem::new, createDefaultSettings().maxCount(1));
 
     public static final Item NATURE_GAS_BUCKET = register("nature_gas_bucket", settings ->

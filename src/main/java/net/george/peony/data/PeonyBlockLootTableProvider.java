@@ -13,6 +13,8 @@ import net.minecraft.loot.condition.BlockStatePropertyLootCondition;
 import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.function.ApplyBonusLootFunction;
+import net.minecraft.loot.function.SetCountLootFunction;
+import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.predicate.StatePredicate;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
@@ -52,6 +54,10 @@ public class PeonyBlockLootTableProvider extends FabricBlockLootTableProvider {
         BlockStatePropertyLootCondition.Builder peanutLootCondition = BlockStatePropertyLootCondition.builder(PeonyBlocks.PEANUT_CROP)
                 .properties(StatePredicate.Builder.create().exactMatch(PeanutCropBlock.AGE, PeanutCropBlock.MAX_AGE));
         this.addDrop(PeonyBlocks.PEANUT_CROP, this.peanutDrops(peanutLootCondition));
+        // tomato vines
+        BlockStatePropertyLootCondition.Builder tomatoLootCondition = BlockStatePropertyLootCondition.builder(PeonyBlocks.TOMATO_VINES)
+                .properties(StatePredicate.Builder.create().exactMatch(TomatoVinesBlock.AGE, TomatoVinesBlock.MAX_AGE));
+        this.addDrop(PeonyBlocks.TOMATO_VINES, this.tomatoDrops(tomatoLootCondition));
     }
 
     public LootTable.Builder peanutDrops(LootCondition.Builder condition) {
@@ -62,6 +68,19 @@ public class PeonyBlockLootTableProvider extends FabricBlockLootTableProvider {
                                 .conditionally(condition)
                                 .with(ItemEntry.builder(PeonyItems.PEANUT)
                                         .apply(ApplyBonusLootFunction.binomialWithBonusCount(impl.getOrThrow(Enchantments.FORTUNE), 0.5714286F, 5)))
+                        )
+        );
+    }
+
+    public LootTable.Builder tomatoDrops(LootCondition.Builder condition) {
+        RegistryWrapper.Impl<Enchantment> impl = this.registryLookup.getWrapperOrThrow(RegistryKeys.ENCHANTMENT);
+        return this.applyExplosionDecay(PeonyBlocks.TOMATO_VINES,
+                LootTable.builder()
+                        .pool(LootPool.builder()
+                                .conditionally(condition)
+                                .with(ItemEntry.builder(PeonyItems.TOMATO)
+                                        .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1, 2))))
+                                        .apply(ApplyBonusLootFunction.binomialWithBonusCount(impl.getOrThrow(Enchantments.FORTUNE), 0.5714286F, 3))
                         )
         );
     }

@@ -85,10 +85,10 @@ public class HeatParticleHelper {
 
     private static int getParticleCountForLevel(HeatLevel level, Random random) {
         return switch (level) {
-            case SMOLDERING -> random.nextInt(2) + 1; // 1-2 particles
-            case LOW -> random.nextInt(3) + 1; // 1-3 particles
-            case HIGH -> random.nextInt(4) + 2; // 2-5 particles
-            case BLAZING -> random.nextInt(6) + 4; // 4-9 particles
+            case SMOLDERING -> 1;
+            case LOW -> random.nextInt(2) + 1;
+            case HIGH -> random.nextInt(3) + 2;
+            case BLAZING -> random.nextInt(3) + 3;
             default -> 0;
         };
     }

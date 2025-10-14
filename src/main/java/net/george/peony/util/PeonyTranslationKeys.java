@@ -34,6 +34,8 @@ public class PeonyTranslationKeys {
     public static final String JADE_SKILLET_NON_CONTAINER_TOOLTIP = createTranslationKey("jade", "tooltip", "skillet", "non", "container");
     public static final String JADE_SKILLET_MELTING_OIL = createTranslationKey("jade", "tooltip", "skillet", "melting", "oil");
     public static final String JADE_SKILLET_TOOL_USAGE_TOOLTIP = createTranslationKey("jade", "tooltip", "skillet", "tool", "usage", "tooltip");
+    public static final String JADE_HEAT_SOURCE_AVAILABLE_HEAT_AMOUNT = createConfigTranslationKey("jade", "heat", "source", "available", "heat", "amount");
+    public static final String JADE_HEAT_SOURCE_HEATING_LEVEL = createConfigTranslationKey("jade", "heat", "source", "heating", "level");
 
     public static String createConfigTranslationKey(String... items) {
         return createTranslationKey("config", items);

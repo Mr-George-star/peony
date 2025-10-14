@@ -9,7 +9,8 @@ public class PeonyFoodComponents {
     public static final FoodComponent LARD = new FoodComponent.Builder().nutrition(2).saturationModifier(3).alwaysEdible().snack().statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 600), 1).build();
     public static final FoodComponent PEANUT_KERNEL = new FoodComponent.Builder().nutrition(1).saturationModifier(1).alwaysEdible().snack().build();
     public static final FoodComponent ROASTED_PEANUT_KERNEL = new FoodComponent.Builder().nutrition(2).saturationModifier(1.5F).alwaysEdible().snack().build();
-    public static final FoodComponent CRUSHED_PEANUTS = new FoodComponent.Builder().nutrition(2).saturationModifier(1).build();
+    public static final FoodComponent CRUSHED_PEANUTS = new FoodComponent.Builder().nutrition(2).saturationModifier(1).alwaysEdible().snack().build();
+    public static final FoodComponent TOMATO = new FoodComponent.Builder().nutrition(3).saturationModifier(0.5F).alwaysEdible().snack().build();
 
     public static void register() {
         Peony.debug("Food Components");

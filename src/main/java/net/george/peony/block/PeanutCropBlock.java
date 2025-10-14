@@ -17,6 +17,7 @@ public class PeanutCropBlock extends CropBlock {
 
     public PeanutCropBlock(Settings settings) {
         super(settings);
+        this.setDefaultState(this.getDefaultState().with(AGE, 0));
     }
 
     @Override

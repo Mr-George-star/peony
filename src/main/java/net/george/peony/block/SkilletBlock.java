@@ -1,7 +1,6 @@
 package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
-import net.george.peony.api.heat.HeatParticleHelper;
 import net.george.peony.api.heat.HeatProvider;
 import net.george.peony.block.entity.*;
 import net.minecraft.block.*;
@@ -20,7 +19,6 @@ import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -73,14 +71,6 @@ public class SkilletBlock extends BlockWithEntity {
     }
 
     @Override
-    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-        BlockState down = world.getBlockState(pos.down());
-        if (down.getBlock() instanceof HeatProvider heatProvider) {
-            HeatParticleHelper.spawnHeatParticles(world, pos.down(), heatProvider.getHeat());
-        }
-    }
-
-    @Override
     protected boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
         BlockState down = world.getBlockState(pos.down());
         return down.isFullCube(world, pos) || down.getBlock() instanceof HeatProvider;
@@ -128,9 +118,9 @@ public class SkilletBlock extends BlockWithEntity {
     }
 
     @Override
-    public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
+    public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         world.removeBlockEntity(pos);
-        super.afterBreak(world, player, pos, state, blockEntity, tool);
+        return super.onBreak(world, pos, state, player);
     }
 
     @Override
@@ -146,6 +136,8 @@ public class SkilletBlock extends BlockWithEntity {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return world.isClient ? null : validateTicker(type, PeonyBlockEntities.SKILLET, BlockEntityTickerProvider::tick);
+        return world.isClient ?
+                validateTicker(type, PeonyBlockEntities.SKILLET, BlockEntityTickerProvider::clientTick) :
+                validateTicker(type, PeonyBlockEntities.SKILLET, BlockEntityTickerProvider::tick);
     }
 }

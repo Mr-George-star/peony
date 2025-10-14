@@ -1,20 +1,25 @@
 package net.george.peony.block.entity;
 
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
-import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.george.networking.api.GameNetworking;
 import net.george.peony.Peony;
 import net.george.peony.api.heat.HeatCalculationUtils;
+import net.george.peony.api.heat.HeatLevel;
+import net.george.peony.api.heat.HeatParticleHelper;
 import net.george.peony.api.heat.HeatProvider;
 import net.george.peony.block.SkilletBlock;
 import net.george.peony.block.data.CookingSteps;
 import net.george.peony.block.data.Output;
 import net.george.peony.block.data.RecipeStepsCursor;
 import net.george.peony.item.PeonyItems;
+import net.george.peony.networking.payload.ItemStackSyncS2CPayload;
+import net.george.peony.networking.payload.SkilletIngredientsSyncS2CPayload;
 import net.george.peony.recipe.PeonyRecipes;
 import net.george.peony.recipe.SequentialCookingRecipe;
 import net.george.peony.recipe.SequentialCookingRecipeInput;
+import net.george.peony.util.ArrayListNbtStorage;
 import net.george.peony.util.PeonyTags;
 import net.george.peony.util.math.Range;
 import net.minecraft.block.BlockState;
@@ -23,6 +28,7 @@ import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.component.type.SuspiciousStewEffectsComponent;
+import net.minecraft.entity.ai.brain.Memory;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
@@ -31,6 +37,8 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeEntry;
@@ -38,6 +46,7 @@ import net.minecraft.recipe.RecipeManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
@@ -46,37 +55,37 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @SuppressWarnings({"unused", "CommentedOutCode"})
 public class SkilletBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, AccessibleInventory, BlockEntityTickerProvider {
     protected static final Identifier DUMMY_RECIPE_ID = Peony.id("dummy_recipe");
     protected final DefaultedList<ItemStack> inventory;
+    public ArrayList<ItemStack> addedIngredients;
     protected final RecipeManager.MatchGetter<SequentialCookingRecipeInput, SequentialCookingRecipe> matchGetter;
     protected final SequentialCookingRecipe dummyRecipe = new SequentialCookingRecipe(550, false, List.of(), null);
-    public final SingleVariantStorage<FluidVariant> fluidStorage = new SingleVariantStorage<>() {
-        @Override
-        protected FluidVariant getBlankVariant() {
-            return FluidVariant.blank();
-        }
-
-        @Override
-        protected long getCapacity(FluidVariant fluidVariant) {
-            return FluidConstants.BOTTLE;
-        }
-
-        @Override
-        protected void onFinalCommit() {
-            markDirty();
-            if (world != null) {
-                world.updateListeners(pos, getCachedState(), getCachedState(), 3);
-            }
-        }
-    };
+//    public final SingleVariantStorage<FluidVariant> fluidStorage = new SingleVariantStorage<>() {
+//        @Override
+//        protected FluidVariant getBlankVariant() {
+//            return FluidVariant.blank();
+//        }
+//
+//        @Override
+//        protected long getCapacity(FluidVariant fluidVariant) {
+//            return FluidConstants.BOTTLE;
+//        }
+//
+//        @Override
+//        protected void onFinalCommit() {
+//            markDirty();
+//            if (world != null) {
+//                world.updateListeners(pos, getCachedState(), getCachedState(), 3);
+//            }
+//        }
+//    };
 
     protected int currentStepIndex = 0;
     protected int heatingTime = 0;
@@ -89,7 +98,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     protected boolean hasIngredient = false;
     protected boolean hasOil = false;
     protected int oilProcessingStage = 0;
-    protected boolean allowOilBasedRecipes = false;
+    public boolean allowOilBasedRecipes = false;
     @Nullable
     protected ItemConvertible requiredContainer;
     @Nullable
@@ -99,12 +108,17 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     public SkilletBlockEntity(BlockPos pos, BlockState state) {
         super(PeonyBlockEntities.SKILLET, pos, state);
         this.inventory = DefaultedList.ofSize(2, ItemStack.EMPTY); // 0: input, 1: output
+        this.addedIngredients = new ArrayList<>();
         this.matchGetter = RecipeManager.createCachedMatchGetter(PeonyRecipes.SEQUENTIAL_COOKING_TYPE);
     }
 
     @Override
     public DefaultedList<ItemStack> getItems() {
         return this.inventory;
+    }
+
+    public ArrayList<ItemStack> getAddedIngredients() {
+        return this.addedIngredients;
     }
 
     @Override
@@ -131,21 +145,21 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         this.markDirty();
     }
 
-    public boolean hasStoredFluid() {
-        return !this.fluidStorage.isResourceBlank() && this.fluidStorage.getAmount() > 0;
-    }
-
-    public FluidVariant getStoredFluidVariant() {
-        return this.fluidStorage.getResource();
-    }
-
-    public long getStoredFluidAmount() {
-        return this.fluidStorage.getAmount();
-    }
-
-    public long getFluidCapacity() {
-        return this.fluidStorage.getCapacity();
-    }
+//    public boolean hasStoredFluid() {
+//        return !this.fluidStorage.isResourceBlank() && this.fluidStorage.getAmount() > 0;
+//    }
+//
+//    public FluidVariant getStoredFluidVariant() {
+//        return this.fluidStorage.getResource();
+//    }
+//
+//    public long getStoredFluidAmount() {
+//        return this.fluidStorage.getAmount();
+//    }
+//
+//    public long getFluidCapacity() {
+//        return this.fluidStorage.getCapacity();
+//    }
 
     @Override
     public Direction getDirection() {
@@ -180,7 +194,10 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.writeNbt(nbt, registryLookup);
         Inventories.writeNbt(nbt, this.inventory, registryLookup);
-        SingleVariantStorage.writeNbt(this.fluidStorage, FluidVariant.CODEC, nbt, registryLookup);
+        this.updateAddedItems();
+        ArrayListNbtStorage.writeItemList(nbt, "AddedIngredients", this.addedIngredients, registryLookup);
+
+//        SingleVariantStorage.writeNbt(this.fluidStorage, FluidVariant.CODEC, nbt, registryLookup);
         this.writeDataToNbt(nbt);
         nbt.putString("CachedDirection", this.getDirection().getName());
     }
@@ -188,7 +205,9 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     @Override
     protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         Inventories.readNbt(nbt, this.inventory, registryLookup);
-        SingleVariantStorage.readNbt(this.fluidStorage, FluidVariant.CODEC, FluidVariant::blank, nbt, registryLookup);
+        this.addedIngredients = ArrayListNbtStorage.readItemList(nbt, "AddedIngredients", registryLookup);
+
+//        SingleVariantStorage.readNbt(this.fluidStorage, FluidVariant.CODEC, FluidVariant::blank, nbt, registryLookup);
         this.currentStepIndex = nbt.getInt("CurrentStepIndex");
         this.heatingTime = nbt.getInt("HeatingTime");
         this.requiredHeatingTime = nbt.getInt("RequiredHeatingTime");
@@ -212,7 +231,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
 
     @Override
     public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
-        return createNbt(registryLookup);
+        return this.createComponentlessNbt(registryLookup);
     }
 
     @Override
@@ -227,18 +246,15 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         builder.add(DataComponentTypes.CONTAINER, ContainerComponent.fromStacks(this.getItems()));
     }
 
-//    @SuppressWarnings("CommentedOutCode")
-//    @Override
-//    public void markDirty() {
-//        if (!Objects.requireNonNull(this.world).isClient) {
-//            CustomPayload payload = this.getInputStack().isEmpty() && this.getOutputStack().isEmpty()
-//                    ? new ClearInventoryS2CPayload(this.pos)
-//                    : new ItemStackSyncS2CPayload(this.inventory.size(), this.inventory, this.pos);
-//
-//            GameNetworking.sendToPlayers(PlayerLookup.world((ServerWorld) this.world), payload);
-//        }
-//        super.markDirty();
-//    }
+    @Override
+    public void markDirty() {
+        if (!Objects.requireNonNull(this.world).isClient) {
+            CustomPayload payload = new ItemStackSyncS2CPayload(this.inventory.size(), this.inventory, this.pos);
+            GameNetworking.sendToPlayers(PlayerLookup.world((ServerWorld) this.world), payload);
+            this.updateAddedItems();
+        }
+        super.markDirty();
+    }
 
     /**
      * Handles item insertion based on current cooking state
@@ -268,11 +284,13 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
 
         // OIL PROCESSING LOGIC
         // Stage 0: Initial oil insertion - starts dummy recipe for oil melting
-        if (this.getInputStack().isEmpty() && !this.hasOil && this.isCookingOil(givenStack)) {
+        if (this.getInputStack().isEmpty() && !this.hasOil && isCookingOil(givenStack)) {
             this.resetCookingState();
             this.updateRecipeData(new RecipeEntry<>(DUMMY_RECIPE_ID, this.dummyRecipe));
             this.hasOil = true;
             this.hasIngredient = true;
+            this.addedIngredients.add(givenStack);
+            this.updateAddedItems();
             this.markDirty();
             return new InsertResult(true, -1);
         }
@@ -299,13 +317,16 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                 this.heatingTime = 0;
                 this.requiredHeatingTime = 0;
                 this.overflowTime = 0;
+                this.allowOilBasedRecipes = true;
                 this.updateRecipeData(new RecipeEntry<>(DUMMY_RECIPE_ID, this.dummyRecipe));
+                this.updateAddedItems();
                 this.markDirty();
                 return new InsertResult(true, -1);
+            } else {
+                return new InsertResult(false, -1);
             }
         } else if (isOilStage1) {
             Peony.LOGGER.debug("Into oil stage 1 - ingredient required");
-            this.allowOilBasedRecipes = true;
 
             // Find recipe that requires oil for the given ingredient
             Optional<RecipeEntry<SequentialCookingRecipe>> newRecipe = this.getCurrentRecipe(world, givenStack);
@@ -362,7 +383,9 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             }
 
             if (currentStep.getIngredient().test(givenStack)) {
+                this.addedIngredients.add(givenStack);
                 this.hasIngredient = true;
+                this.updateAddedItems();
                 this.markDirty();
                 // Store first ingredient in input slot for recipe tracking
                 if (this.currentStepIndex == 0 && this.getInputStack().isEmpty()) {
@@ -384,14 +407,27 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     protected InsertResult startNewRecipe(RecipeEntry<SequentialCookingRecipe> recipe, ItemStack givenStack) {
         Peony.LOGGER.debug("Starting new recipe: {}", recipe.id());
         boolean allowed = this.allowOilBasedRecipes;
+
         this.resetCookingState(false);
         this.updateRecipeData(recipe);
+        this.setInputStack(givenStack.copyWithCount(1));
+        this.addedIngredients.add(givenStack);
         this.hasIngredient = true;
         this.allowOilBasedRecipes = allowed;
-        this.setInputStack(givenStack.copyWithCount(1));
-        Peony.LOGGER.debug("New recipe started successfully");
+        this.updateAddedItems();
         this.markDirty();
+
+        Peony.LOGGER.debug("New recipe started successfully");
         return new InsertResult(true, -1);
+    }
+
+    protected void updateAddedItems() {
+        this.updateAddedItems(this.addedIngredients);
+    }
+
+    protected void updateAddedItems(List<ItemStack> addedIngredients) {
+        CustomPayload payload = new SkilletIngredientsSyncS2CPayload(addedIngredients, this.allowOilBasedRecipes, this.pos);
+        GameNetworking.sendToPlayers(PlayerLookup.world((ServerWorld) this.world), payload);
     }
 
     @Override
@@ -405,6 +441,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             }
             user.setStackInHand(context.hand, outputStack);
             this.setOutputStack(ItemStack.EMPTY);
+            this.updateAddedItems();
             this.markDirty();
             return true;
         }
@@ -414,6 +451,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             user.setStackInHand(context.hand, inputStack);
             this.setInputStack(ItemStack.EMPTY);
             this.resetCookingState();
+            this.updateAddedItems();
             this.markDirty();
             return true;
         }
@@ -446,31 +484,31 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         return new InsertResult(false, -1);
     }
 
-    public boolean extractFluidWithContainer(InteractionContext context, ItemStack containerStack) {
-        if (!this.hasStoredFluid()) {
-            return false;
-        }
+//    public boolean extractFluidWithContainer(InteractionContext context, ItemStack containerStack) {
+//        if (!this.hasStoredFluid()) {
+//            return false;
+//        }
+//
+//        try (Transaction transaction = Transaction.openOuter()) {
+//            long extracted = this.fluidStorage.extract(this.fluidStorage.variant, FluidConstants.BUCKET, transaction);
+//            if (extracted > 0) {
+//                long inserted = this.fluidStorage.insert(fluidStorage.variant, extracted, transaction);
+//                if (inserted > 0) {
+//                    long drained = fluidStorage.extract(fluidStorage.variant, inserted, transaction);
+//
+//                    if (drained == inserted) {
+//                        transaction.commit();
+//                        context.user.setStackInHand(context.hand, containerStack);
+//                        this.markDirty();
+//                        return true;
+//                    }
+//                }
+//            }
+//        }
+//        return false;
+//    }
 
-        try (Transaction transaction = Transaction.openOuter()) {
-            long extracted = this.fluidStorage.extract(this.fluidStorage.variant, FluidConstants.BUCKET, transaction);
-            if (extracted > 0) {
-                long inserted = this.fluidStorage.insert(fluidStorage.variant, extracted, transaction);
-                if (inserted > 0) {
-                    long drained = fluidStorage.extract(fluidStorage.variant, inserted, transaction);
-
-                    if (drained == inserted) {
-                        transaction.commit();
-                        context.user.setStackInHand(context.hand, containerStack);
-                        this.markDirty();
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    protected boolean isCookingOil(ItemStack stack) {
+    public static boolean isCookingOil(ItemStack stack) {
         return stack.isIn(PeonyTags.Items.COOKING_OIL);
     }
 
@@ -494,6 +532,11 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         }
         if (this.cachedRecipe != null) {
             return Optional.of(this.cachedRecipe);
+        }
+        if (this.hasOil) {
+            if (this.oilProcessingStage == 0) {
+                return Optional.of(new RecipeEntry<>(DUMMY_RECIPE_ID, this.dummyRecipe));
+            }
         }
         return Optional.empty();
     }
@@ -661,8 +704,12 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         }
 
         // Skip cooking logic if fluid is stored (for fluid-based recipes)
-        if (this.hasStoredFluid()) {
-            return;
+//        if (this.hasStoredFluid()) {
+//            return;
+//        }
+
+        if (!this.addedIngredients.isEmpty()) {
+            Peony.LOGGER.info(this.addedIngredients.toString());
         }
 
         boolean hasHeatSource = this.checkHeatSource(world, pos);
@@ -769,6 +816,8 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         this.setInputStack(ItemStack.EMPTY);
         this.requiredContainer = Items.BOWL;
         world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5f, 0.5f);
+        this.addedIngredients.clear();
+        this.updateAddedItems();
         this.resetCookingState();
     }
 
@@ -787,6 +836,23 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         }
 
         this.resetCookingState(false);
+        this.addedIngredients.clear();
+        this.updateAddedItems();
         this.markDirty();
+    }
+
+    @Environment(EnvType.CLIENT)
+    @Override
+    public void clientTick(World world, BlockPos pos, BlockState state) {
+        BlockState down = world.getBlockState(pos.down());
+        if (down.getBlock() instanceof HeatProvider heatProvider) {
+            if (world.random.nextInt(15) == 0) {
+                if (this.hasOil) {
+                    HeatParticleHelper.spawnHeatParticles(world, pos.down(), HeatLevel.BLAZING);
+                } else if (!this.getInputStack().isEmpty()) {
+                    HeatParticleHelper.spawnHeatParticles(world, pos.down(), heatProvider.getHeat());
+                }
+            }
+        }
     }
 }

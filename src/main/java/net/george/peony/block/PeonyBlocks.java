@@ -90,6 +90,10 @@ public class PeonyBlocks {
             createDefaultSettings().nonOpaque().noCollision().ticksRandomly().breakInstantly()
                     .mapColor(MapColor.DARK_GREEN).sounds(BlockSoundGroup.CROP).pistonBehavior(PistonBehavior.DESTROY),
             false);
+    public static final Block TOMATO_VINES = register("tomato_vines", TomatoVinesBlock::new,
+            createDefaultSettings().nonOpaque().noCollision().ticksRandomly().breakInstantly()
+                    .mapColor(MapColor.DARK_GREEN).sounds(BlockSoundGroup.CROP).pistonBehavior(PistonBehavior.DESTROY),
+            false);
 
     /* FLUIDS */
     public static final Block NATURE_GAS = register("nature_gas", NatureGasBlock::new, createDefaultSettings()

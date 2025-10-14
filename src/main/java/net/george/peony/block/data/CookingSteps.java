@@ -14,6 +14,7 @@ import net.minecraft.util.dynamic.Codecs;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @SuppressWarnings("unused")
 public class CookingSteps extends RecipeSteps<CookingSteps.Step> {
@@ -159,8 +160,11 @@ public class CookingSteps extends RecipeSteps<CookingSteps.Step> {
                             .forGetter(Step::getRequiredTime),
                     Codecs.NONNEGATIVE_INT.optionalFieldOf("maxTimeOverflow", 0)
                             .forGetter(Step::getMaxTimeOverflow),
-                    Ingredient.DISALLOW_EMPTY_CODEC.optionalFieldOf("requiredTool", ofItem(PeonyItems.PLACEHOLDER))
-                            .forGetter(Step::getRequiredTool),
+                    Ingredient.DISALLOW_EMPTY_CODEC.optionalFieldOf("requiredTool")
+                            .xmap(
+                                    optional -> optional.orElseGet(CraftingSteps.Step::getDefaultIngredient),
+                                    ingredient -> ingredient.equals(getDefaultIngredient()) ? Optional.empty() : Optional.of(ingredient)
+                            ).forGetter(Step::getRequiredTool),
                     Ingredient.DISALLOW_EMPTY_CODEC.fieldOf("ingredient").forGetter(Step::getIngredient)
             ).apply(instance, Step::new));
             PACKET_CODEC = PacketCodec.of(Step::write, Step::read);

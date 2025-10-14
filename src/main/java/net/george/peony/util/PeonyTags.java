@@ -29,6 +29,7 @@ public abstract class PeonyTags {
         protected static final Blocks INSTANCE = new Blocks();
 
         public static final TagKey<Block> BURNABLE_BLOCKS = INSTANCE.of("burnable_blocks");
+        public static final TagKey<Block> VINE_CROPS_ATTACHABLE = INSTANCE.of("vine_crops_attachable");
 
         public static final TagKey<Block> INCORRECT_FOR_KITCHEN_KNIFE = INSTANCE.of("incorrect_for_kitchen_knife");
 

@@ -7,6 +7,7 @@ import net.george.peony.compat.PeonyCompat;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.networking.PeonyNetworking;
 import net.george.peony.recipe.PeonyRecipes;
+import net.george.peony.sound.PeonySoundEvents;
 import net.george.peony.world.PeonyFeatures;
 import net.george.peony.world.gen.PeonyWorldGeneration;
 import net.minecraft.registry.Registry;
@@ -15,7 +16,6 @@ import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// todo: peanuts && its oil
 public class Peony implements ModInitializer {
 	public static final String MOD_ID = "peony";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
@@ -27,9 +27,10 @@ public class Peony implements ModInitializer {
 		PeonyBlocks.register();
 		PeonyBlockEntities.register();
 		PeonyItemGroups.register();
-		PeonyCompat.register();
 		PeonyRecipes.register();
+		PeonySoundEvents.register();
 		PeonyFeatures.register();
+		PeonyCompat.register();
 		PeonyWorldGeneration.generate();
 
 		LOGGER.info("Hello Fabric world!");

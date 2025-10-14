@@ -1,5 +1,6 @@
 package net.george.peony.data;
 
+import dev.architectury.platform.Mod;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.george.peony.block.*;
@@ -19,6 +20,7 @@ public class PeonyModelProvider extends FabricModelProvider {
     public void generateBlockStateModels(BlockStateModelGenerator generator) {
         generator.registerCrop(PeonyBlocks.BARLEY_CROP, BarleyCropBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7);
         generator.registerCrop(PeonyBlocks.PEANUT_CROP, PeanutCropBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7);
+        generator.registerCrop(PeonyBlocks.TOMATO_VINES, TomatoVinesBlock.AGE, 0, 1, 2, 3);
 
         Registries.BLOCK.stream().filter(block -> block instanceof CuttingBoardBlock).forEach(board ->
                 PeonyModels.registerCuttingBoard(generator, board));
@@ -42,10 +44,13 @@ public class PeonyModelProvider extends FabricModelProvider {
         generator.register(PeonyItems.PEANUT, Models.GENERATED);
         generator.register(PeonyItems.ROASTED_PEANUT_KERNEL, Models.GENERATED);
         generator.register(PeonyItems.CRUSHED_PEANUTS, Models.GENERATED);
-        generator.register(PeonyItems.KITCHEN_KNIFE, Models.HANDHELD);
+        generator.register(PeonyItems.TOMATO, Models.GENERATED);
         generator.register(PeonyItems.LARD, Models.GENERATED);
         generator.register(PeonyItems.LARD_BOTTLE, Models.GENERATED);
+
+        generator.register(PeonyItems.KITCHEN_KNIFE, Models.HANDHELD);
         generator.register(PeonyItems.SPATULA, Models.GENERATED);
+        generator.register(PeonyItems.IRON_PARING_KNIFE, Models.GENERATED);
         generator.register(PeonyItems.NATURE_GAS_DETECTOR, Models.GENERATED);
 
         generator.register(PeonyItems.NATURE_GAS_BUCKET, Models.GENERATED);

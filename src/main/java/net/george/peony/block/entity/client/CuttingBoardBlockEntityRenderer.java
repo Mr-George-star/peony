@@ -2,8 +2,9 @@ package net.george.peony.block.entity.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.george.peony.block.entity.CarvedRenderingItems;
 import net.george.peony.block.entity.CuttingBoardBlockEntity;
-import net.george.peony.item.KitchenKnifeItem;
+import net.george.peony.block.entity.NonBlockRenderingItems;
 import net.george.peony.item.SolidModelProvider;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
@@ -15,7 +16,9 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.*;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
 
@@ -52,10 +55,13 @@ public class CuttingBoardBlockEntityRenderer implements BlockEntityRenderer<Cutt
             model.getTransformation().getTransformation(ModelTransformationMode.FIXED).apply(false, matrices);
             matrices.pop();
 
-            switch (stack.getItem()) {
-                case BlockItem ignored -> block(matrices, direction);
-                case KitchenKnifeItem ignored -> carvedItem(matrices, direction, stack.getItem());
-                case null, default -> item(matrices, direction);
+            Item item = stack.getItem();
+            if (item instanceof BlockItem && !NonBlockRenderingItems.getInstance().contains(item)) {
+                this.block(matrices, direction);
+            } else if (CarvedRenderingItems.getInstance().contains(item)) {
+                this.carvedItem(matrices, direction, item);
+            } else {
+                this.item(matrices, direction);
             }
 
             renderer.renderItem(stack, ModelTransformationMode.FIXED, light, OverlayTexture.DEFAULT_UV,
@@ -87,14 +93,7 @@ public class CuttingBoardBlockEntityRenderer implements BlockEntityRenderer<Cutt
         matrices.translate(0.5, 0.48, 0.5);
         matrices.scale(0.8F, 0.8F, 0.8F);
 
-        float angle;
-        if (item instanceof PickaxeItem || item instanceof HoeItem) {
-            angle = 225F;
-        } else if (item instanceof TridentItem) {
-            angle = 135F;
-        } else {
-            angle = 180;
-        }
+        float angle = CarvedRenderingItems.getInstance().get(item).orElse(180F);
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(rotation));
         matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(angle));
     }

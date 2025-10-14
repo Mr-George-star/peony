@@ -2,6 +2,7 @@ package net.george.peony.data;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.george.peony.api.heat.HeatLevel;
 import net.george.peony.block.PeonyBlocks;
 import net.george.peony.block.data.CraftingSteps;
 import net.george.peony.item.PeonyItems;
@@ -23,10 +24,14 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyItems.PEANUT_KERNEL, "Peanut Kernel");
         translationBuilder.add(PeonyItems.ROASTED_PEANUT_KERNEL, "Roasted Peanut Kernel");
         translationBuilder.add(PeonyItems.CRUSHED_PEANUTS, "Crushed Peanuts");
-        translationBuilder.add(PeonyItems.KITCHEN_KNIFE, "Kitchen Knife");
+        translationBuilder.add(PeonyItems.TOMATO, "Tomato");
+        translationBuilder.add(PeonyItems.TOMATO_SEEDS, "Tomato Seeds");
         translationBuilder.add(PeonyItems.LARD, "Lard");
         translationBuilder.add(PeonyItems.LARD_BOTTLE, "Lard Bottle");
+
+        translationBuilder.add(PeonyItems.KITCHEN_KNIFE, "Kitchen Knife");
         translationBuilder.add(PeonyItems.SPATULA, "Spatula");
+        translationBuilder.add(PeonyItems.IRON_PARING_KNIFE, "Iron Paring Knife");
         translationBuilder.add(PeonyItems.NATURE_GAS_DETECTOR, "Nature Gas Detector");
 
         translationBuilder.add(PeonyItems.NATURE_GAS_BUCKET, "Nature Gas Bucket");
@@ -49,11 +54,13 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.FLOUR, "Flour");
         translationBuilder.add(PeonyBlocks.BARLEY_CROP, "Barley Crop");
         translationBuilder.add(PeonyBlocks.PEANUT_CROP, "Peanut Crop");
+        translationBuilder.add(PeonyBlocks.TOMATO_VINES, "Tomato Vines");
 
         translationBuilder.add(PeonyBlocks.NATURE_GAS, "Nature Gas");
         translationBuilder.add(PeonyBlocks.LARD_FLUID, "Lard");
         translationBuilder.add(PeonyBlocks.LARD_CAULDRON, "Lard Cauldron");
 
+        /* PROCEDURES */
         translationBuilder.add(CraftingSteps.Procedure.KNEADING.getTranslationKey(), "Kneading");
         translationBuilder.add(CraftingSteps.Procedure.CUTTING.getTranslationKey(), "Cutting");
 
@@ -65,6 +72,16 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyTranslationKeys.MILLING_RECIPE_CATEGORY_TITLE, "Milling");
         translationBuilder.add(PeonyTranslationKeys.MILLING_RECIPE_MILLING_TIMES, "Mill %d Time(s)");
         translationBuilder.add(PeonyTranslationKeys.SEQUENTIAL_CRAFTING_RECIPE_CATEGORY_TITLE, "Sequential Crafting");
+
+        /* SOUNDS */
+        translationBuilder.add("sound.peony.shear_using", "Using Shear");
+
+        /* HEATING LEVELS */
+        translationBuilder.add(HeatLevel.NONE.getTranslationKey(), "None");
+        translationBuilder.add(HeatLevel.SMOLDERING.getTranslationKey(), "Smoldering");
+        translationBuilder.add(HeatLevel.LOW.getTranslationKey(), "Low");
+        translationBuilder.add(HeatLevel.HIGH.getTranslationKey(), "High");
+        translationBuilder.add(HeatLevel.BLAZING.getTranslationKey(), "Blazing");
 
         /* CONFIG */
         translationBuilder.add(PeonyTranslationKeys.CONFIG_SCREEN_TITLE, "Peony");
@@ -81,7 +98,8 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
 
         /* JADE */
         // config
-        translationBuilder.add("config.jade.plugin_peony.skillet_component", "Skillet State Display");
+        translationBuilder.add("config.jade.plugin_peony.skillet_component", "Skillet Status Display");
+        translationBuilder.add("config.jade.plugin_peony.pot_stand_with_campfire_component", "Oak Pot Stand With Campfire - Temperature Data Display");
 
         translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_COOKING_TIME, "Cooking, at %d second(s), %d second(s) left");
         translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_COOKING_OVERFLOW_TIME, "Timed Out! At %d seconds(s), %d second(s) left");
@@ -89,5 +107,7 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_NON_CONTAINER_TOOLTIP, "Cooking is finished");
         translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_MELTING_OIL, "Melting the oil, at %d second(s), %d second(s) left");
         translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_TOOL_USAGE_TOOLTIP, "The tool needed to proceed to the next step: ");
+        translationBuilder.add(PeonyTranslationKeys.JADE_HEAT_SOURCE_AVAILABLE_HEAT_AMOUNT, "Available heat range: %d°C-%d°C");
+        translationBuilder.add(PeonyTranslationKeys.JADE_HEAT_SOURCE_HEATING_LEVEL, "Heating Level: ");
     }
 }

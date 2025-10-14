@@ -27,6 +27,8 @@ public class PeonyBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
                         || block instanceof AbstractFireBlock
                         || block instanceof CampfireBlock))
                 .add(Blocks.MAGMA_BLOCK).add(Blocks.LAVA).add(Blocks.LAVA_CAULDRON);
+        getOrCreateTagBuilder(PeonyTags.Blocks.VINE_CROPS_ATTACHABLE)
+                .forceAddTag(BlockTags.LOGS).forceAddTag(BlockTags.FENCES);
         getOrCreateTagBuilder(BlockTags.CAMPFIRES)
                 .add(RegistryDataUtils.BLOCK.filterToArray(block -> block instanceof PotStandWithCampfireBlock));
 
@@ -36,7 +38,7 @@ public class PeonyBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
                 .add(PeonyBlocks.SKILLET);
 
         getOrCreateTagBuilder(PeonyTags.Blocks.INCORRECT_FOR_KITCHEN_KNIFE)
-                .addOptionalTag(BlockTags.INCORRECT_FOR_IRON_TOOL);
+                .forceAddTag(BlockTags.INCORRECT_FOR_IRON_TOOL);
 
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
                 .add(PeonyBlocks.MILLSTONE)
