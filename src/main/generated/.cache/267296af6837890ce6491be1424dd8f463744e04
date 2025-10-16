@@ -1,13 +1,13 @@
-// 1.21.1	2025-10-14T21:49:41.1170198	Peony/Block Loot Tables
+// 1.21.1	2025-10-16T10:44:15.3801597	Peony/Block Loot Tables
 c115e1b90c5f8269ff62c76d4ebd43dab038b0e3 data\peony\loot_table\blocks\spruce_pot_stand.json
 2b2a4bde1a1c86393b28fa3ff9b81ef1ddeed22d data\peony\loot_table\blocks\mangrove_pot_stand_with_campfire.json
 2b2a4bde1a1c86393b28fa3ff9b81ef1ddeed22d data\peony\loot_table\blocks\dark_oak_pot_stand_with_campfire.json
 8a8aba07e0b3fd9f9e2c60e54d36a4e9f7c920a4 data\peony\loot_table\blocks\mangrove_pot_stand.json
 5de72acfac9c1b52d3c661fd71c23ee2a519eede data\peony\loot_table\blocks\acacia_pot_stand.json
 2496526d63c461fd804d759fa950000f51c70691 data\peony\loot_table\blocks\cherry_log_stick.json
+43b90cd92baae0929fff43ed22f3b2df7bfafa4c data\peony\loot_table\blocks\dark_oak_log_stick.json
 42ced47d3cbdc6de6804ae2c2cee44418ddadcd3 data\peony\loot_table\blocks\oak_cutting_board.json
 cff7d394686324a3de68db970a4bda227cb5fec2 data\peony\loot_table\blocks\dough.json
-43b90cd92baae0929fff43ed22f3b2df7bfafa4c data\peony\loot_table\blocks\dark_oak_log_stick.json
 f2016ffc0420516d5523063a82959253fbec0f5d data\peony\loot_table\blocks\oak_log_stick.json
 ca439a8441f91873b0defc4acc386f0af9e5edea data\peony\loot_table\blocks\cherry_cutting_board.json
 2b2a4bde1a1c86393b28fa3ff9b81ef1ddeed22d data\peony\loot_table\blocks\birch_pot_stand_with_campfire.json

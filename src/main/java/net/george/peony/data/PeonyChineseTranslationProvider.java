@@ -82,8 +82,8 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.LARD_CAULDRON, "装有猪油的炼药锅");
 
         /* Procedures */
-        translationBuilder.add(CraftingSteps.Procedure.KNEADING.getTranslationKey(), "揉捏");
-        translationBuilder.add(CraftingSteps.Procedure.CUTTING.getTranslationKey(), "切");
+//        translationBuilder.add(CraftingSteps.Procedure.KNEADING.getTranslationKey(), "揉捏");
+//        translationBuilder.add(CraftingSteps.Procedure.CUTTING.getTranslationKey(), "切");
 
         translationBuilder.add(PeonyTranslationKeys.ITEM_GROUP_KEY, "牡丹");
 

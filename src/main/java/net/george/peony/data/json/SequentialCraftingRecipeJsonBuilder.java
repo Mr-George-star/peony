@@ -1,5 +1,7 @@
 package net.george.peony.data.json;
 
+import net.george.peony.api.action.Action;
+import net.george.peony.api.action.ActionType;
 import net.george.peony.block.data.CraftingSteps;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.recipe.SequentialCraftingRecipe;
@@ -51,24 +53,24 @@ public class SequentialCraftingRecipeJsonBuilder implements RecipeJsonBuilder {
         return this;
     }
 
-    public SequentialCraftingRecipeJsonBuilder step(CraftingSteps.Procedure procedure) {
-        return step(procedure, PeonyItems.PLACEHOLDER);
+    public SequentialCraftingRecipeJsonBuilder step(Action action) {
+        return step(action, PeonyItems.PLACEHOLDER);
     }
 
-    public SequentialCraftingRecipeJsonBuilder step(CraftingSteps.Procedure procedure, ItemConvertible item) {
-        return step(procedure, item, 1);
+    public SequentialCraftingRecipeJsonBuilder step(Action action, ItemConvertible item) {
+        return step(action, item, 1);
     }
 
-    public SequentialCraftingRecipeJsonBuilder step(CraftingSteps.Procedure procedure, ItemConvertible item, int count) {
-        return step(procedure, new ItemStack(item, count));
+    public SequentialCraftingRecipeJsonBuilder step(Action action, ItemConvertible item, int count) {
+        return step(action, new ItemStack(item, count));
     }
 
-    public SequentialCraftingRecipeJsonBuilder step(CraftingSteps.Procedure procedure, ItemStack stack) {
-        return step(procedure, Ingredient.ofStacks(stack));
+    public SequentialCraftingRecipeJsonBuilder step(Action action, ItemStack stack) {
+        return step(action, Ingredient.ofStacks(stack));
     }
 
-    public SequentialCraftingRecipeJsonBuilder step(CraftingSteps.Procedure procedure, Ingredient ingredient) {
-        return step(new CraftingSteps.Step(procedure, ingredient));
+    public SequentialCraftingRecipeJsonBuilder step(Action action, Ingredient ingredient) {
+        return step(new CraftingSteps.Step(action, ingredient));
     }
 
     public SequentialCraftingRecipeJsonBuilder step(CraftingSteps.Step step) {

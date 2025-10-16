@@ -3,20 +3,23 @@ package net.george.peony.data;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.george.peony.Peony;
+import net.george.peony.api.action.ActionType;
+import net.george.peony.api.action.ActionTypes;
 import net.george.peony.block.*;
 import net.george.peony.block.data.CookingSteps;
-import net.george.peony.block.data.CraftingSteps;
 import net.george.peony.data.json.MillingRecipeJsonBuilder;
 import net.george.peony.data.json.SequentialCookingRecipeJsonBuilder;
 import net.george.peony.data.json.SequentialCraftingRecipeJsonBuilder;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.util.PeonyTags;
 import net.minecraft.block.Blocks;
+import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
+import net.minecraft.potion.Potions;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
@@ -126,9 +129,8 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
 
         /* SEQUENTIAL CRAFTING */
         SequentialCraftingRecipeJsonBuilder.create(PeonyBlocks.DOUGH)
-                .step(CraftingSteps.Procedure.KNEADING, PeonyBlocks.FLOUR)
-                .step(CraftingSteps.Procedure.KNEADING, Items.POTION)
-                .step(CraftingSteps.Procedure.KNEADING, PeonyItems.PLACEHOLDER)
+                .step(ActionTypes.kneading(), PeonyBlocks.FLOUR)
+                .step(ActionTypes.kneading(), PotionContentsComponent.createStack(Items.POTION, Potions.WATER))
                 .offerTo(exporter, Peony.id("dough_from_flour"));
 
         /* SEQUENTIAL COOKING */

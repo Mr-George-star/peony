@@ -1,4 +1,4 @@
-// 1.21.1	2025-10-14T21:49:41.1159818	Peony/Recipes
+// 1.21.1	2025-10-16T10:44:15.378136	Peony/Recipes
 72323c336cff1f58bf2159cc9c09937a70069a36 data\peony\advancement\recipes\misc\cherry_log_stick.json
 04d04092141fc955d4b09f25359bde17c420e024 data\peony\advancement\recipes\misc\dough_from_flour.json
 fcd4d535a46d3775a009cd653bf4b6ce28426cd1 data\peony\advancement\recipes\misc\skillet_left.json
@@ -9,10 +9,10 @@ afc6c0583c3c508f09f48e89bbe9477ceea564e2 data\peony\advancement\recipes\misc\nat
 886ea6e4945d932094b6f591cc83859fcc0ec78c data\peony\recipe\acacia_cutting_board.json
 3893b7e6616081d429d3948f6136b0625d74ef65 data\peony\advancement\recipes\misc\spruce_pot_stand.json
 fb34b5ce8b539ebce6b4653cb83ace8dae1e00c5 data\peony\recipe\jungle_pot_stand.json
-7a9213464f0e6175a00a93d1283f71e4db22d35c data\peony\recipe\spruce_pot_stand.json
 19218112fd668478800d43f1a3edeeb4251c5a70 data\peony\recipe\acacia_log_stick.json
-9c0d0621399e79874eca7038267707b159851d8a data\peony\advancement\recipes\misc\jungle_pot_stand.json
 e71449d884179882c39fec8c13a0d9d2ffdf86a9 data\peony\recipe\dark_oak_log_stick.json
+7a9213464f0e6175a00a93d1283f71e4db22d35c data\peony\recipe\spruce_pot_stand.json
+9c0d0621399e79874eca7038267707b159851d8a data\peony\advancement\recipes\misc\jungle_pot_stand.json
 0124bfb3279efe31d9482884aa99f693ab11c91c data\peony\recipe\dark_oak_cutting_board.json
 83af09b5842e2737074ca383d52b39d93eaa6c67 data\peony\recipe\mangrove_pot_stand.json
 b391420f945260984b90e1bf43d1031465194a11 data\peony\recipe\kitchen_knife_right.json
@@ -21,8 +21,8 @@ e8447ff0c16c908e780eed5d9654173378fe2b05 data\peony\recipe\wheat_from_hay_block.
 a45f027eb46cb814556b057b7663fbe7e11aa3a1 data\peony\advancement\recipes\misc\birch_pot_stand.json
 08d5f09d93abbf206a45496436ef656af0107b9e data\peony\advancement\recipes\misc\acacia_pot_stand.json
 c2ff43ff8801b63d0ae56b1f8187a2ef31b9c4f9 data\peony\recipe\dark_oak_pot_stand.json
-18fbbfc51d40576c962ec390e86e59954b8b464d data\peony\advancement\recipes\misc\spruce_log_stick.json
 c8b20ca66a8fc6c8f0559c2ea445e79929569fb4 data\peony\advancement\recipes\misc\jungle_log_stick.json
+18fbbfc51d40576c962ec390e86e59954b8b464d data\peony\advancement\recipes\misc\spruce_log_stick.json
 258f6b0416c492f76918777897602fb1b0e1a186 data\peony\advancement\recipes\misc\oak_pot_stand.json
 fdd659c4177a363bea758eaa938892be91f51172 data\peony\advancement\recipes\misc\cherry_pot_stand.json
 b1fd57219fe2a27e7f03e86679f9ec8bf0176973 data\peony\advancement\recipes\misc\cherry_cutting_board.json
@@ -77,5 +77,5 @@ ade3d65b3a0b14d270eaddade9e67887ed351eeb data\peony\advancement\recipes\misc\whe
 56cb0fbe86f1d598b0ac117e0ddd2e1236166934 data\peony\recipe\birch_pot_stand.json
 17802f3fa33f02cd96f79055374bb1a517deca73 data\peony\recipe\cooked_mutton.json
 572999c4e0c1024bb1c688f0a63c626aa160308e data\peony\advancement\recipes\tools\kitchen_knife_left.json
-d421cadf5b49eb8b5fbf37b019351fe7d62759f4 data\peony\recipe\dough_from_flour.json
+c4aacdb375c1ab2412863df9cc4402006f765cde data\peony\recipe\dough_from_flour.json
 6e36ad88fe4816c432af72d83cbeade7d3996c2b data\peony\recipe\acacia_pot_stand.json

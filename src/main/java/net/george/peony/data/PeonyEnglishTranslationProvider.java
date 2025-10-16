@@ -82,8 +82,8 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.LARD_CAULDRON, "Lard Cauldron");
 
         /* PROCEDURES */
-        translationBuilder.add(CraftingSteps.Procedure.KNEADING.getTranslationKey(), "Kneading");
-        translationBuilder.add(CraftingSteps.Procedure.CUTTING.getTranslationKey(), "Cutting");
+//        translationBuilder.add(CraftingSteps.Procedure.KNEADING.getTranslationKey(), "Kneading");
+//        translationBuilder.add(CraftingSteps.Procedure.CUTTING.getTranslationKey(), "Cutting");
 
         translationBuilder.add(PeonyTranslationKeys.ITEM_GROUP_KEY, "Peony");
 

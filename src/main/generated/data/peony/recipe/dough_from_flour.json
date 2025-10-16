@@ -6,19 +6,20 @@
   },
   "steps": [
     {
+      "action": {
+        "type": "peony:kneading"
+      },
       "ingredient": {
         "item": "peony:flour"
-      },
-      "procedure": "peony:kneading"
+      }
     },
     {
+      "action": {
+        "type": "peony:kneading"
+      },
       "ingredient": {
         "item": "minecraft:potion"
-      },
-      "procedure": "peony:kneading"
-    },
-    {
-      "procedure": "peony:kneading"
+      }
     }
   ]
 }

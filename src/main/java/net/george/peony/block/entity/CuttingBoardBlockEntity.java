@@ -3,10 +3,10 @@ package net.george.peony.block.entity;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.george.networking.api.GameNetworking;
 import net.george.peony.Peony;
+import net.george.peony.api.action.Action;
 import net.george.peony.block.CuttingBoardBlock;
 import net.george.peony.block.data.CraftingSteps;
 import net.george.peony.block.data.RecipeStepsCursor;
-import net.george.peony.item.KitchenKnifeItem;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.networking.payload.ItemStackSyncS2CPayload;
 import net.george.peony.recipe.PeonyRecipes;
@@ -46,18 +46,21 @@ import java.util.Optional;
 public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, AccessibleInventory, BlockEntityTickerProvider {
     protected final DefaultedList<ItemStack> inventory;
     protected final RecipeManager.MatchGetter<SingleStackRecipeInput, SequentialCraftingRecipe> matchGetter;
+
+    // Crafting state management
     protected int currentStepIndex = 0;
-    protected boolean placedIngredient = false;
-    protected boolean processed = false;
-    protected boolean placedInitial = false;
-    protected int usageCountdown = 0;
+    protected boolean placedIngredient = false;     // Whether the ingredient for current step is placed
+    protected boolean processed = false;            // Whether the current step action is completed
+    protected boolean placedInitial = false;        // Whether the initial ingredient is placed
+    protected int usageCountdown = 0;               // Cooldown between interactions
     @Nullable
-    protected RecipeEntry<SequentialCraftingRecipe> cachedRecipe = null;
+    protected RecipeEntry<SequentialCraftingRecipe> cachedRecipe = null; // Cached recipe for performance
     protected Direction cachedDirection = Direction.NORTH;
 
     public CuttingBoardBlockEntity(BlockPos pos, BlockState state) {
         super(PeonyBlockEntities.CUTTING_BOARD, pos, state);
         this.inventory = DefaultedList.ofSize(1, ItemStack.EMPTY);
+        // Create cached recipe matcher for better performance
         this.matchGetter = RecipeManager.createCachedMatchGetter(PeonyRecipes.SEQUENTIAL_CRAFTING_TYPE);
     }
 
@@ -149,43 +152,57 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
 
         ItemStack inputStack = this.getInputStack();
         ItemStack stackToBeInserted = givenStack.copyWithCount(1);
-        @Nullable
         RecipeStepsCursor<CraftingSteps.Step> cursor = this.getCurrentCursor(world);
-        boolean isCursorEmpty = cursor == null;
 
-        if (!isCursorEmpty) {
-            CraftingSteps.Procedure procedure = cursor.getCurrentStep() == null ? null : cursor.getCurrentStep().getProcedure();
-            if (this.isCountdownOver()) {
-                if (Objects.equals(procedure, CraftingSteps.Procedure.CUTTING) && givenStack.getItem() instanceof KitchenKnifeItem) {
-                    givenStack.damage(1, user, EquipmentSlot.MAINHAND);
-                    this.processed = true;
-                    this.markDirty();
-                    this.resetCountdown();
-                }
-            }
-        }
-
+        // Place initial item if input slot is empty
         if (inputStack.isEmpty()) {
             this.setInputStack(stackToBeInserted);
             this.updateListeners(world);
             return true;
-        } else if (canItemStacksBeStacked(inputStack, stackToBeInserted)) {
+        }
+
+        // Stack items if they are the same type
+        if (canItemStacksBeStacked(inputStack, stackToBeInserted)) {
             this.setInputStack(new ItemStack(inputStack.getItem(), inputStack.getCount() + stackToBeInserted.getCount()));
             world.emitGameEvent(GameEvent.BLOCK_CHANGE, this.pos, GameEvent.Emitter.of(user, this.getCachedState()));
             this.updateListeners(world);
             return true;
-        } else if (!isCursorEmpty) {
-            if (cursor.getCurrentStep().getIngredient().test(stackToBeInserted)) {
-                if (!this.placedIngredient && !this.processed) {
-                    this.placedIngredient = true;
-                    this.updateListeners(world);
-                    this.resetCountdown();
-                    return true;
-                } else {
-                    return false;
+        }
+
+        // Handle recipe step logic when cooldown is over
+        if (cursor != null && this.isCountdownOver()) {
+            CraftingSteps.Step currentStep = cursor.getCurrentStep();
+            if (currentStep != null) {
+                Action action = currentStep.getAction();
+                Ingredient ingredient = currentStep.getIngredient();
+
+                Peony.LOGGER.debug("Current Step - Action: {}, Ingredient: {}", action, ingredient);
+
+                // Check for tool action
+                if (action != null && action.test(givenStack)) {
+                    if (this.placedIngredient && !this.processed) {
+                        givenStack.damage(1, user, EquipmentSlot.MAINHAND);
+                        this.processed = true;
+                        this.markDirty();
+                        this.resetCountdown();
+                        Peony.LOGGER.debug("Tool operation completed, marked as processed");
+                        return true;
+                    }
+                }
+
+                // Check if placing ingredient for current step
+                if (ingredient.test(stackToBeInserted)) {
+                    if (!this.placedIngredient && !this.processed) {
+                        this.placedIngredient = true;
+                        this.updateListeners(world);
+                        this.resetCountdown();
+                        Peony.LOGGER.debug("Raw materials are placed");
+                        return true;
+                    }
                 }
             }
         }
+
         return false;
     }
 
@@ -198,6 +215,7 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         if (inputStack.isEmpty()) {
             return false;
         } else {
+            // Return item to player and reset crafting state
             user.setStackInHand(context.hand, inputStack);
             this.setInputStack(ItemStack.EMPTY);
             this.resetCraftingState();
@@ -212,43 +230,61 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         World world = context.world;
         BlockPos pos = context.pos;
 
-        @Nullable
         RecipeStepsCursor<CraftingSteps.Step> cursor = this.getCurrentCursor(world);
         if (!this.isCountdownOver() || cursor == null) {
             return true;
         }
 
-        CraftingSteps.Procedure procedure = cursor.getCurrentStep() == null ? null : cursor.getCurrentStep().getProcedure();
-        if (Objects.equals(procedure, CraftingSteps.Procedure.KNEADING)) {
-            Ingredient ingredient = cursor.getCurrentStep().getIngredient();
+        CraftingSteps.Step currentStep = cursor.getCurrentStep();
+        if (currentStep == null) {
+            return true;
+        }
+
+        Action action = currentStep.getAction();
+        Ingredient ingredient = currentStep.getIngredient();
+
+        Peony.LOGGER.debug("Empty-handed operation - Action: {}, Placed Ingredient: {}, Processed: {}",
+                action, this.placedIngredient, this.processed);
+
+        // Check for empty-handed actions
+        if (action != null && action.test(null)) {
+            // Auto-place placeholder ingredients
             if (!this.placedIngredient && !this.processed) {
                 if (ingredient.test(PeonyItems.PLACEHOLDER.getDefaultStack())) {
                     this.placedIngredient = true;
                     this.markDirty();
                     this.resetCountdown();
+                    Peony.LOGGER.debug("Automatic placement of placeholder ingredients");
                 }
             }
+
+            // Execute processing action
             if (this.placedIngredient && !this.processed) {
                 ItemStack displayStack;
                 if (ingredient.test(PeonyItems.PLACEHOLDER.getDefaultStack())) {
+                    // Use recipe output for placeholder display
                     Optional<RecipeEntry<SequentialCraftingRecipe>> recipe = this.getCurrentRecipe(world);
-                    if (recipe.isPresent()) {
-                        displayStack = recipe.get().value().getOutput();
-                    } else {
-                        displayStack = Ingredient.empty().getMatchingStacks()[0];
-                    }
+                    displayStack = recipe.map(entry -> entry.value().getOutput())
+                            .orElse(Ingredient.empty().getMatchingStacks()[0]);
                 } else {
                     displayStack = ingredient.getMatchingStacks()[0];
                 }
+
                 spawnCraftingParticles(world, pos, displayStack, 5);
                 this.processed = true;
                 this.markDirty();
                 this.resetCountdown();
+                Peony.LOGGER.debug("Empty-handed processing completed");
+                return true;
             }
         }
+
         return true;
     }
 
+    /**
+     * Spawns crafting particles at the given position
+     */
     public static void spawnCraftingParticles(World world, BlockPos pos, ItemStack stack, int count) {
         for (int i = 0; i < count; ++i) {
             Vec3d vec3d = new Vec3d(
@@ -286,7 +322,11 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
 
     /* CRAFTING */
 
+    /**
+     * Gets the current recipe matching the input item
+     */
     protected Optional<RecipeEntry<SequentialCraftingRecipe>> getCurrentRecipe(World world, ItemStack input) {
+        // Return cached recipe if available
         if (this.cachedRecipe != null) {
             return Optional.of(this.cachedRecipe);
         }
@@ -318,21 +358,28 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         if (steps == null) {
             return null;
         } else {
+            // Ensure index is within valid range
             int safeIndex = MathHelper.clamp(index, 0, steps.getSteps().size() - 1);
             return steps.createCursor(safeIndex);
         }
     }
 
+    /**
+     * Resets all crafting state to initial values
+     */
     protected void resetCraftingState() {
         this.currentStepIndex = 0;
         this.placedIngredient = false;
         this.processed = false;
         this.placedInitial = false;
         this.cachedRecipe = null;
+        this.usageCountdown = 0;
+        Peony.LOGGER.debug("Reset Crafting State");
     }
 
     @Override
     public void tick(World world, BlockPos pos, BlockState state) {
+        // Update direction from block state
         if (state.contains(CuttingBoardBlock.FACING)) {
             this.cachedDirection = state.get(CuttingBoardBlock.FACING);
         }
@@ -341,25 +388,32 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         RecipeStepsCursor<CraftingSteps.Step> cursor = this.getCurrentCursor(world);
 
         if (recipe.isPresent() && cursor != null) {
+            // Initialize first step
             if (!this.placedInitial) {
-                this.placedIngredient = true;
+                this.placedIngredient = true; // First step ingredient is the input it
+
                 this.processed = false;
                 this.placedInitial = true;
                 this.resetCountdown();
             }
 
+            // Check if this was the final step
             if (this.currentStepIndex > cursor.getLastStepIndex()) {
                 this.resetCraftingState();
                 this.setInputStack(recipe.get().value().getOutput());
                 this.markDirty();
             }
 
+            // Advance to next step when current step is completed
             if (this.placedIngredient && this.processed) {
                 this.currentStepIndex++;
                 this.placedIngredient = false;
                 this.processed = false;
+
+                Peony.LOGGER.debug("Proceed to step: " + this.currentStepIndex);
             }
         } else {
+            // Reset state if no valid recipe
             this.resetCraftingState();
         }
 
