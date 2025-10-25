@@ -1,0 +1,9 @@
+{
+  "type": "peony:paring",
+  "input": {
+    "item": "peony:tomato"
+  },
+  "output": {
+    "id": "peony:peeled_tomato"
+  }
+}

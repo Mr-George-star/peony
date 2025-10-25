@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.george.peony.api.heat.HeatLevel;
 import net.george.peony.block.PeonyBlocks;
-import net.george.peony.block.data.CraftingSteps;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.util.PeonyTranslationKeys;
 import net.minecraft.registry.RegistryWrapper;
@@ -26,6 +25,9 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyItems.CRUSHED_PEANUTS, "Crushed Peanuts");
         translationBuilder.add(PeonyItems.TOMATO, "Tomato");
         translationBuilder.add(PeonyItems.TOMATO_SEEDS, "Tomato Seeds");
+        translationBuilder.add(PeonyItems.PEELED_TOMATO, "Peeled Tomato");
+        translationBuilder.add(PeonyItems.TOMATO_SAUCE, "Tomato Sauce");
+        translationBuilder.add(PeonyItems.SCRAMBLED_EGGS, "Scrambled Eggs");
         translationBuilder.add(PeonyItems.LARD, "Lard");
         translationBuilder.add(PeonyItems.LARD_BOTTLE, "Lard Bottle");
 
@@ -36,6 +38,12 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
 
         translationBuilder.add(PeonyItems.NATURE_GAS_BUCKET, "Nature Gas Bucket");
         translationBuilder.add(PeonyItems.LARD_BUCKET, "Lard Bucket");
+
+        translationBuilder.add(PeonyItems.MUSIC_DISC_SURPRISE, "Surprise");
+
+        translationBuilder.add(PeonyBlocks.DOUGH, "Dough");
+        translationBuilder.add(PeonyBlocks.FLOUR, "Flour");
+        translationBuilder.add(PeonyBlocks.FLATBREAD, "Flatbread");
 
         translationBuilder.add(PeonyBlocks.MILLSTONE, "Millstone");
         translationBuilder.add(PeonyBlocks.OAK_CUTTING_BOARD, "Oak Cutting Board");
@@ -71,8 +79,7 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.CHERRY_POT_STAND_WITH_CAMPFIRE, "Cherry Pot Stand With Campfire");
         translationBuilder.add(PeonyBlocks.DARK_OAK_POT_STAND_WITH_CAMPFIRE, "Dark Oak Pot Stand With Campfire");
         translationBuilder.add(PeonyBlocks.MANGROVE_POT_STAND_WITH_CAMPFIRE, "Mangrove Pot Stand With Campfire");
-        translationBuilder.add(PeonyBlocks.DOUGH, "Dough");
-        translationBuilder.add(PeonyBlocks.FLOUR, "Flour");
+
         translationBuilder.add(PeonyBlocks.BARLEY_CROP, "Barley Crop");
         translationBuilder.add(PeonyBlocks.PEANUT_CROP, "Peanut Crop");
         translationBuilder.add(PeonyBlocks.TOMATO_VINES, "Tomato Vines");
@@ -80,10 +87,6 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.NATURE_GAS, "Nature Gas");
         translationBuilder.add(PeonyBlocks.LARD_FLUID, "Lard");
         translationBuilder.add(PeonyBlocks.LARD_CAULDRON, "Lard Cauldron");
-
-        /* PROCEDURES */
-//        translationBuilder.add(CraftingSteps.Procedure.KNEADING.getTranslationKey(), "Kneading");
-//        translationBuilder.add(CraftingSteps.Procedure.CUTTING.getTranslationKey(), "Cutting");
 
         translationBuilder.add(PeonyTranslationKeys.ITEM_GROUP_KEY, "Peony");
 
@@ -96,6 +99,14 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
 
         /* SOUNDS */
         translationBuilder.add("sound.peony.shear_using", "Using Shear");
+        translationBuilder.add("sound.peony.paring", "Paring");
+
+        /* JUKEBOX SONGS */
+        translationBuilder.add("jukebox_song.peony.surprise", "Surprise (Never Gonna Give You Up) - Rick Astley");
+
+        /* DAMAGE TYPES */
+        translationBuilder.add("death.attack.scald", "%1$s was scalded to death");
+        translationBuilder.add("death.attack.scald.player", "%1$s was scalded to death in a fight with %2$s");
 
         /* HEATING LEVELS */
         translationBuilder.add(HeatLevel.NONE.getTranslationKey(), "None");

@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_dough": {
+    "has_flour": {
       "conditions": {
         "items": [
           {
-            "items": "peony:dough"
+            "items": "peony:flour"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_dough"
+      "has_flour"
     ]
   ],
   "rewards": {

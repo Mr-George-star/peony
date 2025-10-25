@@ -37,6 +37,13 @@ import static net.minecraft.item.Items.GLASS_BOTTLE;
 public class PeonyBlocks {
     public static final Map<Block, Block> POT_STAND_FAMILIES;
 
+    public static final Block DOUGH = register("dough",
+            DoughBlock::new, createDefaultSettings().breakInstantly(), DoughItem::new);
+    public static final Block FLOUR = register("flour",
+            FlourBlock::new, createDefaultSettings().breakInstantly(), FlourItem::new);
+    public static final Block FLATBREAD = register("flatbread",
+            FlatbreadBlock::new, createDefaultSettings().breakInstantly(), FlatbreadItem::new);
+
     public static final Block MILLSTONE = register("millstone", MillstoneBlock::new,
             AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE).nonOpaque());
     // use log top map color
@@ -97,11 +104,6 @@ public class PeonyBlocks {
             DARK_OAK_LOG_STICK, MapColor.BROWN);
     public static final Block MANGROVE_POT_STAND_WITH_CAMPFIRE = registerPotStandWithCampfire("mangrove",
             MANGROVE_LOG_STICK, MapColor.SPRUCE_BROWN);
-
-    public static final Block DOUGH = register("dough",
-                DoughBlock::new, createDefaultSettings().breakInstantly(), DoughItem::new);
-    public static final Block FLOUR = register("flour",
-                FlourBlock::new, createDefaultSettings().breakInstantly(), FlourItem::new);
 
     /* CROPS */
 
@@ -243,6 +245,17 @@ public class PeonyBlocks {
         @Override
         public BlockState asRenderingState() {
             return FLOUR.getDefaultState();
+        }
+    }
+
+    static class FlatbreadItem extends BlockItem implements SolidModelProvider {
+        public FlatbreadItem(Block flatbread, Settings settings) {
+            super(flatbread, settings);
+        }
+
+        @Override
+        public BlockState asRenderingState() {
+            return FLATBREAD.getDefaultState();
         }
     }
 

@@ -176,7 +176,7 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
                 Action action = currentStep.getAction();
                 Ingredient ingredient = currentStep.getIngredient();
 
-                Peony.LOGGER.debug("Current Step - Action: {}, Ingredient: {}", action, ingredient);
+                Peony.LOGGER.info("Current Step - Action: {}, Ingredient: {}", action, ingredient);
 
                 // Check for tool action
                 if (action != null && action.test(givenStack)) {
@@ -185,18 +185,19 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
                         this.processed = true;
                         this.markDirty();
                         this.resetCountdown();
-                        Peony.LOGGER.debug("Tool operation completed, marked as processed");
+                        Peony.LOGGER.info("Tool operation completed, marked as processed");
                         return true;
                     }
                 }
 
                 // Check if placing ingredient for current step
-                if (ingredient.test(stackToBeInserted)) {
+                // Skip ingredient placement if it's a placeholder
+                if (!ingredient.test(PeonyItems.PLACEHOLDER.getDefaultStack()) && ingredient.test(stackToBeInserted)) {
                     if (!this.placedIngredient && !this.processed) {
                         this.placedIngredient = true;
                         this.updateListeners(world);
                         this.resetCountdown();
-                        Peony.LOGGER.debug("Raw materials are placed");
+                        Peony.LOGGER.info("Raw materials are placed");
                         return true;
                     }
                 }
@@ -248,34 +249,42 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
 
         // Check for empty-handed actions
         if (action != null && action.test(null)) {
-            // Auto-place placeholder ingredients
-            if (!this.placedIngredient && !this.processed) {
-                if (ingredient.test(PeonyItems.PLACEHOLDER.getDefaultStack())) {
+            // For placeholder ingredients, skip the placement step and go directly to processing
+            if (ingredient.test(PeonyItems.PLACEHOLDER.getDefaultStack())) {
+                if (!this.placedIngredient && !this.processed) {
+                    // Auto-place placeholder ingredients and immediately process
                     this.placedIngredient = true;
+                    this.processed = true;
                     this.markDirty();
                     this.resetCountdown();
-                    Peony.LOGGER.debug("Automatic placement of placeholder ingredients");
+                    Peony.LOGGER.debug("Skipped placeholder ingredient placement and marked as processed");
+                    return true;
+                } else if (this.placedIngredient && !this.processed) {
+                    // If already auto-placed in tick, just mark as processed
+                    this.processed = true;
+                    this.markDirty();
+                    this.resetCountdown();
+                    Peony.LOGGER.debug("Processed placeholder ingredient that was auto-placed");
+                    return true;
                 }
-            }
-
-            // Execute processing action
-            if (this.placedIngredient && !this.processed) {
-                ItemStack displayStack;
-                if (ingredient.test(PeonyItems.PLACEHOLDER.getDefaultStack())) {
-                    // Use recipe output for placeholder display
-                    Optional<RecipeEntry<SequentialCraftingRecipe>> recipe = this.getCurrentRecipe(world);
-                    displayStack = recipe.map(entry -> entry.value().getOutput())
-                            .orElse(Ingredient.empty().getMatchingStacks()[0]);
-                } else {
-                    displayStack = ingredient.getMatchingStacks()[0];
+            } else {
+                // For non-placeholder ingredients, use normal flow
+                if (!this.placedIngredient && !this.processed) {
+                    // Wait for ingredient to be placed first
+                    Peony.LOGGER.debug("Waiting for ingredient to be placed");
+                    return true;
                 }
 
-                spawnCraftingParticles(world, pos, displayStack, 5);
-                this.processed = true;
-                this.markDirty();
-                this.resetCountdown();
-                Peony.LOGGER.debug("Empty-handed processing completed");
-                return true;
+                // Execute processing action for non-placeholder ingredients
+                if (this.placedIngredient && !this.processed) {
+                    ItemStack displayStack = ingredient.getMatchingStacks()[0];
+                    spawnCraftingParticles(world, pos, displayStack, 5);
+                    this.processed = true;
+                    this.markDirty();
+                    this.resetCountdown();
+                    Peony.LOGGER.debug("Empty-handed processing completed");
+                    return true;
+                }
             }
         }
 
@@ -374,7 +383,7 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         this.placedInitial = false;
         this.cachedRecipe = null;
         this.usageCountdown = 0;
-        Peony.LOGGER.debug("Reset Crafting State");
+        Peony.LOGGER.info("Reset Crafting State");
     }
 
     @Override
@@ -384,39 +393,67 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
             this.cachedDirection = state.get(CuttingBoardBlock.FACING);
         }
 
+        // Decrement cooldown
+        if (this.usageCountdown > 0) {
+            this.usageCountdown--;
+        }
+
         Optional<RecipeEntry<SequentialCraftingRecipe>> recipe = this.getCurrentRecipe(world);
         RecipeStepsCursor<CraftingSteps.Step> cursor = this.getCurrentCursor(world);
 
         if (recipe.isPresent() && cursor != null) {
             // Initialize first step
             if (!this.placedInitial) {
-                this.placedIngredient = true; // First step ingredient is the input it
-
+                this.placedIngredient = true; // First step ingredient is the input item
                 this.processed = false;
                 this.placedInitial = true;
                 this.resetCountdown();
+                this.markDirty();
+                Peony.LOGGER.debug("Initialized first step");
             }
 
-            // Check if this was the final step
+            // Auto-skip placement for placeholder ingredients in tick
+            CraftingSteps.Step currentStep = cursor.getCurrentStep();
+            if (currentStep != null && !this.placedIngredient && !this.processed) {
+                Ingredient ingredient = currentStep.getIngredient();
+                if (ingredient.test(PeonyItems.PLACEHOLDER.getDefaultStack())) {
+                    this.placedIngredient = true;
+                    Peony.LOGGER.debug("Auto-skipped placeholder ingredient placement in tick");
+                    this.markDirty();
+                }
+            }
+
+            // Check if all steps are completed
             if (this.currentStepIndex > cursor.getLastStepIndex()) {
-                this.resetCraftingState();
+                Peony.LOGGER.debug("All steps completed, producing output");
                 this.setInputStack(recipe.get().value().getOutput());
+                this.resetCraftingState();
                 this.markDirty();
+                return;
             }
 
             // Advance to next step when current step is completed
             if (this.placedIngredient && this.processed) {
+                Peony.LOGGER.debug("Step {} completed, advancing to next step", this.currentStepIndex);
                 this.currentStepIndex++;
                 this.placedIngredient = false;
                 this.processed = false;
 
-                Peony.LOGGER.debug("Proceed to step: " + this.currentStepIndex);
+                // Check if we've reached the end after advancing
+                if (this.currentStepIndex > cursor.getLastStepIndex()) {
+                    Peony.LOGGER.debug("Reached final step after advancement, producing output");
+                    this.setInputStack(recipe.get().value().getOutput());
+                    this.resetCraftingState();
+                }
+
+                this.markDirty();
             }
         } else {
             // Reset state if no valid recipe
-            this.resetCraftingState();
+            if (!this.getInputStack().isEmpty()) {
+                Peony.LOGGER.debug("No valid recipe found, resetting crafting state");
+                this.resetCraftingState();
+            }
         }
-
-        this.usageCountdown--;
     }
 }

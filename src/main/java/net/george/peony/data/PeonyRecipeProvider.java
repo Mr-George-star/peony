@@ -8,18 +8,21 @@ import net.george.peony.api.action.ActionTypes;
 import net.george.peony.block.*;
 import net.george.peony.block.data.CookingSteps;
 import net.george.peony.data.json.MillingRecipeJsonBuilder;
+import net.george.peony.data.json.ParingRecipeJsonBuilder;
 import net.george.peony.data.json.SequentialCookingRecipeJsonBuilder;
 import net.george.peony.data.json.SequentialCraftingRecipeJsonBuilder;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.util.PeonyTags;
 import net.minecraft.block.Blocks;
 import net.minecraft.component.type.PotionContentsComponent;
+import net.minecraft.data.server.recipe.CookingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potions;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
@@ -121,6 +124,10 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
             }
         });
 
+        /* FURNACE */
+        CookingRecipeJsonBuilder.createSmelting(Ingredient.ofItems(PeonyBlocks.DOUGH), RecipeCategory.FOOD, Items.BREAD, 0.35F, 200)
+                .criterion(hasItem(PeonyBlocks.DOUGH), conditionsFromItem(PeonyBlocks.DOUGH)).offerTo(exporter, Peony.id("bread_from_dough"));
+
         /* CUSTOM RECIPE */
         /* MILLING */
         generateMillingRecipe(Blocks.HAY_BLOCK, Items.WHEAT, 9, 2, exporter);
@@ -132,22 +139,34 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .step(ActionTypes.kneading(), PeonyBlocks.FLOUR)
                 .step(ActionTypes.kneading(), PotionContentsComponent.createStack(Items.POTION, Potions.WATER))
                 .offerTo(exporter, Peony.id("dough_from_flour"));
+        SequentialCraftingRecipeJsonBuilder.create(PeonyBlocks.FLATBREAD)
+                .step(ActionTypes.kneading(), PeonyBlocks.DOUGH)
+                .step(ActionTypes.kneading(), PeonyItems.PLACEHOLDER)
+                .offerTo(exporter, Peony.id("flatbread_from_dough"));
 
         /* SEQUENTIAL COOKING */
         SequentialCookingRecipeJsonBuilder.create(550, false, PeonyItems.ROASTED_PEANUT_KERNEL)
                 .step(new CookingSteps.Step(240, 20, PeonyItems.PEANUT_KERNEL))
                 .offerTo(exporter);
+        SequentialCookingRecipeJsonBuilder.create(550, false, PeonyItems.TOMATO_SAUCE, Items.BOWL)
+                .step(new CookingSteps.Step(200, 60, PeonyItems.SPATULA, PeonyItems.PEELED_TOMATO))
+                .step(new CookingSteps.Step(200, 20, PeonyItems.PEELED_TOMATO))
+                .offerTo(exporter);
+        SequentialCookingRecipeJsonBuilder.create(550, true, PeonyItems.SCRAMBLED_EGGS, Items.BOWL)
+                .step(new CookingSteps.Step(80, 60, Items.EGG))
+                .step(new CookingSteps.Step(240, 20, Items.EGG))
+                .offerTo(exporter);
+
+        /* PARING */
+        ParingRecipeJsonBuilder.create(PeonyItems.TOMATO, PeonyItems.PEELED_TOMATO).category(RecipeCategory.FOOD).offerTo(exporter);
 
         // Vanilla Extend
-        SequentialCookingRecipeJsonBuilder.create(550, true, Items.COOKED_PORKCHOP)
-                .step(new CookingSteps.Step(240, 20, Items.PORKCHOP))
-                .offerTo(exporter);
-        SequentialCookingRecipeJsonBuilder.create(550, true, Items.COOKED_BEEF)
-                .step(new CookingSteps.Step(240, 20, Items.BEEF))
-                .offerTo(exporter);
-        SequentialCookingRecipeJsonBuilder.create(550, true, Items.COOKED_MUTTON)
-                .step(new CookingSteps.Step(240, 20, Items.MUTTON))
-                .offerTo(exporter);
+        createCookingRecipe(Items.BEEF, Items.COOKED_BEEF, exporter);
+        createCookingRecipe(Items.PORKCHOP, Items.COOKED_PORKCHOP, exporter);
+        createCookingRecipe(Items.MUTTON, Items.COOKED_MUTTON, exporter);
+        createCookingRecipe(Items.RABBIT, Items.COOKED_RABBIT, exporter);
+        createCookingRecipe(Items.COD, Items.COOKED_COD, exporter);
+        createCookingRecipe(Items.SALMON, Items.COOKED_SALMON, exporter);
     }
 
     public void generateMillingRecipe(ItemConvertible input, ItemConvertible outputItem, int outputCount, int millingTimes, RecipeExporter exporter) {
@@ -183,6 +202,12 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .pattern("S S")
                 .group(PEONY_BLOCKS)
                 .criterion(hasItem(logStick.getLog()), conditionsFromItem(logStick.getLog()))
+                .offerTo(exporter);
+    }
+
+    public static void createCookingRecipe(ItemConvertible input, ItemConvertible output, RecipeExporter exporter) {
+        SequentialCookingRecipeJsonBuilder.create(550, true, output)
+                .step(new CookingSteps.Step(240, 20, input))
                 .offerTo(exporter);
     }
 }

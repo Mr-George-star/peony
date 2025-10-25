@@ -1,0 +1,20 @@
+{
+  "type": "peony:sequential_cooking",
+  "needOil": true,
+  "output": {
+    "outputStack": {
+      "count": 1,
+      "id": "minecraft:cooked_cod"
+    }
+  },
+  "steps": [
+    {
+      "ingredient": {
+        "item": "minecraft:cod"
+      },
+      "maxTimeOverflow": 20,
+      "requiredTime": 240
+    }
+  ],
+  "temperature": 550
+}

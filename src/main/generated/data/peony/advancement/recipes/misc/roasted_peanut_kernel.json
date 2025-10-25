@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_roasted_peanut_kernel": {
+    "has_peanut_kernel": {
       "conditions": {
         "items": [
           {
-            "items": "peony:roasted_peanut_kernel"
+            "items": "peony:peanut_kernel"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_roasted_peanut_kernel"
+      "has_peanut_kernel"
     ]
   ],
   "rewards": {

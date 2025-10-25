@@ -1,0 +1,22 @@
+{
+  "type": "peony:sequential_crafting",
+  "output": {
+    "count": 1,
+    "id": "peony:flatbread"
+  },
+  "steps": [
+    {
+      "action": {
+        "type": "peony:kneading"
+      },
+      "ingredient": {
+        "item": "peony:dough"
+      }
+    },
+    {
+      "action": {
+        "type": "peony:kneading"
+      }
+    }
+  ]
+}

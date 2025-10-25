@@ -101,7 +101,7 @@ public class SequentialCraftingRecipeJsonBuilder implements RecipeJsonBuilder {
     @Override
     public void offerTo(RecipeExporter exporter, Identifier recipeId) {
         if (this.criteria.isEmpty()) {
-            this.criterion(this.getOutputItem());
+            this.criterion(this.steps.getFirst().getIngredient().getMatchingStacks()[0].getItem());
         }
         Advancement.Builder builder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
         Objects.requireNonNull(this.criteria).forEach(builder::criterion);

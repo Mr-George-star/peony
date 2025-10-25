@@ -51,6 +51,9 @@ public class PeonyModelProvider extends FabricModelProvider {
         generator.register(PeonyItems.ROASTED_PEANUT_KERNEL, Models.GENERATED);
         generator.register(PeonyItems.CRUSHED_PEANUTS, Models.GENERATED);
         generator.register(PeonyItems.TOMATO, Models.GENERATED);
+        generator.register(PeonyItems.PEELED_TOMATO, Models.GENERATED);
+        generator.register(PeonyItems.TOMATO_SAUCE, Models.GENERATED);
+        generator.register(PeonyItems.SCRAMBLED_EGGS, Models.GENERATED);
         generator.register(PeonyItems.LARD, Models.GENERATED);
         generator.register(PeonyItems.LARD_BOTTLE, Models.GENERATED);
 
@@ -61,5 +64,7 @@ public class PeonyModelProvider extends FabricModelProvider {
 
         generator.register(PeonyItems.NATURE_GAS_BUCKET, Models.GENERATED);
         generator.register(PeonyItems.LARD_BUCKET, Models.GENERATED);
+
+        generator.register(PeonyItems.MUSIC_DISC_SURPRISE, Models.GENERATED);
     }
 }

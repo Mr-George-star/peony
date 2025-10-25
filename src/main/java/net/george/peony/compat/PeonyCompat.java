@@ -42,6 +42,7 @@ public class PeonyCompat {
         registry.add(PeonyItems.PEANUT_KERNEL, 0.1F);
         registry.add(PeonyItems.TOMATO, 0.5F);
         registry.add(PeonyBlocks.DOUGH, 0.6F);
+        registry.add(PeonyBlocks.FLATBREAD, 0.6F);
     }
 
     private static void registerBurning() {

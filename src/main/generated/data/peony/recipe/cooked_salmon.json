@@ -1,0 +1,20 @@
+{
+  "type": "peony:sequential_cooking",
+  "needOil": true,
+  "output": {
+    "outputStack": {
+      "count": 1,
+      "id": "minecraft:cooked_salmon"
+    }
+  },
+  "steps": [
+    {
+      "ingredient": {
+        "item": "minecraft:salmon"
+      },
+      "maxTimeOverflow": 20,
+      "requiredTime": 240
+    }
+  ],
+  "temperature": 550
+}

@@ -1,8 +1,22 @@
 {
+  "paring": {
+    "subtitle": "sound.peony.paring",
+    "sounds": [
+      "peony:paring"
+    ]
+  },
   "shear_using": {
     "subtitle": "sound.peony.shear_using",
     "sounds": [
       "peony:shear_using"
+    ]
+  },
+  "music_disc_surprise": {
+    "sounds": [
+      {
+        "name": "peony:music_disc_surprise",
+        "stream": true
+      }
     ]
   }
 }

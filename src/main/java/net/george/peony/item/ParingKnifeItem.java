@@ -2,6 +2,7 @@ package net.george.peony.item;
 
 import net.george.peony.recipe.ParingRecipe;
 import net.george.peony.recipe.PeonyRecipes;
+import net.george.peony.sound.PeonySoundEvents;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.AttributeModifiersComponent;
@@ -19,6 +20,7 @@ import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeMatcher;
 import net.minecraft.recipe.input.SingleStackRecipeInput;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
@@ -77,6 +79,7 @@ public class ParingKnifeItem extends ToolItem {
             ItemStack result = matchedRecipe.get().value().craft(input, world.getRegistryManager());
             user.giveItemStack(result);
             offHandStack.decrementUnlessCreative(1, user);
+            world.playSound(user, user.getBlockPos(), PeonySoundEvents.ITEM_PARING, SoundCategory.PLAYERS, 1.0F, 1.0F);
             heldStack.damage(1, user, EquipmentSlot.MAINHAND);
             return TypedActionResult.success(heldStack);
         } else {

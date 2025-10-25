@@ -57,14 +57,52 @@ public class CookingSteps extends RecipeSteps<CookingSteps.Step> {
         final Ingredient requiredTool;
         final Ingredient ingredient;
         final boolean oilPlacingStep;
+        final StirFryingData fryingData;
 
-        public Step(int requiredTime, int maxTimeOverflow, Ingredient requiredTool, Ingredient ingredient) {
+        public Step(int requiredTime, int maxTimeOverflow, Ingredient requiredTool, Ingredient ingredient, StirFryingData fryingData) {
             super(ingredient);
             this.requiredTime = requiredTime;
             this.maxTimeOverflow = maxTimeOverflow;
             this.requiredTool = requiredTool;
             this.ingredient = ingredient;
             this.oilPlacingStep = false;
+            this.fryingData = fryingData;
+        }
+
+        public Step(int requiredTime, int maxTimeOverflow, ItemConvertible requiredTool, Ingredient ingredient, StirFryingData fryingData) {
+            this(requiredTime, maxTimeOverflow, ofItem(requiredTool), ingredient, fryingData);
+        }
+
+        public Step(int requiredTime, int maxTimeOverflow, Ingredient requiredTool, ItemConvertible ingredient, StirFryingData fryingData) {
+            this(requiredTime, maxTimeOverflow, requiredTool, ofItem(ingredient), fryingData);
+        }
+
+        public Step(int requiredTime, int maxTimeOverflow, ItemConvertible requiredTool, ItemConvertible ingredient, StirFryingData fryingData) {
+            this(requiredTime, maxTimeOverflow, ofItem(requiredTool), ofItem(ingredient), fryingData);
+        }
+
+        public Step(int requiredTime, int maxTimeOverflow, ItemConvertible requiredTool, Ingredient ingredient) {
+            this(requiredTime, maxTimeOverflow, ofItem(requiredTool), ingredient);
+        }
+
+        public Step(int requiredTime, int maxTimeOverflow, Ingredient requiredTool, ItemConvertible ingredient) {
+            this(requiredTime, maxTimeOverflow, requiredTool, ofItem(ingredient));
+        }
+
+        public Step(int requiredTime, int maxTimeOverflow, ItemConvertible requiredTool, ItemConvertible ingredient) {
+            this(requiredTime, maxTimeOverflow, ofItem(requiredTool), ofItem(ingredient));
+        }
+
+        public Step(int requiredTime, int maxTimeOverflow, Ingredient requiredTool, Ingredient ingredient) {
+            this(requiredTime, maxTimeOverflow, requiredTool, ingredient, StirFryingData.DEFAULT);
+        }
+
+        public Step(int requiredTime, int maxTimeOverflow, ItemConvertible ingredient) {
+            this(requiredTime, maxTimeOverflow, PeonyItems.PLACEHOLDER, ingredient);
+        }
+
+        public Step(int requiredTime, int maxTimeOverflow, ItemConvertible ingredient, StirFryingData fryingData) {
+            this(requiredTime, maxTimeOverflow, PeonyItems.PLACEHOLDER, ingredient, fryingData);
         }
 
         /**
@@ -79,14 +117,7 @@ public class CookingSteps extends RecipeSteps<CookingSteps.Step> {
             this.requiredTool = ofItem(PeonyItems.SPATULA);
             this.ingredient = ofItem(PeonyItems.LARD);
             this.oilPlacingStep = true;
-        }
-
-        public Step(int requiredTime, int maxTimeOverflow, ItemConvertible requiredTool, ItemConvertible ingredient) {
-            this(requiredTime, maxTimeOverflow, ofItem(requiredTool), ofItem(ingredient));
-        }
-
-        public Step(int requiredTime, int maxTimeOverflow, ItemConvertible ingredient) {
-            this(requiredTime, maxTimeOverflow, ofItem(PeonyItems.PLACEHOLDER), ofItem(ingredient));
+            this.fryingData = null;
         }
 
         public int getRequiredTime() {
@@ -105,11 +136,16 @@ public class CookingSteps extends RecipeSteps<CookingSteps.Step> {
             return this.oilPlacingStep;
         }
 
+        public StirFryingData getFryingData() {
+            return this.fryingData;
+        }
+
         protected void write(RegistryByteBuf buf) {
             PacketCodecs.INTEGER.encode(buf, this.requiredTime);
             PacketCodecs.INTEGER.encode(buf, this.maxTimeOverflow);
             Ingredient.PACKET_CODEC.encode(buf, this.requiredTool);
             Ingredient.PACKET_CODEC.encode(buf, this.ingredient);
+            StirFryingData.PACKET_CODEC.encode(buf, this.fryingData);
         }
 
         protected static CookingSteps.Step read(RegistryByteBuf buf) {
@@ -121,7 +157,8 @@ public class CookingSteps extends RecipeSteps<CookingSteps.Step> {
             if (maxTimeOverflow < 0) {
                 maxTimeOverflow = 0;
             }
-            return new CookingSteps.Step(requiredTime, maxTimeOverflow, Ingredient.PACKET_CODEC.decode(buf), Ingredient.PACKET_CODEC.decode(buf));
+            return new CookingSteps.Step(requiredTime, maxTimeOverflow,
+                    Ingredient.PACKET_CODEC.decode(buf), Ingredient.PACKET_CODEC.decode(buf), StirFryingData.PACKET_CODEC.decode(buf));
         }
 
         @Override
@@ -165,7 +202,12 @@ public class CookingSteps extends RecipeSteps<CookingSteps.Step> {
                                     optional -> optional.orElseGet(CraftingSteps.Step::getDefaultIngredient),
                                     ingredient -> ingredient.equals(getDefaultIngredient()) ? Optional.empty() : Optional.of(ingredient)
                             ).forGetter(Step::getRequiredTool),
-                    Ingredient.DISALLOW_EMPTY_CODEC.fieldOf("ingredient").forGetter(Step::getIngredient)
+                    Ingredient.DISALLOW_EMPTY_CODEC.fieldOf("ingredient").forGetter(Step::getIngredient),
+                    StirFryingData.CODEC.optionalFieldOf("fryingData")
+                            .xmap(
+                                    optional -> optional.orElse(StirFryingData.DEFAULT),
+                                    data -> data.equals(StirFryingData.DEFAULT) ? Optional.empty() : Optional.of(data)
+                            ).forGetter(Step::getFryingData)
             ).apply(instance, Step::new));
             PACKET_CODEC = PacketCodec.of(Step::write, Step::read);
         }

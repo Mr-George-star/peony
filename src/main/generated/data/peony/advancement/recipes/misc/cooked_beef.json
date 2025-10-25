@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_cooked_beef": {
+    "has_beef": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:cooked_beef"
+            "items": "minecraft:beef"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_cooked_beef"
+      "has_beef"
     ]
   ],
   "rewards": {

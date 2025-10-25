@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_peeled_tomato": {
+      "conditions": {
+        "items": [
+          {
+            "items": "peony:peeled_tomato"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "peony:tomato_sauce"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_peeled_tomato"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "peony:tomato_sauce"
+    ]
+  }
+}

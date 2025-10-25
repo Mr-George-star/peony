@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.george.peony.api.heat.HeatLevel;
 import net.george.peony.block.PeonyBlocks;
-import net.george.peony.block.data.CraftingSteps;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.util.PeonyTranslationKeys;
 import net.minecraft.registry.RegistryWrapper;
@@ -26,6 +25,9 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyItems.CRUSHED_PEANUTS, "花生碎");
         translationBuilder.add(PeonyItems.TOMATO, "西红柿");
         translationBuilder.add(PeonyItems.TOMATO_SEEDS, "西红柿种子");
+        translationBuilder.add(PeonyItems.PEELED_TOMATO, "去皮的西红柿");
+        translationBuilder.add(PeonyItems.TOMATO_SAUCE, "番茄酱");
+        translationBuilder.add(PeonyItems.SCRAMBLED_EGGS, "炒蛋");
         translationBuilder.add(PeonyItems.LARD, "猪油");
         translationBuilder.add(PeonyItems.LARD_BOTTLE, "猪油瓶");
 
@@ -36,6 +38,12 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
 
         translationBuilder.add(PeonyItems.NATURE_GAS_BUCKET, "天然气桶");
         translationBuilder.add(PeonyItems.LARD_BUCKET, "猪油桶");
+
+        translationBuilder.add(PeonyItems.MUSIC_DISC_SURPRISE, "惊喜");
+
+        translationBuilder.add(PeonyBlocks.DOUGH, "面团");
+        translationBuilder.add(PeonyBlocks.FLOUR, "面粉");
+        translationBuilder.add(PeonyBlocks.FLATBREAD, "面饼");
 
         translationBuilder.add(PeonyBlocks.MILLSTONE, "石磨");
         translationBuilder.add(PeonyBlocks.OAK_CUTTING_BOARD, "橡木菜板");
@@ -71,8 +79,7 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.CHERRY_POT_STAND_WITH_CAMPFIRE, "带营火的樱花木锅架");
         translationBuilder.add(PeonyBlocks.DARK_OAK_POT_STAND_WITH_CAMPFIRE, "带营火的深色橡木锅架");
         translationBuilder.add(PeonyBlocks.MANGROVE_POT_STAND_WITH_CAMPFIRE, "带营火的红树木锅架");
-        translationBuilder.add(PeonyBlocks.DOUGH, "面团");
-        translationBuilder.add(PeonyBlocks.FLOUR, "面粉");
+
         translationBuilder.add(PeonyBlocks.BARLEY_CROP, "大麦作物");
         translationBuilder.add(PeonyBlocks.PEANUT_CROP, "花生作物");
         translationBuilder.add(PeonyBlocks.TOMATO_VINES, "西红柿藤");
@@ -80,10 +87,6 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.NATURE_GAS, "天然气");
         translationBuilder.add(PeonyBlocks.LARD_FLUID, "猪油");
         translationBuilder.add(PeonyBlocks.LARD_CAULDRON, "装有猪油的炼药锅");
-
-        /* Procedures */
-//        translationBuilder.add(CraftingSteps.Procedure.KNEADING.getTranslationKey(), "揉捏");
-//        translationBuilder.add(CraftingSteps.Procedure.CUTTING.getTranslationKey(), "切");
 
         translationBuilder.add(PeonyTranslationKeys.ITEM_GROUP_KEY, "牡丹");
 
@@ -96,6 +99,14 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
 
         /* SOUNDS */
         translationBuilder.add("sound.peony.shear_using", "使用剪刀");
+        translationBuilder.add("sound.peony.paring", "削皮");
+
+        /* JUKEBOX SONGS */
+        translationBuilder.add("jukebox_song.peony.surprise", "惊喜 (Never Gonna Give You Up) - Rick Astley");
+
+        /* DAMAGE TYPES */
+        translationBuilder.add("death.attack.scald", "%1$s被烫死了");
+        translationBuilder.add("death.attack.scald.player", "%1$s在与%2$s的战斗中被烫死了");
 
         /* HEATING LEVELS */
         translationBuilder.add(HeatLevel.NONE.getTranslationKey(), "无");

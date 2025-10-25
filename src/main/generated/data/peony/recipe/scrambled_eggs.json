@@ -1,0 +1,28 @@
+{
+  "type": "peony:sequential_cooking",
+  "needOil": true,
+  "output": {
+    "container": "minecraft:bowl",
+    "outputStack": {
+      "count": 1,
+      "id": "peony:scrambled_eggs"
+    }
+  },
+  "steps": [
+    {
+      "ingredient": {
+        "item": "minecraft:egg"
+      },
+      "maxTimeOverflow": 60,
+      "requiredTime": 80
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:egg"
+      },
+      "maxTimeOverflow": 20,
+      "requiredTime": 240
+    }
+  ],
+  "temperature": 550
+}

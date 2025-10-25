@@ -28,7 +28,7 @@ import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 
-public class  CuttingBoardBlock extends BlockWithEntity implements Waterloggable {
+public class CuttingBoardBlock extends BlockWithEntity implements Waterloggable {
     public static final MapCodec<CuttingBoardBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(createSettingsCodec(), createLogCodec()).apply(instance, CuttingBoardBlock::new));
     public static final VoxelShape SHAPE = Block.createCuboidShape(1, 0, 1, 15, 3, 15);

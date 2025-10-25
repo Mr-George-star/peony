@@ -88,7 +88,7 @@ public class MillingRecipeJsonBuilder implements RecipeJsonBuilder {
     @Override
     public void offerTo(RecipeExporter exporter, Identifier recipeId) {
         if (this.criteria.isEmpty()) {
-            this.criterion(this.getOutputItem());
+            this.criterion(this.input);
         }
         Advancement.Builder builder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
         Objects.requireNonNull(this.criteria).forEach(builder::criterion);

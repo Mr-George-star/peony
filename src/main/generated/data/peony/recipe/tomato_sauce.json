@@ -1,0 +1,31 @@
+{
+  "type": "peony:sequential_cooking",
+  "needOil": false,
+  "output": {
+    "container": "minecraft:bowl",
+    "outputStack": {
+      "count": 1,
+      "id": "peony:tomato_sauce"
+    }
+  },
+  "steps": [
+    {
+      "ingredient": {
+        "item": "peony:peeled_tomato"
+      },
+      "maxTimeOverflow": 60,
+      "requiredTime": 200,
+      "requiredTool": {
+        "item": "peony:spatula"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "peony:peeled_tomato"
+      },
+      "maxTimeOverflow": 20,
+      "requiredTime": 200
+    }
+  ],
+  "temperature": 550
+}

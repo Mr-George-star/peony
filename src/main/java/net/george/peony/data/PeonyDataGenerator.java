@@ -2,6 +2,8 @@ package net.george.peony.data;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.george.peony.block.PeonyJukeboxSongs;
+import net.george.peony.compat.PeonyDamageTypes;
 import net.george.peony.data.tag.PeonyBlockTagsProvider;
 import net.george.peony.data.tag.PeonyFluidTagsProvider;
 import net.george.peony.data.tag.PeonyItemTagsProvider;
@@ -31,5 +33,7 @@ public class PeonyDataGenerator implements DataGeneratorEntrypoint {
 	public void buildRegistry(RegistryBuilder registryBuilder) {
 		registryBuilder.addRegistry(RegistryKeys.CONFIGURED_FEATURE, PeonyConfiguredFeatures::boostrap);
 		registryBuilder.addRegistry(RegistryKeys.PLACED_FEATURE, PeonyPlacedFeatures::boostrap);
+		registryBuilder.addRegistry(RegistryKeys.JUKEBOX_SONG, PeonyJukeboxSongs::boostrap);
+		registryBuilder.addRegistry(RegistryKeys.DAMAGE_TYPE, PeonyDamageTypes::bootstrap);
 	}
 }

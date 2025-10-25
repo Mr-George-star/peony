@@ -50,24 +50,32 @@ public class SkilletBlockEntityRenderer implements BlockEntityRenderer<SkilletBl
         if (ingredients.isEmpty()) {
             renderSingleItem(entity, entity.getOutputStack(), direction, 0, matrices, vertexConsumers, light, overlay);
         } else {
-            for (int index = 0; index < ingredients.size(); index++) {
-                ItemStack stack = ingredients.get(index);
-                renderIngredient(entity, stack, direction, index, matrices, vertexConsumers, tickDelta, light, overlay);
+            int index = 0;
+            int stackIndex = 0;
+            while (stackIndex < ingredients.size()) {
+                ItemStack stack = ingredients.get(stackIndex);
+                if (renderIngredient(entity, stack, direction, index, matrices, vertexConsumers, tickDelta, light, overlay)) {
+                    index++;
+                }
+                stackIndex++;
             }
         }
     }
 
-    private void renderIngredient(SkilletBlockEntity entity, ItemStack stack, Direction direction, int index,
+    private boolean renderIngredient(SkilletBlockEntity entity, ItemStack stack, Direction direction, int index,
                                   MatrixStack matrices, VertexConsumerProvider vertexConsumers, float tickDelta, int light, int overlay) {
+        boolean increaseIndex = true;
         matrices.push();
 
         if (entity.allowOilBasedRecipes && SkilletBlockEntity.isCookingOil(stack)) {
             this.renderOil(entity, matrices, vertexConsumers, tickDelta, light, overlay);
+            increaseIndex = false;
         } else {
             renderSingleItem(entity, stack, direction, index, matrices, vertexConsumers, light, overlay);
         }
 
         matrices.pop();
+        return increaseIndex;
     }
 
     private void renderSingleItem(SkilletBlockEntity entity, ItemStack stack, Direction direction, int index,
@@ -111,7 +119,7 @@ public class SkilletBlockEntityRenderer implements BlockEntityRenderer<SkilletBl
         if (world == null) return;
 
         long time = world.getTime();
-        float waveOffset = (float) Math.sin((time + tickDelta) * 0.1) * 0.01f;
+        float waveOffset = (float) Math.sin((time + tickDelta) * 0.1) * 0.005f;
         float liquidHeight = 0.075F;
 
         MinecraftClient client = MinecraftClient.getInstance();

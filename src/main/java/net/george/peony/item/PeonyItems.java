@@ -3,6 +3,7 @@ package net.george.peony.item;
 import net.george.peony.Peony;
 import net.george.peony.PeonyItemGroups;
 import net.george.peony.block.PeonyBlocks;
+import net.george.peony.block.PeonyJukeboxSongs;
 import net.george.peony.fluid.PeonyFluids;
 import net.minecraft.block.Block;
 import net.minecraft.item.*;
@@ -30,6 +31,12 @@ public class PeonyItems {
             createDefaultSettings().food(PeonyFoodComponents.TOMATO));
     public static final Item TOMATO_SEEDS = register("tomato_seeds", settings ->
             new AliasedBlockItem(PeonyBlocks.TOMATO_VINES, settings), createDefaultSettings());
+    public static final Item PEELED_TOMATO = register("peeled_tomato", Item::new,
+            createDefaultSettings().food(PeonyFoodComponents.TOMATO));
+    public static final Item TOMATO_SAUCE = register("tomato_sauce", Item::new,
+            createDefaultSettings().maxCount(1).food(PeonyFoodComponents.TOMATO_SAUCE));
+    public static final Item SCRAMBLED_EGGS = register("scrambled_eggs", Item::new,
+            createDefaultSettings().maxCount(1).food(PeonyFoodComponents.SCRAMBLED_EGGS));
     public static final Item LARD = register("lard", Item::new, createDefaultSettings().food(PeonyFoodComponents.LARD));
     public static final Item LARD_BOTTLE = register("lard_bottle", Item::new, createDefaultSettings().maxCount(16));
 
@@ -46,6 +53,7 @@ public class PeonyItems {
     public static final Item LARD_BUCKET = register("lard_bucket", settings ->
             new BucketItem(PeonyFluids.STILL_LARD, settings), createDefaultSettings().maxCount(1).recipeRemainder(Items.BUCKET));
 
+    public static final Item MUSIC_DISC_SURPRISE = register("music_disc_surprise", Item::new, createDefaultSettings().maxCount(1).jukeboxPlayable(PeonyJukeboxSongs.SURPRISE_KEY));
     public static final Item PLACEHOLDER = register("placeholder", Item::new, createDefaultSettings(), false);
 
     public static Item register(String name, Function<Item.Settings, Item> itemFactory, Item.Settings settings) {

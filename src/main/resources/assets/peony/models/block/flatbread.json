@@ -1,0 +1,25 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"gui_light": "front",
+	"textures": {
+		"flatbread": "peony:block/flatbread",
+		"particle": "peony:block/flatbread"
+	},
+	"elements": [
+		{
+			"name": "main",
+			"from": [1, 0, 1],
+			"to": [15, 1, 15],
+			"rotation": {"angle": 0, "axis": "y", "origin": [1, 0, 1]},
+			"faces": {
+				"north": {"uv": [7, 0, 14, 0.5], "texture": "#flatbread"},
+				"east": {"uv": [7, 0, 14, 0.5], "texture": "#flatbread"},
+				"south": {"uv": [7, 0, 14, 0.5], "texture": "#flatbread"},
+				"west": {"uv": [7, 0, 14, 0.5], "texture": "#flatbread"},
+				"up": {"uv": [7, 7, 0, 0], "texture": "#flatbread"},
+				"down": {"uv": [7, 7, 0, 14], "texture": "#flatbread"}
+			}
+		}
+	]
+}

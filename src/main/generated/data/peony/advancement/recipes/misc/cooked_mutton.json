@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_cooked_mutton": {
+    "has_mutton": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:cooked_mutton"
+            "items": "minecraft:mutton"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_cooked_mutton"
+      "has_mutton"
     ]
   ],
   "rewards": {
