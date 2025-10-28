@@ -28,12 +28,14 @@ public class PeonyTranslationKeys {
     public static final String SECOND = createTranslationKey("unit", "second");
 
     /* JADE */
-    public static final String JADE_SKILLET_COOKING_TIME = createTranslationKey("jade", "tooltip", "skillet", "cooking", "time");
-    public static final String JADE_SKILLET_COOKING_OVERFLOW_TIME = createTranslationKey("jade", "tooltip", "skillet", "cooking", "overflow", "time");
+    public static final String JADE_SKILLET_MELTING_OIL = createTranslationKey("jade", "tooltip", "skillet", "melting", "oil");
+    public static final String JADE_SKILLET_CONTINUE = createTranslationKey("jade", "tooltip", "skillet", "continue");
+    public static final String JADE_SKILLET_HEATING_TIME = createTranslationKey("jade", "tooltip", "skillet", "heating", "time");
+    public static final String JADE_SKILLET_OVERFLOW_TIME = createTranslationKey("jade", "tooltip", "skillet", "overflow", "time");
+    public static final String JADE_SKILLET_STIR_FRYING_COUNT = createTranslationKey("jade", "tooltip", "skillet", "stir", "frying", "count");
+    public static final String JADE_SKILLET_TOOL_USAGE_TOOLTIP = createTranslationKey("jade", "tooltip", "skillet", "tool", "usage", "tooltip");
     public static final String JADE_SKILLET_CONTAINER_TOOLTIP = createTranslationKey("jade", "tooltip", "skillet", "container");
     public static final String JADE_SKILLET_NON_CONTAINER_TOOLTIP = createTranslationKey("jade", "tooltip", "skillet", "non", "container");
-    public static final String JADE_SKILLET_MELTING_OIL = createTranslationKey("jade", "tooltip", "skillet", "melting", "oil");
-    public static final String JADE_SKILLET_TOOL_USAGE_TOOLTIP = createTranslationKey("jade", "tooltip", "skillet", "tool", "usage", "tooltip");
     public static final String JADE_HEAT_SOURCE_AVAILABLE_HEAT_AMOUNT = createConfigTranslationKey("jade", "heat", "source", "available", "heat", "amount");
     public static final String JADE_HEAT_SOURCE_HEATING_LEVEL = createConfigTranslationKey("jade", "heat", "source", "heating", "level");
 

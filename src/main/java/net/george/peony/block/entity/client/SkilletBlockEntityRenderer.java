@@ -67,7 +67,7 @@ public class SkilletBlockEntityRenderer implements BlockEntityRenderer<SkilletBl
         boolean increaseIndex = true;
         matrices.push();
 
-        if (entity.allowOilBasedRecipes && SkilletBlockEntity.isCookingOil(stack)) {
+        if (entity.context.allowOilBasedRecipes && SkilletBlockEntity.isCookingOil(stack)) {
             this.renderOil(entity, matrices, vertexConsumers, tickDelta, light, overlay);
             increaseIndex = false;
         } else {

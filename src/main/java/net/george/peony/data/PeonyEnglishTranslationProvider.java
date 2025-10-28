@@ -133,12 +133,14 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add("config.jade.plugin_peony.skillet_component", "Skillet Status Display");
         translationBuilder.add("config.jade.plugin_peony.pot_stand_with_campfire_component", "Oak Pot Stand With Campfire - Temperature Data Display");
 
-        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_COOKING_TIME, "Cooking, at %d second(s), %d second(s) left");
-        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_COOKING_OVERFLOW_TIME, "Timed Out! At %d seconds(s), %d second(s) left");
+        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_MELTING_OIL, "Melting the oil, at %d second(s), %d second(s) left");
+        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_CONTINUE, "Add any ingredient to proceed to the next step");
+        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_HEATING_TIME, "Cooking, at %d second(s), %d second(s) left");
+        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_OVERFLOW_TIME, "Timed Out! At %d seconds(s), %d second(s) left");
+        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_STIR_FRYING_COUNT, "Stir-frying, needs %d times, %d time(s) left");
+        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_TOOL_USAGE_TOOLTIP, "The tool needed to proceed to the next step: ");
         translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_CONTAINER_TOOLTIP, "Cooking is finished, the container to transfer the finished product: ");
         translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_NON_CONTAINER_TOOLTIP, "Cooking is finished");
-        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_MELTING_OIL, "Melting the oil, at %d second(s), %d second(s) left");
-        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_TOOL_USAGE_TOOLTIP, "The tool needed to proceed to the next step: ");
         translationBuilder.add(PeonyTranslationKeys.JADE_HEAT_SOURCE_AVAILABLE_HEAT_AMOUNT, "Available heat range: %d°C-%d°C");
         translationBuilder.add(PeonyTranslationKeys.JADE_HEAT_SOURCE_HEATING_LEVEL, "Heating Level: ");
     }

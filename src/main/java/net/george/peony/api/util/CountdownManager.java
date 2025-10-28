@@ -59,6 +59,16 @@ public class CountdownManager implements NbtSerializable {
         Optional.ofNullable(this.get(componentName)).ifPresent(CountdownComponent::reset);
     }
 
+    public boolean isActive(String componentName) {
+        CountdownComponent component = this.components.get(componentName);
+        return component != null && component.started && component.currentTick > 0;
+    }
+
+    public int getRemainingTicks(String componentName) {
+        CountdownComponent component = this.components.get(componentName);
+        return component != null && component.started ? component.currentTick : 0;
+    }
+
     @Override
     public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         for (CountdownComponent component : this.components.values()) {

@@ -119,7 +119,7 @@ public interface AccessibleInventory {
         public boolean result;
         public int decrementCount;
 
-        InsertResult(boolean result, int decrementCount) {
+        public InsertResult(boolean result, int decrementCount) {
             this.result = result;
             this.decrementCount = decrementCount;
         }

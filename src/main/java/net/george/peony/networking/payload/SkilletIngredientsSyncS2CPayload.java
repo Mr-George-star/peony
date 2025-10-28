@@ -33,7 +33,7 @@ public record SkilletIngredientsSyncS2CPayload(List<ItemStack> ingredients, bool
             if (!ingredients.isEmpty()) {
                 skillet.addedIngredients.addAll(ingredients);
             }
-            skillet.allowOilBasedRecipes = payload.allowOilBasedRecipes;
+            skillet.context.allowOilBasedRecipes = payload.allowOilBasedRecipes;
             skillet.markDirty();
         }
     });

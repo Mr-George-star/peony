@@ -7,6 +7,7 @@ import net.george.peony.api.action.ActionType;
 import net.george.peony.api.action.ActionTypes;
 import net.george.peony.block.*;
 import net.george.peony.block.data.CookingSteps;
+import net.george.peony.block.data.StirFryingData;
 import net.george.peony.data.json.MillingRecipeJsonBuilder;
 import net.george.peony.data.json.ParingRecipeJsonBuilder;
 import net.george.peony.data.json.SequentialCookingRecipeJsonBuilder;
@@ -154,7 +155,7 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .offerTo(exporter);
         SequentialCookingRecipeJsonBuilder.create(550, true, PeonyItems.SCRAMBLED_EGGS, Items.BOWL)
                 .step(new CookingSteps.Step(80, 60, Items.EGG))
-                .step(new CookingSteps.Step(240, 20, Items.EGG))
+                .step(new CookingSteps.Step(240, 20, PeonyItems.SPATULA, Items.EGG, new StirFryingData(3)))
                 .offerTo(exporter);
 
         /* PARING */

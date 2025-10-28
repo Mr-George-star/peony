@@ -1,4 +1,4 @@
-// 1.21.1	2025-10-25T17:26:48.5805764	Peony/Recipes
+// 1.21.1	2025-10-28T20:00:23.9265956	Peony/Recipes
 72323c336cff1f58bf2159cc9c09937a70069a36 data\peony\advancement\recipes\misc\cherry_log_stick.json
 afc6c0583c3c508f09f48e89bbe9477ceea564e2 data\peony\advancement\recipes\misc\nature_gas_detector.json
 53c345d14aa51741b6a7ccf50bc7d0719c7bf1f9 data\peony\recipe\cherry_log_stick.json
@@ -94,4 +94,4 @@ c9d32a264a55f17ce0bcfe6ab00ff5f71abef3be data\peony\recipe\cooked_porkchop.json
 2ca3fd02659532613fa439ac43445ef5dd649ca1 data\peony\advancement\recipes\tools\spatula.json
 c7136430bd693a47210db23c875d3b668af71050 data\peony\advancement\recipes\food\bread_from_dough.json
 6e36ad88fe4816c432af72d83cbeade7d3996c2b data\peony\recipe\acacia_pot_stand.json
-95f7f071dd05b8d6ea57003fd982078b34a4513b data\peony\recipe\scrambled_eggs.json
+7f9d1ba592b9e98b91a58347a345a88eb9383580 data\peony\recipe\scrambled_eggs.json

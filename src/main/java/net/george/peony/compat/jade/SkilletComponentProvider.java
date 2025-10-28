@@ -1,5 +1,6 @@
 package net.george.peony.compat.jade;
 
+import net.george.peony.Peony;
 import net.george.peony.block.entity.SkilletBlockEntity;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.util.PeonyTranslationKeys;
@@ -25,32 +26,27 @@ public enum SkilletComponentProvider implements IBlockComponentProvider, IServer
 
     @Override
     public void appendTooltip(ITooltip tooltip, BlockAccessor blockAccessor, IPluginConfig config) {
-        if (blockAccessor.getBlockEntity() instanceof SkilletBlockEntity) {
-            NbtCompound data = blockAccessor.getServerData();
-            boolean containsHasOil = data.contains("HasOil");
-            if (!containsHasOil || !data.getBoolean("HasOil")) {
-                if (data.contains("InOverflow")) {
-                    if (data.getBoolean("InOverflow")) {
-                        int overflowTime = this.getIntData(data, "OverflowTime");
-                        int maxOverflowTime = this.getIntData(data, "MaxOverflowTime");
-                        tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_COOKING_OVERFLOW_TIME,
-                                        Math.round((float) overflowTime / 20), Math.round((float) maxOverflowTime / 20))
-                                .formatted(Formatting.RED));
-                    } else {
-                        int heatingTime = this.getIntData(data, "HeatingTime");
-                        int requiredHeatingTime = this.getIntData(data, "RequiredHeatingTime");
-                        if (heatingTime > 0 && requiredHeatingTime > 0) {
-                            tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_COOKING_TIME,
-                                Math.round((float) heatingTime / 20), Math.round((float) requiredHeatingTime / 20)));
-                        }
-                    }
+        if (blockAccessor.getBlockEntity() instanceof SkilletBlockEntity skillet) {
+            NbtCompound nbt = blockAccessor.getServerData();
+            SkilletBlockEntity.CookingStates state;
+            if (nbt.contains("State")) {
+                try {
+                    String stateName = nbt.getString("State");
+                    state = SkilletBlockEntity.CookingStates.valueOf(stateName);
+                    Peony.LOGGER.debug("Restored state from NBT: {}", stateName);
+                } catch (IllegalArgumentException e) {
+                    state = SkilletBlockEntity.CookingStates.IDLE;
+                    Peony.LOGGER.warn("Failed to restore state from NBT, defaulting to IDLE");
                 }
+            } else {
+                state = SkilletBlockEntity.CookingStates.IDLE;
             }
-            if (containsHasOil) {
-                if (data.getBoolean("HasOil")) {
-                    int oilProcessingStage = this.getIntData(data, "OilProcessingStage");
-                    int heatingTime = this.getIntData(data, "HeatingTime");
-                    int requiredHeatingTime = this.getIntData(data, "RequiredHeatingTime");
+
+            switch (state) {
+                case OIL_PROCESSING -> {
+                    int oilProcessingStage = this.getIntData(nbt, "OilProcessingStage");
+                    int heatingTime = this.getIntData(nbt, "HeatingTime");
+                    int requiredHeatingTime = this.getIntData(nbt, "RequiredHeatingTime");
                     if (oilProcessingStage == 0) {
                         int displayHeatingTime = Math.round((float) heatingTime / 20);
                         int displayRequiredHeatingTime = Math.round((float) requiredHeatingTime / 20);
@@ -62,18 +58,41 @@ public enum SkilletComponentProvider implements IBlockComponentProvider, IServer
                             tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_TOOL_USAGE_TOOLTIP));
                             tooltip.append(icon);
                         }
+                    } else {
+                        tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_CONTINUE));
                     }
                 }
-            }
-            if (data.contains("ContainerTooltip")) {
-                if (data.getBoolean("ContainerTooltip") && data.contains("Container")) {
-                    Item container = Registries.ITEM.get(Identifier.tryParse(data.getString("Container")));
-                    IElementHelper elements = IElementHelper.get();
-                    IElement icon = elements.item(new ItemStack(container), 0.5f).size(new Vec2f(10, 10)).translate(new Vec2f(0, -1));
-                    tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_CONTAINER_TOOLTIP));
-                    tooltip.append(icon);
-                } else {
-                    tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_NON_CONTAINER_TOOLTIP));
+                case HEATING -> {
+                    int heatingTime = this.getIntData(nbt, "HeatingTime");
+                    int requiredHeatingTime = this.getIntData(nbt, "RequiredHeatingTime");
+                    if (heatingTime > 0 && requiredHeatingTime > 0) {
+                        tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_HEATING_TIME,
+                                Math.round((float) heatingTime / 20), Math.round((float) requiredHeatingTime / 20)));
+                    }
+                }
+                case STIR_FRYING -> {
+                    int stirFryingCount = this.getIntData(nbt, "StirFryingCount");
+                    int requiredStirFryingCount = this.getIntData(nbt, "RequiredStirFryingCount");
+                    tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_STIR_FRYING_COUNT,
+                            requiredStirFryingCount, stirFryingCount));
+                }
+                case OVERFLOW -> {
+                    int overflowTime = this.getIntData(nbt, "OverflowTime");
+                    int maxOverflowTime = this.getIntData(nbt, "MaxOverflowTime");
+                    tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_OVERFLOW_TIME,
+                                    Math.round((float) overflowTime / 20), Math.round((float) maxOverflowTime / 20))
+                            .formatted(Formatting.RED));
+                }
+                case COMPLETED, FAILED -> {
+                    if (nbt.getBoolean("ContainerTooltip") && nbt.contains("Container")) {
+                        Item container = Registries.ITEM.get(Identifier.tryParse(nbt.getString("Container")));
+                        IElementHelper elements = IElementHelper.get();
+                        IElement icon = elements.item(new ItemStack(container), 0.5f).size(new Vec2f(10, 10)).translate(new Vec2f(0, -1));
+                        tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_CONTAINER_TOOLTIP));
+                        tooltip.append(icon);
+                    } else {
+                        tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_NON_CONTAINER_TOOLTIP));
+                    }
                 }
             }
         }
@@ -82,7 +101,7 @@ public enum SkilletComponentProvider implements IBlockComponentProvider, IServer
     @Override
     public void appendServerData(NbtCompound nbt, BlockAccessor blockAccessor) {
         if (blockAccessor.getBlockEntity() instanceof SkilletBlockEntity skillet) {
-            skillet.writeDataToNbt(nbt);
+            skillet.context.writeNbt(nbt, blockAccessor.getLevel().getRegistryManager());
             if (!skillet.getOutputStack().isEmpty()) {
                 ItemConvertible requiredContainer = skillet.getRequiredContainer();
 

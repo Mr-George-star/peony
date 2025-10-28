@@ -17,11 +17,17 @@
       "requiredTime": 80
     },
     {
+      "fryingData": {
+        "times": 3
+      },
       "ingredient": {
         "item": "minecraft:egg"
       },
       "maxTimeOverflow": 20,
-      "requiredTime": 240
+      "requiredTime": 240,
+      "requiredTool": {
+        "item": "peony:spatula"
+      }
     }
   ],
   "temperature": 550
