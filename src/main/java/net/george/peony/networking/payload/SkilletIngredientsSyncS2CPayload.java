@@ -4,6 +4,7 @@ import net.george.networking.api.GameNetworking;
 import net.george.peony.Peony;
 import net.george.peony.block.entity.SkilletBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -15,25 +16,32 @@ import net.minecraft.util.math.BlockPos;
 import java.util.List;
 import java.util.Objects;
 
-public record SkilletIngredientsSyncS2CPayload(List<ItemStack> ingredients, boolean allowOilBasedRecipes, BlockPos pos) implements CustomPayload {
+public record SkilletIngredientsSyncS2CPayload(List<ItemStack> ingredients, boolean allowOilBasedRecipes, ItemStack requiredContainer, BlockPos pos) implements CustomPayload {
     public static final Identifier PACKET_ID = Peony.id("skillet_ingredients_sync");
     public static final Id<SkilletIngredientsSyncS2CPayload> ID = new Id<>(PACKET_ID);
     public static final PacketCodec<RegistryByteBuf, SkilletIngredientsSyncS2CPayload> CODEC =
             PacketCodec.tuple(
                     ItemStack.OPTIONAL_PACKET_CODEC.collect(PacketCodecs.toList()), SkilletIngredientsSyncS2CPayload::ingredients,
                     PacketCodecs.BOOL, SkilletIngredientsSyncS2CPayload::allowOilBasedRecipes,
+                    ItemStack.OPTIONAL_PACKET_CODEC, SkilletIngredientsSyncS2CPayload::requiredContainer,
                     BlockPos.PACKET_CODEC, SkilletIngredientsSyncS2CPayload::pos,
                     SkilletIngredientsSyncS2CPayload::new
             );
     public static final GameNetworking.PayloadReceiver<SkilletIngredientsSyncS2CPayload> RECEIVER = (payload, context) -> context.runInClient(client -> {
         BlockEntity blockEntity = Objects.requireNonNull(client.world).getBlockEntity(payload.pos);
         List<ItemStack> ingredients = payload.ingredients;
+        ItemStack requiredContainer = payload.requiredContainer;
         if (blockEntity instanceof SkilletBlockEntity skillet) {
             skillet.addedIngredients.clear();
             if (!ingredients.isEmpty()) {
                 skillet.addedIngredients.addAll(ingredients);
             }
             skillet.context.allowOilBasedRecipes = payload.allowOilBasedRecipes;
+            if (requiredContainer.isEmpty()) {
+                skillet.setRequiredContainer(null);
+            } else {
+                skillet.setRequiredContainer(requiredContainer.getItem());
+            }
             skillet.markDirty();
         }
     });

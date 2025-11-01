@@ -3,7 +3,6 @@ package net.george.peony.block.entity.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.george.peony.block.entity.NonBlockRenderingItems;
 import net.george.peony.block.entity.SkilletBlockEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
@@ -18,11 +17,12 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.joml.Matrix4f;
 
@@ -42,28 +42,71 @@ public class SkilletBlockEntityRenderer implements BlockEntityRenderer<SkilletBl
     @Override
     public void render(SkilletBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         Direction direction = entity.getDirection();
+        SkilletBlockEntity.AnimationData data = entity.context.getAnimationData();
+        long seed = data.seed;
+        Random random = Random.create(seed);
+
+        long time = System.currentTimeMillis() - data.timestamp;
+        if (data.preSeed != seed) {
+            data.preSeed = seed;
+            if (time > 1000) {
+                data.timestamp = System.currentTimeMillis();
+            }
+            data.randomHeights = new float[9];
+            for (int i = 0; i < 9; i++) {
+                data.randomHeights[i] = 0.25f + random.nextFloat() * 1;
+            }
+        }
+
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
         List<ItemStack> ingredients = entity.getAddedIngredients();
 
+        matrices.push();
+        this.applyInitial(entity, matrices);
+
         if (ingredients.isEmpty()) {
-            renderSingleItem(entity, entity.getOutputStack(), direction, 0, matrices, vertexConsumers, light, overlay);
+            renderSingleItem(entity, entity.getOutputStack(), 0, matrices, vertexConsumers, light, overlay, random, time, data);
         } else {
-            int index = 0;
-            int stackIndex = 0;
-            while (stackIndex < ingredients.size()) {
-                ItemStack stack = ingredients.get(stackIndex);
-                if (renderIngredient(entity, stack, direction, index, matrices, vertexConsumers, tickDelta, light, overlay)) {
+            if (!entity.getOutputStack().isEmpty() && entity.getOutputStack() != null) {
+                if (entity.getRequiredContainer() == null) {
+                    renderSingleItem(entity, entity.getOutputStack(), 0, matrices, vertexConsumers, light, overlay, random, time, data);
+                } else {
+                    render(entity, ingredients, false, matrices, vertexConsumers, tickDelta, light, overlay, random, time, data);
+                }
+                matrices.pop();
+                return;
+            }
+            render(entity, ingredients, true, matrices, vertexConsumers, tickDelta, light, overlay, random, time, data);
+        }
+        matrices.pop();
+    }
+
+    private void render(SkilletBlockEntity entity, List<ItemStack> ingredients, boolean renderOil,
+                        MatrixStack matrices, VertexConsumerProvider vertexConsumers, float tickDelta, int light, int overlay,
+                        Random random, long time, SkilletBlockEntity.AnimationData data) {
+        int index = 0;
+        int stackIndex = 0;
+        while (stackIndex < ingredients.size()) {
+            ItemStack stack = ingredients.get(stackIndex);
+            if (SkilletBlockEntity.isCookingOil(stack) && renderOil) {
+                if (renderIngredient(entity, stack, index, matrices, vertexConsumers, tickDelta, light, overlay, random, time, data)) {
                     index++;
                 }
-                stackIndex++;
+            } else if (!SkilletBlockEntity.isCookingOil(stack)){
+                if (renderIngredient(entity, stack, index, matrices, vertexConsumers, tickDelta, light, overlay, random, time, data)) {
+                    index++;
+                }
             }
+            stackIndex++;
+            matrices.translate(0, 0, 0.025);
         }
     }
 
-    private boolean renderIngredient(SkilletBlockEntity entity, ItemStack stack, Direction direction, int index,
-                                  MatrixStack matrices, VertexConsumerProvider vertexConsumers, float tickDelta, int light, int overlay) {
+    private boolean renderIngredient(SkilletBlockEntity entity, ItemStack stack, int index,
+                                     MatrixStack matrices, VertexConsumerProvider vertexConsumers, float tickDelta, int light, int overlay,
+                                     Random random, long time, SkilletBlockEntity.AnimationData data) {
         boolean increaseIndex = true;
         matrices.push();
 
@@ -71,49 +114,47 @@ public class SkilletBlockEntityRenderer implements BlockEntityRenderer<SkilletBl
             this.renderOil(entity, matrices, vertexConsumers, tickDelta, light, overlay);
             increaseIndex = false;
         } else {
-            renderSingleItem(entity, stack, direction, index, matrices, vertexConsumers, light, overlay);
+            renderSingleItem(entity, stack, index, matrices, vertexConsumers, light, overlay,
+                    random, time, data);
         }
 
         matrices.pop();
         return increaseIndex;
     }
 
-    private void renderSingleItem(SkilletBlockEntity entity, ItemStack stack, Direction direction, int index,
-                                  MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+    private void renderSingleItem(SkilletBlockEntity entity, ItemStack stack, int index,
+                                  MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay,
+                                  Random random, long time, SkilletBlockEntity.AnimationData data) {
         ItemRenderer renderer = MinecraftClient.getInstance().getItemRenderer();
         int pos = (int) entity.getPos().asLong();
 
-        if (stack.getItem() instanceof BlockItem && !NonBlockRenderingItems.getInstance().contains(stack.getItem())) {
-            this.block(matrices, direction, index);
-        } else {
-            this.item(matrices, direction, index);
+        int count = 90 + random.nextInt(90);
+        matrices.multiply(RotationAxis.NEGATIVE_Z.rotationDegrees(index * count));
+
+        if (time < 1000) {
+            matrices.translate(0, 0, data.randomHeights[index] * MathHelper.sin(MathHelper.PI * time / 1000f));
+            matrices.multiply(RotationAxis.NEGATIVE_X.rotationDegrees(720f / 1000 * time));
         }
 
         renderer.renderItem(stack, ModelTransformationMode.FIXED, light, OverlayTexture.DEFAULT_UV,
                 matrices, vertexConsumers, entity.getWorld(), pos);
     }
 
-    protected void block(MatrixStack matrices, Direction direction, int index) {
-        float rotation = -direction.asRotation();
-
-        matrices.translate(0.5, (index + 1) / 16.0, 0.5);
-        matrices.scale(0.8F, 0.8F, 0.8F);
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(rotation));
-    }
-
-    protected void item(MatrixStack matrices, Direction direction, int index) {
-        float rotation = -direction.asRotation();
-
-        matrices.translate(0.5, (index + 1) / 16.0, 0.5);
-        matrices.scale(0.6F, 0.6F, 0.6F);
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(rotation));
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
+    protected void applyInitial(SkilletBlockEntity skillet, MatrixStack matrices) {
+        int rotation = skillet.getDirection().getHorizontal() * 90;
+        matrices.translate(0.5, 0.1, 0.5);
+        matrices.multiply(RotationAxis.NEGATIVE_Y.rotationDegrees(rotation));
+        matrices.multiply(RotationAxis.NEGATIVE_X.rotationDegrees(90));
+        matrices.scale(0.5f, 0.5f, 0.5f);
     }
 
     protected void renderOil(SkilletBlockEntity blockEntity, MatrixStack matrices, VertexConsumerProvider vertexConsumers, float tickDelta, int light, int overlay) {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
+        matrices.pop();
+        matrices.pop();
+        matrices.push();
 
         World world = blockEntity.getWorld();
         if (world == null) return;
@@ -168,5 +209,9 @@ public class SkilletBlockEntityRenderer implements BlockEntityRenderer<SkilletBl
                 .light(light)
                 .overlay(overlay)
                 .normal(0, 1, 0);
+        matrices.pop();
+        matrices.push();
+        this.applyInitial(blockEntity, matrices);
+        matrices.push();
     }
 }
