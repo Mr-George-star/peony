@@ -1,11 +1,16 @@
 package net.george.peony.item;
 
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.george.peony.Peony;
 import net.george.peony.PeonyItemGroups;
+import net.george.peony.api.item.FluidContainer;
 import net.george.peony.block.PeonyBlocks;
 import net.george.peony.block.PeonyJukeboxSongs;
+import net.george.peony.block.data.Output;
 import net.george.peony.fluid.PeonyFluids;
 import net.minecraft.block.Block;
+import net.minecraft.component.type.FoodComponents;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -16,7 +21,10 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @SuppressWarnings("UnusedReturnValue")
+// todo: new api create :: for registering tool variants |||| Rice & beans
 public class PeonyItems {
+    public static final Item WOODEN_PLATE = register("wooden_plate", Item::new,
+            createDefaultSettings().maxCount(16));
     public static final Item BARLEY = register("barley", Item::new, createDefaultSettings());
     public static final Item BARLEY_SEEDS = register("barley_seeds", settings ->
             new AliasedBlockItem(PeonyBlocks.BARLEY_CROP, settings), createDefaultSettings());
@@ -33,19 +41,58 @@ public class PeonyItems {
             new AliasedBlockItem(PeonyBlocks.TOMATO_VINES, settings), createDefaultSettings());
     public static final Item PEELED_TOMATO = register("peeled_tomato", Item::new,
             createDefaultSettings().food(PeonyFoodComponents.TOMATO));
+    public static final Item PEELED_POTATO = register("peeled_potato", Item::new,
+            createDefaultSettings().food(FoodComponents.POTATO));
+    public static final Item SHREDDED_POTATO = register("shredded_potato", Item::new,
+            createDefaultSettings().food(FoodComponents.POTATO));
+    // todo: seeds && crops of coriander
+    public static final Item CORIANDER = register("coriander", Item::new, createDefaultSettings());
+
+    /* ingredients */
+    public static final Item HAM = register("ham", Item::new,
+            createDefaultSettings().food(PeonyFoodComponents.HAM));
+
+    /* food */
+    public static final Item BAKED_FLATBREAD = register("baked_flatbread", Item::new,
+            createDefaultSettings().food(PeonyFoodComponents.BAKED_FLATBREAD));
     public static final Item TOMATO_SAUCE = register("tomato_sauce", Item::new,
             createDefaultSettings().maxCount(1).food(PeonyFoodComponents.TOMATO_SAUCE));
     public static final Item SCRAMBLED_EGGS = register("scrambled_eggs", Item::new,
             createDefaultSettings().maxCount(1).food(PeonyFoodComponents.SCRAMBLED_EGGS));
+    public static final Item SCRAMBLED_EGGS_WITH_TOMATOES = register("scrambled_eggs_with_tomatoes", Item::new,
+            createDefaultSettings().maxCount(1).food(PeonyFoodComponents.SCRAMBLED_EGGS_WITH_TOMATOES));
+    public static final Item FRIED_SHREDDED_POTATOES = register("fried_shredded_potatoes", Item::new,
+            createDefaultSettings().maxCount(1).food(PeonyFoodComponents.FRIED_SHREDDED_POTATOES));
+    // todo: fermentation tank
+    public static final Item CHEESE = register("cheese", Item::new,
+            createDefaultSettings().food(PeonyFoodComponents.CHEESE));
+
+    /* oil */
     public static final Item LARD = register("lard", Item::new, createDefaultSettings().food(PeonyFoodComponents.LARD));
     public static final Item LARD_BOTTLE = register("lard_bottle", Item::new, createDefaultSettings().maxCount(16));
 
+    /* condiments */
+    public static final Item CONDIMENT_BOTTLE = register("condiment_bottle", Item::new,
+            createDefaultSettings().maxCount(16));
+    public static final Item BLACK_VINEGAR = register("black_vinegar", Item::new,
+            createDefaultSettings().maxCount(16));
+
+    /* kitchen tools */
     public static final Item KITCHEN_KNIFE = register("kitchen_knife", settings ->
             new KitchenKnifeItem(PeonyToolMaterials.KITCHEN_KNIFE, settings), createDefaultSettings().maxCount(1));
     public static final Item SPATULA = register("spatula", settings ->
             new SpatulaItem(PeonyToolMaterials.SPATULA, settings), createDefaultSettings().maxCount(1));
+    // todo: more variants
     public static final Item IRON_PARING_KNIFE = register("iron_paring_knife", settings ->
             new ParingKnifeItem(ToolMaterials.IRON, settings), createDefaultSettings().maxCount(1));
+    public static final Item IRON_SHREDDER = register("iron_shredder", settings ->
+            new ShredderItem(ToolMaterials.IRON, settings), createDefaultSettings().maxCount(1));
+    public static final Item GOLD_SHREDDER = register("gold_shredder", settings ->
+            new ShredderItem(ToolMaterials.GOLD, settings), createDefaultSettings().maxCount(1));
+    public static final Item DIAMOND_SHREDDER = register("diamond_shredder", settings ->
+            new ShredderItem(ToolMaterials.DIAMOND, settings), createDefaultSettings().maxCount(1));
+    public static final Item NETHERITE_SHREDDER = register("netherite_shredder", settings ->
+            new ShredderItem(ToolMaterials.NETHERITE, settings), createDefaultSettings().maxCount(1));
     public static final Item NATURE_GAS_DETECTOR = register("nature_gas_detector", NatureGasDetectorItem::new, createDefaultSettings().maxCount(1));
 
     public static final Item NATURE_GAS_BUCKET = register("nature_gas_bucket", settings ->
@@ -82,6 +129,11 @@ public class PeonyItems {
 
     public static void register() {
         PeonyFoodComponents.register();
+        FluidContainer.FLUID_CONTAINERS.registerForItems((itemStack, ignored) ->
+                FluidContainer.create(Fluids.WATER, FluidConstants.BOTTLE), Items.POTION);
+
+        Output.OIL_OUTPUTS.registerForItems((itemStack, ignored) ->
+                Output.create(LARD_BOTTLE.getDefaultStack(), Items.GLASS_BOTTLE), LARD, LARD_BOTTLE);
         Peony.debug("Items");
     }
 }

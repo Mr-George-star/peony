@@ -8,6 +8,8 @@ import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 
+import java.util.Objects;
+
 @SuppressWarnings("unused")
 public class FluidStack {
     public static final Codec<FluidStack> CODEC = RecordCodecBuilder.create(instance ->
@@ -49,5 +51,22 @@ public class FluidStack {
 
     public boolean isEmpty() {
         return this.amount <= 0 || this.fluid.isBlank();
+    }
+
+    @Override
+    public boolean equals(Object another) {
+        if (this == another) {
+            return true;
+        }
+        if (another == null || getClass() != another.getClass()) {
+            return false;
+        }
+        FluidStack that = (FluidStack) another;
+        return this.amount == that.amount && Objects.equals(this.fluid, that.fluid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.fluid, this.amount);
     }
 }

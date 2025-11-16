@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -33,7 +34,9 @@ public class LardFluidBlock extends FluidBlock {
     @Override
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
         if (world.random.nextFloat() < 0.1F && entity instanceof LivingEntity living) {
-            living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, Peony.getConfig().lardSlownessDurationTicks, 1));
+            if (living instanceof PlayerEntity player && !player.isCreative()) {
+                living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, Peony.getConfig().lardSlownessDurationTicks, 1));
+            }
         }
         if (entity.isOnFire()) {
             entity.setFireTicks(entity.getFireTicks() + Peony.getConfig().lardFireExtensionTicks);

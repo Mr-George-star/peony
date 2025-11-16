@@ -1,0 +1,9 @@
+{
+  "type": "peony:shredding",
+  "input": {
+    "item": "peony:peeled_potato"
+  },
+  "output": {
+    "id": "peony:shredded_potato"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "type": "peony:sequential_cooking",
+  "needOil": false,
+  "output": {
+    "container": "peony:wooden_plate",
+    "outputStack": {
+      "count": 1,
+      "id": "peony:scrambled_eggs_with_tomatoes"
+    }
+  },
+  "steps": [
+    {
+      "ingredient": {
+        "item": "peony:coriander"
+      },
+      "maxTimeOverflow": 60,
+      "requiredTime": 80
+    },
+    {
+      "ingredient": {
+        "item": "peony:peeled_tomato"
+      },
+      "maxTimeOverflow": 60,
+      "requiredTime": 100,
+      "requiredTool": {
+        "item": "peony:spatula"
+      }
+    },
+    {
+      "fryingData": {
+        "times": 3
+      },
+      "ingredient": {
+        "item": "peony:scrambled_eggs"
+      },
+      "maxTimeOverflow": 20,
+      "requiredTime": 280,
+      "requiredTool": {
+        "item": "peony:spatula"
+      }
+    }
+  ],
+  "temperature": 550
+}

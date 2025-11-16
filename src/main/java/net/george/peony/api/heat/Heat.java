@@ -12,6 +12,7 @@ public interface Heat {
                     Range.CODEC.fieldOf("temperature").forGetter(Heat::getTemperature),
                     HeatLevel.CODEC.fieldOf("level").forGetter(Heat::getLevel)
             ).apply(instance, Impl::new));
+    Heat NONE = create(Range.create(0, 0), HeatLevel.NONE);
 
     Range getTemperature();
 

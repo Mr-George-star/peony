@@ -17,7 +17,6 @@ import net.minecraft.item.ToolItem;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
-import net.minecraft.recipe.RecipeMatcher;
 import net.minecraft.recipe.input.SingleStackRecipeInput;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.sound.SoundCategory;

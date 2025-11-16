@@ -1,5 +1,6 @@
 package net.george.peony.compat;
 
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
@@ -12,12 +13,11 @@ import net.george.peony.block.entity.CarvedRenderingItems;
 import net.george.peony.block.entity.NonBlockRenderingItems;
 import net.george.peony.item.KitchenKnifeItem;
 import net.george.peony.item.PeonyItems;
+import net.george.peony.util.BlockPlacements;
+import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.AliasedBlockItem;
-import net.minecraft.item.HoeItem;
-import net.minecraft.item.PickaxeItem;
-import net.minecraft.item.TridentItem;
+import net.minecraft.item.*;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
@@ -27,7 +27,9 @@ import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 
 public class PeonyCompat {
     public static final Identifier SHORT_GRASS_LOOT = Identifier.ofVanilla("blocks/short_grass");
@@ -107,6 +109,30 @@ public class PeonyCompat {
         });
     }
 
+    private static void registerEvents() {
+        UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
+            ItemStack stack = player.getStackInHand(hand);
+
+            if (stack.isOf(Items.EGG)) {
+                BlockPos pos = hitResult.getBlockPos();
+                BlockState state = world.getBlockState(pos);
+
+                if (state.isOf(PeonyBlocks.SKILLET)) {
+                    return ActionResult.FAIL;
+                }
+            } else if (stack.isOf(Items.BOWL)) {
+                BlockPos pos = hitResult.getBlockPos();
+                BlockState state = world.getBlockState(pos);
+                if (state.isOf(PeonyBlocks.SKILLET)) {
+                    return ActionResult.FAIL;
+                }
+                ItemPlacementContext ctx = new ItemPlacementContext(world, player, hand, stack, hitResult);
+                return BlockPlacements.placeBlock(ctx, PeonyBlocks.BOWL);
+            }
+            return ActionResult.PASS;
+        });
+    }
+
     public static void register() {
         Peony.debug("Combats");
         registerCompostingChances();
@@ -114,5 +140,6 @@ public class PeonyCompat {
         registerNonBlockRenderingItems();
         registerCarvedRenderingItems();
         modifyLootTables();
+        registerEvents();
     }
 }

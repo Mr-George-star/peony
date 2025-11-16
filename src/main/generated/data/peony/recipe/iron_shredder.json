@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "peony-items",
+  "key": {
+    "M": {
+      "tag": "c:ingots/iron"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "M M",
+    "MMM",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "peony:iron_shredder"
+  }
+}

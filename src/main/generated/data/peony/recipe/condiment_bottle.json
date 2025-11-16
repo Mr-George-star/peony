@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "peony-items",
+  "key": {
+    "G": {
+      "tag": "c:glass_blocks"
+    }
+  },
+  "pattern": [
+    "G G",
+    "GGG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "peony:condiment_bottle"
+  }
+}

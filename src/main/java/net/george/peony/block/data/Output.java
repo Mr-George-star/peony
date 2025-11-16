@@ -2,6 +2,8 @@ package net.george.peony.block.data;
 
 import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.fabricmc.fabric.api.lookup.v1.item.ItemApiLookup;
+import net.george.peony.Peony;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.util.FluidStack;
 import net.minecraft.item.ItemConvertible;
@@ -14,7 +16,36 @@ import org.jetbrains.annotations.Nullable;
 import java.util.stream.Stream;
 
 public interface Output {
-    MapCodec<Output> CODEC = new OutputContainerMapCodec();
+    ItemApiLookup<Output, Void> OIL_OUTPUTS = ItemApiLookup.get(Peony.id("oil_outputs"), Output.class, Void.class);
+    MapCodec<Output> CODEC = new OutputMapCodec();
+    MapCodec<Output> CONTAINER_NOT_EMPTY_CODEC = new NotEmptyOutputMapCodec();
+    MapCodec<ItemOutputImpl> ITEM_OUTPUT_CODEC = RecordCodecBuilder.mapCodec(instance ->
+            instance.group(
+                    ItemStack.CODEC.fieldOf("outputStack").forGetter(ItemOutputImpl::getOutputStack),
+                    Registries.ITEM.getCodec().fieldOf("container").xmap(
+                            item -> (ItemConvertible) item,
+                            ItemConvertible::asItem
+                    ).forGetter(ItemOutputImpl::getContainer)
+            ).apply(instance, ItemOutputImpl::new)
+    );
+    MapCodec<NoContainerItemOutput> NO_CONTAINER_CODEC = RecordCodecBuilder.mapCodec(instance ->
+            instance.group(
+                    ItemStack.CODEC.fieldOf("outputStack").forGetter(NoContainerItemOutput::getOutputStack)
+            ).apply(instance, NoContainerItemOutput::new)
+    );
+    MapCodec<FluidOutputImpl> FLUID_OUTPUT_CODEC = RecordCodecBuilder.mapCodec(instance ->
+            instance.group(
+                    FluidStack.CODEC.fieldOf("outputFluid").forGetter(FluidOutputImpl::getOutputFluid),
+                    Registries.ITEM.getCodec().fieldOf("container").xmap(
+                            item -> (ItemConvertible) item,
+                            ItemConvertible::asItem
+                    ).forGetter(FluidOutputImpl::getContainer),
+                    Registries.ITEM.getCodec().fieldOf("result").xmap(
+                            item -> (ItemConvertible) item,
+                            ItemConvertible::asItem
+                    ).forGetter(FluidOutputImpl::getOutputItem)
+            ).apply(instance, FluidOutputImpl::new)
+    );
     PacketCodec<RegistryByteBuf, Output> PACKET_CODEC = new OutputContainerPacketCodec();
 
     ItemStack getOutputStack();
@@ -65,6 +96,14 @@ public interface Output {
         public FluidStack getOutputFluid() {
             return null;
         }
+
+        @Override
+        public String toString() {
+            return "ItemOutputImpl[" +
+                    "outputStack=" + this.outputStack +
+                    ", container=" + this.container +
+                    ']';
+        }
     }
 
     class NoContainerItemOutput implements Output {
@@ -88,6 +127,13 @@ public interface Output {
         @Nullable
         public FluidStack getOutputFluid() {
             return null;
+        }
+
+        @Override
+        public String toString() {
+            return "NoContainerItemOutput[" +
+                    "outputStack=" + this.outputStack +
+                    ']';
         }
     }
 
@@ -120,57 +166,38 @@ public interface Output {
         public ItemConvertible getOutputItem() {
             return this.getOutputStack().getItem();
         }
+
+        @Override
+        public String toString() {
+            return "FluidOutputImpl[" +
+                    "outputFluid=" + this.outputFluid +
+                    ", container=" + this.container +
+                    ", result=" + this.result +
+                    ']';
+        }
     }
 
-    class OutputContainerMapCodec extends MapCodec<Output> {
-        private final MapCodec<ItemOutputImpl> itemOutputCodec = RecordCodecBuilder.mapCodec(instance ->
-                instance.group(
-                        ItemStack.CODEC.fieldOf("outputStack").forGetter(ItemOutputImpl::getOutputStack),
-                        Registries.ITEM.getCodec().fieldOf("container").xmap(
-                                item -> (ItemConvertible) item,
-                                ItemConvertible::asItem
-                        ).forGetter(ItemOutputImpl::getContainer)
-                ).apply(instance, ItemOutputImpl::new)
-        );
-        private final MapCodec<NoContainerItemOutput> noContainerCodec = RecordCodecBuilder.mapCodec(instance ->
-                instance.group(
-                        ItemStack.CODEC.fieldOf("outputStack").forGetter(NoContainerItemOutput::getOutputStack)
-                ).apply(instance, NoContainerItemOutput::new)
-        );
-        private final MapCodec<FluidOutputImpl> fluidOutputCodec = RecordCodecBuilder.mapCodec(instance ->
-                instance.group(
-                        FluidStack.CODEC.fieldOf("outputFluid").forGetter(FluidOutputImpl::getOutputFluid),
-                        Registries.ITEM.getCodec().fieldOf("container").xmap(
-                                item -> (ItemConvertible) item,
-                                ItemConvertible::asItem
-                        ).forGetter(FluidOutputImpl::getContainer),
-                        Registries.ITEM.getCodec().fieldOf("result").xmap(
-                                item -> (ItemConvertible) item,
-                                ItemConvertible::asItem
-                        ).forGetter(FluidOutputImpl::getOutputItem)
-                ).apply(instance, FluidOutputImpl::new)
-        );
-
+    class OutputMapCodec extends MapCodec<Output> {
         @Override
         public <T> DataResult<Output> decode(DynamicOps<T> ops, MapLike<T> input) {
             if (input.get("outputFluid") != null) {
-                return this.fluidOutputCodec.decode(ops, input).map(impl -> impl);
+                return FLUID_OUTPUT_CODEC.decode(ops, input).map(impl -> impl);
             }
             else if (input.get("container") != null) {
-                return this.itemOutputCodec.decode(ops, input).map(impl -> impl);
+                return ITEM_OUTPUT_CODEC.decode(ops, input).map(impl -> impl);
             } else {
-                return this.noContainerCodec.decode(ops, input).map(noContainer -> noContainer);
+                return NO_CONTAINER_CODEC.decode(ops, input).map(noContainer -> noContainer);
             }
         }
 
         @Override
         public <T> RecordBuilder<T> encode(Output input, DynamicOps<T> ops, RecordBuilder<T> prefix) {
             if (input instanceof FluidOutputImpl fluidOutput) {
-                return this.fluidOutputCodec.encode(fluidOutput, ops, prefix);
+                return FLUID_OUTPUT_CODEC.encode(fluidOutput, ops, prefix);
             } else if (input instanceof ItemOutputImpl itemOutput) {
-                return this.itemOutputCodec.encode(itemOutput, ops, prefix);
+                return ITEM_OUTPUT_CODEC.encode(itemOutput, ops, prefix);
             } else if (input instanceof NoContainerItemOutput noContainer) {
-                return this.noContainerCodec.encode(noContainer, ops, prefix);
+                return NO_CONTAINER_CODEC.encode(noContainer, ops, prefix);
             }
             return prefix;
         }
@@ -179,10 +206,46 @@ public interface Output {
         public <T> Stream<T> keys(DynamicOps<T> ops) {
             return Stream.concat(
                     Stream.concat(
-                            this.itemOutputCodec.keys(ops),
-                            this.noContainerCodec.keys(ops)
+                            ITEM_OUTPUT_CODEC.keys(ops),
+                            NO_CONTAINER_CODEC.keys(ops)
                     ),
-                    this.fluidOutputCodec.keys(ops)
+                    FLUID_OUTPUT_CODEC.keys(ops)
+            );
+        }
+    }
+
+    class NotEmptyOutputMapCodec extends MapCodec<Output> {
+        @Override
+        public <T> DataResult<Output> decode(DynamicOps<T> ops, MapLike<T> input) {
+            if (input.get("container") == null) {
+                return DataResult.error(() -> "Container cannot be placeholder!");
+            }
+            if (input.get("outputFluid") != null) {
+                return FLUID_OUTPUT_CODEC.decode(ops, input).map(impl -> impl);
+            }
+            return ITEM_OUTPUT_CODEC.decode(ops, input).map(impl -> impl);
+        }
+
+        @Override
+        public <T> RecordBuilder<T> encode(Output input, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+            if (input.getContainer() == PeonyItems.PLACEHOLDER) {
+                return new RecordBuilder.MapBuilder<>(ops).mapError(error -> "Container cannot be placeholder! Error: " + error);
+            }
+            return switch (input) {
+                case FluidOutputImpl fluidOutput -> FLUID_OUTPUT_CODEC.encode(fluidOutput, ops, prefix);
+                case ItemOutputImpl itemOutput -> ITEM_OUTPUT_CODEC.encode(itemOutput, ops, prefix);
+                default -> prefix;
+            };
+        }
+
+        @Override
+        public <T> Stream<T> keys(DynamicOps<T> ops) {
+            return Stream.concat(
+                    Stream.concat(
+                            ITEM_OUTPUT_CODEC.keys(ops),
+                            NO_CONTAINER_CODEC.keys(ops)
+                    ),
+                    FLUID_OUTPUT_CODEC.keys(ops)
             );
         }
     }

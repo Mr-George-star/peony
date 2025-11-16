@@ -1,0 +1,17 @@
+{
+  "type": "peony:brewing",
+  "brewingTime": 200,
+  "ingredients": [
+    {
+      "count": 1,
+      "id": "minecraft:honeycomb"
+    }
+  ],
+  "output": {
+    "container": "minecraft:glass_bottle",
+    "outputStack": {
+      "count": 1,
+      "id": "minecraft:honey_bottle"
+    }
+  }
+}

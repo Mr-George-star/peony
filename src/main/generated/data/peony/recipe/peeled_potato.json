@@ -1,0 +1,9 @@
+{
+  "type": "peony:paring",
+  "input": {
+    "item": "minecraft:potato"
+  },
+  "output": {
+    "id": "peony:peeled_potato"
+  }
+}

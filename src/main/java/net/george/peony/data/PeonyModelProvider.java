@@ -52,14 +52,30 @@ public class PeonyModelProvider extends FabricModelProvider {
         generator.register(PeonyItems.CRUSHED_PEANUTS, Models.GENERATED);
         generator.register(PeonyItems.TOMATO, Models.GENERATED);
         generator.register(PeonyItems.PEELED_TOMATO, Models.GENERATED);
+        generator.register(PeonyItems.PEELED_POTATO, Models.GENERATED);
+        generator.register(PeonyItems.SHREDDED_POTATO, Models.GENERATED);
+        generator.register(PeonyItems.CORIANDER, Models.GENERATED);
+        generator.register(PeonyItems.HAM, Models.GENERATED);
+        generator.register(PeonyItems.BAKED_FLATBREAD, Models.GENERATED);
         generator.register(PeonyItems.TOMATO_SAUCE, Models.GENERATED);
         generator.register(PeonyItems.SCRAMBLED_EGGS, Models.GENERATED);
+        generator.register(PeonyItems.SCRAMBLED_EGGS_WITH_TOMATOES, Models.GENERATED);
+        generator.register(PeonyItems.FRIED_SHREDDED_POTATOES, Models.GENERATED);
+        generator.register(PeonyItems.CHEESE, Models.GENERATED);
+
         generator.register(PeonyItems.LARD, Models.GENERATED);
         generator.register(PeonyItems.LARD_BOTTLE, Models.GENERATED);
+        generator.register(PeonyItems.CONDIMENT_BOTTLE, Models.GENERATED);
+        generator.register(PeonyItems.BLACK_VINEGAR, Models.GENERATED);
 
         generator.register(PeonyItems.KITCHEN_KNIFE, Models.HANDHELD);
         generator.register(PeonyItems.SPATULA, Models.GENERATED);
         generator.register(PeonyItems.IRON_PARING_KNIFE, Models.GENERATED);
+        generator.register(PeonyItems.IRON_SHREDDER, Models.GENERATED);
+        generator.register(PeonyItems.GOLD_SHREDDER, Models.GENERATED);
+        generator.register(PeonyItems.DIAMOND_SHREDDER, Models.GENERATED);
+        generator.register(PeonyItems.NETHERITE_SHREDDER, Models.GENERATED);
+        generator.register(PeonyItems.WOODEN_PLATE, Models.GENERATED);
         generator.register(PeonyItems.NATURE_GAS_DETECTOR, Models.GENERATED);
 
         generator.register(PeonyItems.NATURE_GAS_BUCKET, Models.GENERATED);

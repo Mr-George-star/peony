@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east":  {
+      "model": "peony:block/brewing_barrel",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "peony:block/brewing_barrel"
+    },
+    "facing=south": {
+      "model": "peony:block/brewing_barrel",
+      "y": 180
+    },
+    "facing=west":  {
+      "model": "peony:block/brewing_barrel",
+      "y": 270
+    }
+  }
+}

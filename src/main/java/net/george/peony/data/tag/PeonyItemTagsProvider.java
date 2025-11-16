@@ -21,6 +21,7 @@ public class PeonyItemTagsProvider extends FabricTagProvider.ItemTagProvider {
         getOrCreateTagBuilder(PeonyTags.Items.LOG_STICKS)
                 .add(RegistryDataUtils.ITEM.filterToArray(item -> item instanceof BlockItem blockItem && blockItem.getBlock() instanceof LogStickBlock));
         getOrCreateTagBuilder(PeonyTags.Items.COOKING_OIL)
-                .add(PeonyItems.LARD);
+                .add(PeonyItems.LARD)
+                .add(PeonyItems.LARD_BOTTLE);
     }
 }

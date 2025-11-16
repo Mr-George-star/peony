@@ -4,7 +4,7 @@
   "group": "peony-items",
   "key": {
     "I": {
-      "item": "minecraft:iron_ingot"
+      "tag": "c:ingots/iron"
     },
     "S": {
       "item": "minecraft:stick"

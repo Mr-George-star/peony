@@ -3,6 +3,7 @@
   "category": "food",
   "cookingtime": 200,
   "experience": 0.35,
+  "group": "peony-items",
   "ingredient": {
     "item": "peony:dough"
   },

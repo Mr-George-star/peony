@@ -1,6 +1,7 @@
 package net.george.peony.block.entity;
 
 import com.google.common.collect.ImmutableList;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.george.peony.Peony;
 import net.george.peony.block.*;
 import net.george.peony.util.registry.RegistryDataUtils;
@@ -18,6 +19,8 @@ public class PeonyBlockEntities {
             CuttingBoardBlockEntity::new, RegistryDataUtils.BLOCK.filterToArray(block -> block instanceof CuttingBoardBlock));
     public static final BlockEntityType<SkilletBlockEntity> SKILLET = register("skillet",
             SkilletBlockEntity::new, PeonyBlocks.SKILLET);
+    public static final BlockEntityType<BrewingBarrelBlockEntity> BREWING_BARREL = register("brewing_barrel",
+            BrewingBarrelBlockEntity::new, PeonyBlocks.BREWING_BARREL);
     public static final BlockEntityType<PotStandBlockEntity> POT_STAND = register("pot_stand",
             PotStandBlockEntity::new, RegistryDataUtils.BLOCK.filterToArray(block -> block instanceof PotStandBlock));
     public static final BlockEntityType<PotStandWithCampfireBlockEntity> POT_STAND_WITH_CAMPFIRE = register("pot_stand_with_campfire",
@@ -33,5 +36,6 @@ public class PeonyBlockEntities {
 
     public static void register() {
         Peony.debug("Block Entities");
+        FluidStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.fluidStorage, BREWING_BARREL);
     }
 }

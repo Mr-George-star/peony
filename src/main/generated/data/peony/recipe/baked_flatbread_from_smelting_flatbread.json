@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "food",
+  "cookingtime": 200,
+  "experience": 0.35,
+  "group": "peony-items",
+  "ingredient": {
+    "item": "peony:flatbread"
+  },
+  "result": {
+    "id": "peony:baked_flatbread"
+  }
+}

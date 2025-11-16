@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_shredded_potato": {
+      "conditions": {
+        "items": [
+          {
+            "items": "peony:shredded_potato"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "peony:fried_shredded_potatoes"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_shredded_potato"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "peony:fried_shredded_potatoes"
+    ]
+  }
+}

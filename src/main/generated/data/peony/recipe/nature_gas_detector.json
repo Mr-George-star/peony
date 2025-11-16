@@ -4,13 +4,13 @@
   "group": "peony-items",
   "key": {
     "I": {
-      "item": "minecraft:iron_ingot"
+      "tag": "c:ingots/iron"
     },
     "L": {
       "item": "minecraft:lightning_rod"
     },
     "R": {
-      "item": "minecraft:redstone"
+      "tag": "c:dusts/redstone"
     }
   },
   "pattern": [

@@ -26,14 +26,30 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyItems.TOMATO, "西红柿");
         translationBuilder.add(PeonyItems.TOMATO_SEEDS, "西红柿种子");
         translationBuilder.add(PeonyItems.PEELED_TOMATO, "去皮的西红柿");
+        translationBuilder.add(PeonyItems.PEELED_POTATO, "去皮的土豆");
+        translationBuilder.add(PeonyItems.SHREDDED_POTATO, "土豆丝");
+        translationBuilder.add(PeonyItems.CORIANDER, "香菜");
+        translationBuilder.add(PeonyItems.HAM, "火腿片");
+        translationBuilder.add(PeonyItems.BAKED_FLATBREAD, "烤过的面饼");
         translationBuilder.add(PeonyItems.TOMATO_SAUCE, "番茄酱");
         translationBuilder.add(PeonyItems.SCRAMBLED_EGGS, "炒蛋");
+        translationBuilder.add(PeonyItems.SCRAMBLED_EGGS_WITH_TOMATOES, "西红柿炒鸡蛋");
+        translationBuilder.add(PeonyItems.FRIED_SHREDDED_POTATOES, "炒土豆丝");
+        translationBuilder.add(PeonyItems.CHEESE, "芝士");
+
         translationBuilder.add(PeonyItems.LARD, "猪油");
         translationBuilder.add(PeonyItems.LARD_BOTTLE, "猪油瓶");
+        translationBuilder.add(PeonyItems.CONDIMENT_BOTTLE, "调料瓶");
+        translationBuilder.add(PeonyItems.BLACK_VINEGAR, "黑醋");
 
         translationBuilder.add(PeonyItems.KITCHEN_KNIFE, "菜刀");
         translationBuilder.add(PeonyItems.SPATULA, "炒菜铲");
         translationBuilder.add(PeonyItems.IRON_PARING_KNIFE, "铁削皮刀");
+        translationBuilder.add(PeonyItems.IRON_SHREDDER, "铁擦丝器");
+        translationBuilder.add(PeonyItems.GOLD_SHREDDER, "金擦丝器");
+        translationBuilder.add(PeonyItems.DIAMOND_SHREDDER, "钻石擦丝器");
+        translationBuilder.add(PeonyItems.NETHERITE_SHREDDER, "下界合金擦丝器");
+        translationBuilder.add(PeonyItems.WOODEN_PLATE, "木碟");
         translationBuilder.add(PeonyItems.NATURE_GAS_DETECTOR, "天然气探测器");
 
         translationBuilder.add(PeonyItems.NATURE_GAS_BUCKET, "天然气桶");
@@ -55,6 +71,7 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.DARK_OAK_CUTTING_BOARD, "深色橡木菜板");
         translationBuilder.add(PeonyBlocks.MANGROVE_CUTTING_BOARD, "红树木菜板");
         translationBuilder.add(PeonyBlocks.SKILLET, "平底锅");
+        translationBuilder.add(PeonyBlocks.BREWING_BARREL, "酿造桶");
         translationBuilder.add(PeonyBlocks.OAK_LOG_STICK, "橡木原木棍");
         translationBuilder.add(PeonyBlocks.SPRUCE_LOG_STICK, "云杉原木棍");
         translationBuilder.add(PeonyBlocks.BIRCH_LOG_STICK, "白桦原木棍");
@@ -83,6 +100,8 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.BARLEY_CROP, "大麦作物");
         translationBuilder.add(PeonyBlocks.PEANUT_CROP, "花生作物");
         translationBuilder.add(PeonyBlocks.TOMATO_VINES, "西红柿藤");
+
+        translationBuilder.add(PeonyBlocks.BOWL, "碗");
 
         translationBuilder.add(PeonyBlocks.NATURE_GAS, "天然气");
         translationBuilder.add(PeonyBlocks.LARD_FLUID, "猪油");

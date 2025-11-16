@@ -319,19 +319,16 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             if (this.requiredContainer != null) {
                 ItemStack heldStack = user.getStackInHand(context.hand);
                 if (heldStack.getItem() == this.requiredContainer.asItem()) {
-                    InsertResult result = this.extractOutputWithContainer(context, heldStack);
-                    return result.isSuccess();
+                    return this.extractOutputWithContainer(context, heldStack).isSuccess();
                 }
                 return false;
             }
 
-            // No container required, extract directly
+            // Direct extraction without container
             user.setStackInHand(context.hand, outputStack);
             this.setOutputStack(ItemStack.EMPTY);
-            this.resetCookingVariables();
-            this.addedIngredients.clear();
-            this.updateAddedItems();
-            this.markDirty();
+            // changed!
+            this.resetCookingState();
             return true;
         }
 
@@ -340,10 +337,8 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             user.setStackInHand(context.hand, inputStack);
             user.damage(PeonyDamageTypes.of(context.world, PeonyDamageTypes.SCALD), context.world.random.nextBetween(1, 2));
             this.setInputStack(ItemStack.EMPTY);
-            this.resetCookingVariables();
-            this.addedIngredients.clear();
-            this.updateAddedItems();
-            this.markDirty();
+            // changed!
+            this.resetCookingState();
             return true;
         }
 
@@ -381,12 +376,11 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                     this.requiredContainer = null;
 
                     // Reset state when all output is extracted
-                    this.resetCookingVariables();
+                    this.resetCookingState();
                 }
 
                 this.markDirty();
-                this.addedIngredients.clear();
-                this.updateAddedItems();
+                // changed!
                 return new InsertResult(true, 1); // Consume 1 container
             }
         }
@@ -414,12 +408,8 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         if (this.cachedRecipe == null || !this.cachedRecipe.id().equals(recipe.id())) {
             this.cachedRecipe = recipe;
             this.context.cachedRecipe = recipe;
-            this.context.requiredHeatingTime = 0;
-            this.context.heatingTime = 0;
-            this.context.overflowTime = 0;
-            this.context.maxOverflowTime = 0;
-            this.context.inOverflow = false;
-            this.context.oilProcessingStage = 0;
+            // changed!
+            this.context.resetCookingTimers();
             this.countdownManager.reset("IngredientPlacement");
             Peony.LOGGER.debug("Updated recipe data: {}", recipe.id());
         }
@@ -562,28 +552,24 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     }
 
     /**
-     * Resets all cooking variables to their initial state.
+     * Resets all cooking state variables to their initial values.
      */
     protected void resetCookingVariables() {
-        this.resetCookingVariables(true);
-    }
-
-    /**
-     * Resets all cooking state variables to their initial values.
-     *
-     * @param resetContainer whether to reset the required container
-     */
-    protected void resetCookingVariables(boolean resetContainer) {
         this.context.reset();
-        if (resetContainer) {
-            this.requiredContainer = null;
-        }
+        this.requiredContainer = null;
         this.cachedRecipe = null;
         // Ensure state is correctly set to IDLE
         if (this.context.state != CookingStates.IDLE) {
             this.context.state = CookingStates.IDLE;
         }
         Peony.LOGGER.debug("Reset cooking variables");
+    }
+
+    protected void resetCookingState() {
+        this.resetCookingVariables();
+        this.addedIngredients.clear();
+        this.updateAddedItems();
+        this.markDirty();
     }
 
     /**
@@ -714,7 +700,10 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         this.setInputStack(ItemStack.EMPTY);
         this.requiredContainer = Items.BOWL;
         world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5f, 0.5f);
-        this.resetCookingVariables(false);
+
+        // Instead of resetting to IDLE, transition to FAILED state
+        // This allows the skillet to stay in failed state until items are extracted
+        this.context.transitionTo(CookingStates.FAILED);
         this.updateAddedItems();
         this.markDirty();
     }
@@ -752,13 +741,10 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     @Override
     public void clientTick(World world, BlockPos pos, BlockState state) {
         BlockState down = world.getBlockState(pos.down());
-        if (down.getBlock() instanceof HeatProvider heatProvider) {
-            if (world.random.nextInt(15) == 0) {
-                if (this.context.hasOil) {
-                    HeatParticleHelper.spawnHeatParticles(world, pos.down(), HeatLevel.BLAZING);
-                } else if (!this.getInputStack().isEmpty()) {
-                    HeatParticleHelper.spawnHeatParticles(world, pos.down(), heatProvider.getHeat());
-                }
+        if (down.getBlock() instanceof HeatProvider heatProvider && world.random.nextInt(15) == 0) {
+            HeatLevel particleHeat = this.context.hasOil ? HeatLevel.BLAZING : heatProvider.getHeat().getLevel();
+            if (this.context.hasOil || !this.getInputStack().isEmpty()) {
+                HeatParticleHelper.spawnHeatParticles(world, pos.down(), particleHeat);
             }
         }
     }
@@ -980,6 +966,15 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             this.state = CookingStates.IDLE;
         }
 
+        public void resetCookingTimers() {
+            this.requiredHeatingTime = 0;
+            this.heatingTime = 0;
+            this.overflowTime = 0;
+            this.maxOverflowTime = 0;
+            this.inOverflow = false;
+            this.oilProcessingStage = 0;
+        }
+
         @Override
         public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
             nbt.putString("State", this.state.name());
@@ -1185,6 +1180,25 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             } else if (context.oilProcessingStage == 1) {
                 Peony.LOGGER.debug("Oil stage 1 - ingredient required");
 
+                Output oilOutput = Output.OIL_OUTPUTS.find(context.skillet.addedIngredients.getFirst(), null);
+                if (oilOutput != null) {
+                    Peony.LOGGER.info(oilOutput.toString());
+                    if (givenStack.isOf(oilOutput.getContainer().asItem())) {
+                        ItemStack outputStack = oilOutput.getOutputStack().copy();
+                        interactionContext.user.giveItemStack(outputStack);
+                        context.skillet.setInputStack(ItemStack.EMPTY);
+                        if (!interactionContext.user.getAbilities().creativeMode) {
+                            givenStack.decrement(1);
+                        }
+                        context.skillet.resetCookingVariables();
+                        context.skillet.addedIngredients.clear();
+                        context.skillet.updateAddedItems();
+                        context.skillet.markDirty();
+
+                        Peony.LOGGER.debug("Oil output created: {}", outputStack.getItem());
+                        return new InsertResult(true, 1);
+                    }
+                }
                 Optional<RecipeEntry<SequentialCookingRecipe>> newRecipe = context.skillet.getCurrentRecipe(world, givenStack);
                 if (newRecipe.isPresent()) {
                     Peony.LOGGER.debug("Found matching recipe: {}", newRecipe.get().id());
@@ -1345,7 +1359,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                     // Stir-frying failed - not enough stirs within time limit
                     Peony.LOGGER.debug("Stir frying failed: required {} times, but only {} times within time limit",
                             context.requiredStirFryingCount, context.stirFryingCount);
-                    context.transitionTo(CookingStates.FAILED);
+                    context.skillet.failCooking(world, pos);
                 }
                 return;
             }
@@ -1456,7 +1470,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             // Check if max overflow time exceeded
             if (context.maxOverflowTime > 0 && context.overflowTime >= context.maxOverflowTime) {
                 Peony.LOGGER.debug("Overflow timeout");
-                context.transitionTo(CookingStates.FAILED);
+                context.skillet.failCooking(world, pos);
                 return;
             }
 
@@ -1546,7 +1560,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             // Check if countdown expired
             if (context.countdownManager.isOver("IngredientPlacement")) {
                 Peony.LOGGER.debug("Ingredient placement timeout");
-                context.transitionTo(CookingStates.FAILED);
+                context.skillet.failCooking(world, pos);
             }
         }
 
@@ -1654,7 +1668,6 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         @Override
         public void onEnter(CookingContext context, World world, BlockPos pos) {
             Peony.LOGGER.debug("Entered FAILED state");
-            context.skillet.failCooking(world, pos);
         }
 
         @Override

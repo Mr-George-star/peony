@@ -4,9 +4,11 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.george.peony.block.*;
 import net.george.peony.item.PeonyItems;
+import net.george.peony.util.PeonyTags;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.BlockStatePropertyLootCondition;
@@ -34,6 +36,8 @@ public class PeonyBlockLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(PeonyBlocks.FLOUR);
         addDrop(PeonyBlocks.FLATBREAD);
         addDrop(PeonyBlocks.SKILLET);
+        addDrop(PeonyBlocks.BREWING_BARREL);
+        addDrop(PeonyBlocks.BOWL, Items.BOWL);
 
         Registries.BLOCK.stream().forEach(entry -> {
             if (entry instanceof CuttingBoardBlock board) {

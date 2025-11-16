@@ -1,0 +1,17 @@
+{
+  "type": "peony:sequential_crafting",
+  "output": {
+    "count": 2,
+    "id": "peony:ham"
+  },
+  "steps": [
+    {
+      "action": {
+        "type": "peony:cutting"
+      },
+      "ingredient": {
+        "item": "minecraft:porkchop"
+      }
+    }
+  ]
+}

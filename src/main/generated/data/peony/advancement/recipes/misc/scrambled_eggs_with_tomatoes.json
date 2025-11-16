@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_coriander": {
+      "conditions": {
+        "items": [
+          {
+            "items": "peony:coriander"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "peony:scrambled_eggs_with_tomatoes"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_coriander"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "peony:scrambled_eggs_with_tomatoes"
+    ]
+  }
+}

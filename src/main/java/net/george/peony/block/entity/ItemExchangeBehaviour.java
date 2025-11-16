@@ -1,5 +1,6 @@
 package net.george.peony.block.entity;
 
+import net.george.peony.item.PeonyItems;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.player.PlayerEntity;
@@ -52,5 +53,7 @@ public interface ItemExchangeBehaviour {
                 return DEFAULT.exchange(world, player, stack);
             }
         });
+        register(PeonyItems.BLACK_VINEGAR, (world, player, stack) ->
+                ItemUsage.exchangeStack(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
     }
 }

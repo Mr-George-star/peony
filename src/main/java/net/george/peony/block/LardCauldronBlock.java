@@ -41,12 +41,7 @@ public class LardCauldronBlock extends LeveledCauldronBlock {
         CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(PeonyItems.LARD_BUCKET, FILL_WITH_LARD);
         CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(PeonyItems.LARD_BOTTLE, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
-                player.setStackInHand(hand, ItemUsage.exchangeStack(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
-                player.incrementStat(Stats.USE_CAULDRON);
-                player.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
-                world.setBlockState(pos, state.cycle(LeveledCauldronBlock.LEVEL));
-                world.playSound(null, pos, SoundEvents.ITEM_BOTTLE_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                world.emitGameEvent(null, GameEvent.FLUID_PLACE, pos);
+                CauldronBehavior.fillCauldron(world, pos, player, hand, stack, PeonyBlocks.LARD_CAULDRON.getDefaultState().with(LeveledCauldronBlock.LEVEL, 1), SoundEvents.ITEM_BOTTLE_EMPTY);
             }
             return ItemActionResult.success(world.isClient);
         });
@@ -55,19 +50,10 @@ public class LardCauldronBlock extends LeveledCauldronBlock {
         map.put(Items.BUCKET, (state, world, pos, player, hand, stack) ->
                 CauldronBehavior.emptyCauldron(state, world, pos, player, hand, stack, new ItemStack(PeonyItems.LARD_BUCKET), cauldron -> cauldron.get(LeveledCauldronBlock.LEVEL) == 3, SoundEvents.ITEM_BUCKET_FILL));
         map.put(PeonyItems.LARD_BOTTLE, (state, world, pos, player, hand, stack) -> {
-            if (state.get(LeveledCauldronBlock.LEVEL) == 3) {
-                return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-            } else {
-                if (!world.isClient) {
-                    player.setStackInHand(hand, ItemUsage.exchangeStack(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
-                    player.incrementStat(Stats.USE_CAULDRON);
-                    player.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
-                    world.setBlockState(pos, state.cycle(LeveledCauldronBlock.LEVEL));
-                    world.playSound(null, pos, SoundEvents.ITEM_BOTTLE_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                    world.emitGameEvent(null, GameEvent.FLUID_PLACE, pos);
-                }
-                return ItemActionResult.success(world.isClient);
+            if (!world.isClient) {
+                CauldronBehavior.fillCauldron(world, pos, player, hand, stack, PeonyBlocks.LARD_CAULDRON.getDefaultState().cycle(LeveledCauldronBlock.LEVEL), SoundEvents.ITEM_BOTTLE_EMPTY);
             }
+            return ItemActionResult.success(world.isClient);
         });
         map.put(Items.GLASS_BOTTLE, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
@@ -82,6 +68,7 @@ public class LardCauldronBlock extends LeveledCauldronBlock {
 
             return ItemActionResult.success(world.isClient);
         });
+        CauldronBehavior.registerBucketBehavior(map);
     }
 
     @Override

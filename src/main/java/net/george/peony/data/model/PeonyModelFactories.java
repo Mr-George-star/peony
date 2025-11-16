@@ -26,4 +26,24 @@ public class PeonyModelFactories {
                             .put(TextureKey.PARTICLE,
                                     (block instanceof PotStandBlock potStand && potStand.getLogStick() instanceof LogStickBlock logStick) ? TextureMap.getId(logStick.getLog()) : TextureMap.getId(block)),
             PeonyModels.POT_STAND);
+    public static final TexturedModel.Factory PIZZA_FULL = TexturedModel.makeFactory(block ->
+            new TextureMap()
+                    .put(TextureKey.TEXTURE, TextureMap.getId(block))
+                    .put(TextureKey.PARTICLE, TextureMap.getId(block)),
+            PeonyModels.PIZZA_FULL);
+    public static final TexturedModel.Factory PIZZA_FOUR_THIRDS = TexturedModel.makeFactory(block ->
+                    new TextureMap()
+                            .put(TextureKey.TEXTURE, TextureMap.getId(block))
+                            .put(TextureKey.PARTICLE, TextureMap.getId(block)),
+            PeonyModels.PIZZA_FOUR_THIRDS);
+    public static final TexturedModel.Factory PIZZA_HALF = TexturedModel.makeFactory(block ->
+                    new TextureMap()
+                            .put(TextureKey.TEXTURE, TextureMap.getId(block))
+                            .put(TextureKey.PARTICLE, TextureMap.getId(block)),
+            PeonyModels.PIZZA_HALF);
+    public static final TexturedModel.Factory PIZZA_ONE_QUARTER = TexturedModel.makeFactory(block ->
+                    new TextureMap()
+                            .put(TextureKey.TEXTURE, TextureMap.getId(block))
+                            .put(TextureKey.PARTICLE, TextureMap.getId(block)),
+            PeonyModels.PIZZA_ONE_QUARTER);
 }

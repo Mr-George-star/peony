@@ -18,6 +18,8 @@ import net.george.peony.item.SolidModelProvider;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.block.piston.PistonBehavior;
+import net.minecraft.component.type.FoodComponent;
+import net.minecraft.item.AliasedBlockItem;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -66,6 +68,8 @@ public class PeonyBlocks {
     public static final Block SKILLET = register("skillet", SkilletBlock::new,
             createDefaultSettings().nonOpaque().requiresTool().mapColor(MapColor.IRON_GRAY),
             PeonyItems.createDefaultSettings().maxCount(1));
+    public static final Block BREWING_BARREL = register("brewing_barrel", BrewingBarrelBlock::new,
+            createDefaultSettings().nonOpaque().mapColor(MapColor.SPRUCE_BROWN));
 
     // use log top map color
     public static final Block OAK_LOG_STICK = registerLogStick("oak", Blocks.OAK_LOG, MapColor.OAK_TAN);
@@ -131,6 +135,9 @@ public class PeonyBlocks {
     public static final Block LARD_CAULDRON = register("lard_cauldron", LardCauldronBlock::new,
             AbstractBlock.Settings.copy(Blocks.CAULDRON), false);
 
+    /* SPECIAL */
+    public static final Block BOWL = register("bowl", BowlBlock::new, createDefaultWoodSettings(MapColor.BROWN), false);
+
 
     public static Block registerLogStick(String variant, Block log, MapColor woodTopColor) {
         return register(variant + "_log_stick", settings ->
@@ -148,6 +155,11 @@ public class PeonyBlocks {
                         new PotStandWithCampfireBlock(settings, logStick),
                 createDefaultWoodSettings(woodSideColor).luminance(Blocks.createLightLevelFromLitBlockState(15)).nonOpaque(),
                 false);
+    }
+
+    public static Block registerPizza(String name, FoodComponent perPiece) {
+        return register(name, settings ->
+                new PizzaBlock(settings, perPiece), createPizza(), AliasedBlockItem::new);
     }
 
     public static Block register(String name,
@@ -205,6 +217,10 @@ public class PeonyBlocks {
                 .sounds(soundGroup)
                 .strength(2.0F)
                 .burnable();
+    }
+
+    public static AbstractBlock.Settings createPizza() {
+        return createDefaultSettings().mapColor(MapColor.BROWN).breakInstantly();
     }
 
     public static void register() {

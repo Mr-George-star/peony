@@ -2,32 +2,32 @@ package net.george.peony.data;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.george.peony.Peony;
-import net.george.peony.api.action.ActionType;
 import net.george.peony.api.action.ActionTypes;
 import net.george.peony.block.*;
 import net.george.peony.block.data.CookingSteps;
 import net.george.peony.block.data.StirFryingData;
-import net.george.peony.data.json.MillingRecipeJsonBuilder;
-import net.george.peony.data.json.ParingRecipeJsonBuilder;
-import net.george.peony.data.json.SequentialCookingRecipeJsonBuilder;
-import net.george.peony.data.json.SequentialCraftingRecipeJsonBuilder;
+import net.george.peony.data.json.*;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.util.PeonyTags;
 import net.minecraft.block.Blocks;
 import net.minecraft.component.type.PotionContentsComponent;
-import net.minecraft.data.server.recipe.CookingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potions;
-import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.registry.tag.TagKey;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class PeonyRecipeProvider extends FabricRecipeProvider {
@@ -50,61 +50,82 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PeonyBlocks.SKILLET)
                 .input('S', PeonyTags.Items.LOG_STICKS)
-                .input('I', Items.IRON_INGOT)
+                .input('I', ConventionalItemTags.IRON_INGOTS)
                 .pattern("S  ")
                 .pattern(" II")
                 .pattern(" II")
                 .group(PEONY_BLOCKS)
-                .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromTag(ConventionalItemTags.IRON_INGOTS))
                 .offerTo(exporter, Peony.id("skillet_right"));
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PeonyBlocks.SKILLET)
                 .input('S', PeonyTags.Items.LOG_STICKS)
-                .input('I', Items.IRON_INGOT)
+                .input('I', ConventionalItemTags.IRON_INGOTS)
                 .pattern("  S")
                 .pattern("II ")
                 .pattern("II ")
                 .group(PEONY_BLOCKS)
-                .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromTag(ConventionalItemTags.IRON_INGOTS))
                 .offerTo(exporter, Peony.id("skillet_left"));
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PeonyBlocks.BREWING_BARREL)
+                .input('W', ItemTags.PLANKS)
+                .input('S', ItemTags.SLABS)
+                .pattern("WSW")
+                .pattern("WSW")
+                .pattern("S S")
+                .group(PEONY_BLOCKS)
+                .criterion(hasItem(Blocks.OAK_PLANKS), conditionsFromTag(ItemTags.PLANKS))
+                .offerTo(exporter);
 
         /* ITEMS */
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, PeonyItems.KITCHEN_KNIFE)
-                .input('I', Items.IRON_INGOT)
+                .input('I', ConventionalItemTags.IRON_INGOTS)
                 .input('S', Items.STICK)
                 .pattern("II")
                 .pattern("II")
                 .pattern("S ")
                 .group(PEONY_ITEMS)
-                .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromTag(ConventionalItemTags.IRON_INGOTS))
                 .offerTo(exporter, Peony.id("kitchen_knife_right"));
         ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, PeonyItems.KITCHEN_KNIFE)
-                .input('I', Items.IRON_INGOT)
+                .input('I', ConventionalItemTags.IRON_INGOTS)
                 .input('S', Items.STICK)
                 .pattern("II")
                 .pattern("II")
                 .pattern(" S")
                 .group(PEONY_ITEMS)
-                .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromTag(ConventionalItemTags.IRON_INGOTS))
                 .offerTo(exporter, Peony.id("kitchen_knife_left"));
         ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, PeonyItems.SPATULA)
-                .input('I', Items.IRON_INGOT)
+                .input('I', ConventionalItemTags.IRON_INGOTS)
                 .input('S', Items.STICK)
                 .pattern(" II")
                 .pattern(" II")
                 .pattern("S  ")
                 .group(PEONY_ITEMS)
-                .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromTag(ConventionalItemTags.IRON_INGOTS))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.COMBAT, PeonyItems.WOODEN_PLATE)
+                .input('W', ItemTags.PLANKS)
+                .pattern("WWW").group(PEONY_ITEMS)
+                .criterion(hasItem(Blocks.OAK_PLANKS), conditionsFromTag(ItemTags.PLANKS))
                 .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PeonyItems.NATURE_GAS_DETECTOR)
-                .input('I', Items.IRON_INGOT)
-                .input('R', Items.REDSTONE)
+                .input('I', ConventionalItemTags.IRON_INGOTS)
+                .input('R', ConventionalItemTags.REDSTONE_DUSTS)
                 .input('L', Items.LIGHTNING_ROD)
                 .pattern(" L ")
                 .pattern("IRI")
                 .pattern("IRI")
                 .group(PEONY_ITEMS)
-                .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromTag(ConventionalItemTags.IRON_INGOTS))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PeonyItems.CONDIMENT_BOTTLE)
+                .input('G', ConventionalItemTags.GLASS_BLOCKS)
+                .pattern("G G")
+                .pattern("GGG")
+                .group(PEONY_ITEMS)
+                .criterion(hasItem(Blocks.GLASS), conditionsFromTag(ConventionalItemTags.GLASS_BLOCKS))
                 .offerTo(exporter);
 
         /* LARD CONVERTING */
@@ -125,9 +146,18 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
             }
         });
 
+        createShredderRecipe(Items.IRON_INGOT, ConventionalItemTags.IRON_INGOTS, PeonyItems.IRON_SHREDDER, exporter);
+        createShredderRecipe(Items.GOLD_INGOT, ConventionalItemTags.GOLD_INGOTS, PeonyItems.GOLD_SHREDDER, exporter);
+        createShredderRecipe(Items.DIAMOND, ConventionalItemTags.DIAMOND_GEMS, PeonyItems.DIAMOND_SHREDDER, exporter);
+        offerNetheriteUpgradeRecipe(exporter, PeonyItems.DIAMOND_SHREDDER, RecipeCategory.TOOLS, PeonyItems.NETHERITE_SHREDDER);
+
+        offerShapelessRecipe(exporter, PeonyItems.TOMATO_SEEDS, PeonyItems.TOMATO, PEONY_ITEMS, 1);
+
         /* FURNACE */
-        CookingRecipeJsonBuilder.createSmelting(Ingredient.ofItems(PeonyBlocks.DOUGH), RecipeCategory.FOOD, Items.BREAD, 0.35F, 200)
-                .criterion(hasItem(PeonyBlocks.DOUGH), conditionsFromItem(PeonyBlocks.DOUGH)).offerTo(exporter, Peony.id("bread_from_dough"));
+        offerSmelting(exporter, List.of(PeonyBlocks.DOUGH), RecipeCategory.FOOD, Items.BREAD,
+                0.35F, 200, PEONY_ITEMS);
+        offerSmelting(exporter, List.of(PeonyBlocks.FLATBREAD), RecipeCategory.FOOD, PeonyItems.BAKED_FLATBREAD,
+                0.35F, 200, PEONY_ITEMS);
 
         /* CUSTOM RECIPE */
         /* MILLING */
@@ -144,6 +174,9 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .step(ActionTypes.kneading(), PeonyBlocks.DOUGH)
                 .step(ActionTypes.kneading(), PeonyItems.PLACEHOLDER)
                 .offerTo(exporter, Peony.id("flatbread_from_dough"));
+        SequentialCraftingRecipeJsonBuilder.create(PeonyItems.HAM, 2)
+                .step(ActionTypes.cutting(), Items.PORKCHOP)
+                .offerTo(exporter, Peony.id("ham_from_porkchop"));
 
         /* SEQUENTIAL COOKING */
         SequentialCookingRecipeJsonBuilder.create(550, false, PeonyItems.ROASTED_PEANUT_KERNEL)
@@ -157,9 +190,30 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .step(new CookingSteps.Step(80, 60, Items.EGG))
                 .step(new CookingSteps.Step(240, 20, PeonyItems.SPATULA, Items.EGG, new StirFryingData(3)))
                 .offerTo(exporter);
+        SequentialCookingRecipeJsonBuilder.create(550, false, PeonyItems.SCRAMBLED_EGGS_WITH_TOMATOES, PeonyItems.WOODEN_PLATE)
+                .step(new CookingSteps.Step(80, 60, PeonyItems.CORIANDER))
+                .step(new CookingSteps.Step(100, 60, PeonyItems.SPATULA, PeonyItems.PEELED_TOMATO))
+                .step(new CookingSteps.Step(280, 20, PeonyItems.SPATULA, PeonyItems.SCRAMBLED_EGGS, new StirFryingData(3)))
+                .offerTo(exporter);
+        SequentialCookingRecipeJsonBuilder.create(550, true, PeonyItems.FRIED_SHREDDED_POTATOES, PeonyItems.WOODEN_PLATE)
+                .step(new CookingSteps.Step(100, 80, PeonyItems.SHREDDED_POTATO))
+                .step(new CookingSteps.Step(80, 20, PeonyItems.BLACK_VINEGAR))
+                .step(new CookingSteps.Step(260, 20, PeonyItems.SPATULA, PeonyItems.SHREDDED_POTATO, new StirFryingData(4)))
+                .offerTo(exporter);
 
         /* PARING */
-        ParingRecipeJsonBuilder.create(PeonyItems.TOMATO, PeonyItems.PEELED_TOMATO).category(RecipeCategory.FOOD).offerTo(exporter);
+        ParingRecipeJsonBuilder.create(PeonyItems.TOMATO, PeonyItems.PEELED_TOMATO).category(RecipeCategory.FOOD)
+                .criterion(PeonyItems.TOMATO).offerTo(exporter);
+        ParingRecipeJsonBuilder.create(Items.POTATO, PeonyItems.PEELED_POTATO).category(RecipeCategory.FOOD)
+                .criterion(Items.POTATO).offerTo(exporter);
+
+        /* BREWING */
+        BrewingRecipeJsonBuilder.create(Items.HONEY_BOTTLE, Items.GLASS_BOTTLE, Items.HONEYCOMB.getDefaultStack())
+                .brewingTime(200).offerTo(exporter, Peony.id("honey_bottle_brewing_from_honeycomb"));
+
+        /* SHREDDING */
+        ShreddingRecipeJsonBuilder.create(PeonyItems.PEELED_POTATO, PeonyItems.SHREDDED_POTATO, 1)
+                .offerTo(exporter);
 
         // Vanilla Extend
         createCookingRecipe(Items.BEEF, Items.COOKED_BEEF, exporter);
@@ -203,6 +257,22 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .pattern("S S")
                 .group(PEONY_BLOCKS)
                 .criterion(hasItem(logStick.getLog()), conditionsFromItem(logStick.getLog()))
+                .offerTo(exporter);
+    }
+
+    public static void createShredderRecipe(ItemConvertible material, @Nullable TagKey<Item> materialTag, ItemConvertible result, RecipeExporter exporter) {
+        ShapedRecipeJsonBuilder builder = ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, result).input('S', Items.STICK);
+        if (materialTag == null) {
+            builder.input('M', material);
+        } else {
+            builder.input('M', materialTag);
+        }
+
+        builder.pattern("M M")
+                .pattern("MMM")
+                .pattern(" S ")
+                .group(PEONY_ITEMS)
+                .criterion(hasItem(material), conditionsFromItem(material))
                 .offerTo(exporter);
     }
 

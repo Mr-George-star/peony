@@ -3,10 +3,12 @@ package net.george.peony.block;
 import com.mojang.serialization.MapCodec;
 import net.george.peony.api.heat.HeatProvider;
 import net.george.peony.block.entity.*;
+import net.george.peony.compat.PeonyDamageTypes;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
@@ -26,7 +28,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.stream.Stream;
 
@@ -43,6 +44,8 @@ public class SkilletBlock extends BlockWithEntity {
 
     public SkilletBlock(Settings settings) {
         super(settings);
+        this.setDefaultState(this.getDefaultState()
+                .with(FACING, Direction.NORTH));
     }
 
     @Override
@@ -81,6 +84,18 @@ public class SkilletBlock extends BlockWithEntity {
     public BlockState getPlacementState(ItemPlacementContext context) {
         return this.getDefaultState()
                 .with(FACING, context.getHorizontalPlayerFacing().getOpposite());
+    }
+
+    @Override
+    protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+        if (!world.isClient) {
+            BlockPos downPos = entity.getBlockPos().down();
+            BlockState downState = world.getBlockState(downPos);
+            if (downState.getBlock() instanceof SkilletBlock && world.getBlockState(downPos.down()) instanceof HeatProvider provider &&
+                provider.getLevel().causesDamage()) {
+                entity.damage(PeonyDamageTypes.of(world, PeonyDamageTypes.SCALD), world.random.nextBetween(1, 2));
+            }
+        }
     }
 
     @Override
@@ -133,7 +148,6 @@ public class SkilletBlock extends BlockWithEntity {
         return new SkilletBlockEntity(pos, state);
     }
 
-    @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return world.isClient ?

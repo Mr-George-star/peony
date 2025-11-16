@@ -3,6 +3,7 @@ package net.george.peony.data.model;
 import com.google.gson.JsonObject;
 import net.george.peony.Peony;
 import net.george.peony.block.LogStickBlock;
+import net.george.peony.block.PizzaBlock;
 import net.george.peony.block.PotStandWithCampfireBlock;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.*;
@@ -21,6 +22,14 @@ public class PeonyModels {
     public static final Model POT_STAND_WITH_CAMPFIRE = new Model(Optional.of(Peony.id("block/pot_stand_with_campfire")),
             Optional.empty(), TextureKey.TEXTURE, TextureKey.PARTICLE);
     public static final Model POT_STAND_WITH_CAMPFIRE_OFF = new Model(Optional.of(Peony.id("block/pot_stand_with_campfire_off")),
+            Optional.empty(), TextureKey.TEXTURE, TextureKey.PARTICLE);
+    public static final Model PIZZA_FULL = new Model(Optional.of(Peony.id("block/pizza_template_full")),
+            Optional.empty(), TextureKey.TEXTURE, TextureKey.PARTICLE);
+    public static final Model PIZZA_FOUR_THIRDS = new Model(Optional.of(Peony.id("block/pizza_template_four_thirds")),
+            Optional.empty(), TextureKey.TEXTURE, TextureKey.PARTICLE);
+    public static final Model PIZZA_HALF = new Model(Optional.of(Peony.id("block/pizza_template_half")),
+            Optional.empty(), TextureKey.TEXTURE, TextureKey.TEXTURE);
+    public static final Model PIZZA_ONE_QUARTER = new Model(Optional.of(Peony.id("block/pizza_template_one_quarter")),
             Optional.empty(), TextureKey.TEXTURE, TextureKey.PARTICLE);
 
     public static Identifier getUploaded(Block block, BlockStateModelGenerator generator, TexturedModel.Factory factory) {
@@ -90,6 +99,25 @@ public class PeonyModels {
 
         generator.blockStateCollector.accept(VariantsBlockStateSupplier.create(potStandWithCampfire)
                 .coordinate(BlockStateModelGenerator.createBooleanModelMap(Properties.LIT, potStandWithCampfireId, potStandWithCampfireOffId))
+                .coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates()));
+    }
+
+    public static void registerPizza(BlockStateModelGenerator generator, Block pizza) {
+        TextureMap map = new TextureMap()
+                .put(TextureKey.TEXTURE, TextureMap.getId(pizza))
+                .put(TextureKey.TEXTURE, TextureMap.getId(pizza));
+        Identifier fullId = PIZZA_FULL.upload(pizza, map, generator.modelCollector);
+        Identifier fourThirdsId = PIZZA_FOUR_THIRDS.upload(pizza, map, generator.modelCollector);
+        Identifier halfId = PIZZA_HALF.upload(pizza, map, generator.modelCollector);
+        Identifier oneQuarterId = PIZZA_ONE_QUARTER.upload(pizza, map, generator.modelCollector);
+
+        generator.blockStateCollector.accept(VariantsBlockStateSupplier.create(pizza)
+                .coordinate(BlockStateVariantMap.create(PizzaBlock.EATEN_STAGE)
+                        .register(0, BlockStateVariant.create().put(VariantSettings.MODEL, fullId))
+                        .register(1, BlockStateVariant.create().put(VariantSettings.MODEL, fourThirdsId))
+                        .register(2, BlockStateVariant.create().put(VariantSettings.MODEL, halfId))
+                        .register(3, BlockStateVariant.create().put(VariantSettings.MODEL, oneQuarterId))
+                )
                 .coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates()));
     }
 }

@@ -26,14 +26,30 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyItems.TOMATO, "Tomato");
         translationBuilder.add(PeonyItems.TOMATO_SEEDS, "Tomato Seeds");
         translationBuilder.add(PeonyItems.PEELED_TOMATO, "Peeled Tomato");
+        translationBuilder.add(PeonyItems.PEELED_POTATO, "Peeled Potato");
+        translationBuilder.add(PeonyItems.SHREDDED_POTATO, "Shredded Potato");
+        translationBuilder.add(PeonyItems.CORIANDER, "Coriander");
+        translationBuilder.add(PeonyItems.HAM, "Ham");
+        translationBuilder.add(PeonyItems.BAKED_FLATBREAD, "Baked Flatbread");
         translationBuilder.add(PeonyItems.TOMATO_SAUCE, "Tomato Sauce");
         translationBuilder.add(PeonyItems.SCRAMBLED_EGGS, "Scrambled Eggs");
+        translationBuilder.add(PeonyItems.SCRAMBLED_EGGS_WITH_TOMATOES, "Scrambled Eggs With Tomatoes");
+        translationBuilder.add(PeonyItems.FRIED_SHREDDED_POTATOES, "Fried Shredded Potatoes");
+        translationBuilder.add(PeonyItems.CHEESE, "Cheese");
+
         translationBuilder.add(PeonyItems.LARD, "Lard");
         translationBuilder.add(PeonyItems.LARD_BOTTLE, "Lard Bottle");
+        translationBuilder.add(PeonyItems.CONDIMENT_BOTTLE, "Condiment Bottle");
+        translationBuilder.add(PeonyItems.BLACK_VINEGAR, "Black Vinegar");
 
         translationBuilder.add(PeonyItems.KITCHEN_KNIFE, "Kitchen Knife");
         translationBuilder.add(PeonyItems.SPATULA, "Spatula");
         translationBuilder.add(PeonyItems.IRON_PARING_KNIFE, "Iron Paring Knife");
+        translationBuilder.add(PeonyItems.IRON_SHREDDER, "Iron Shredder");
+        translationBuilder.add(PeonyItems.GOLD_SHREDDER, "Gold Shredder");
+        translationBuilder.add(PeonyItems.DIAMOND_SHREDDER, "Diamond Shredder");
+        translationBuilder.add(PeonyItems.NETHERITE_SHREDDER, "Netherite Shredder");
+        translationBuilder.add(PeonyItems.WOODEN_PLATE, "Wooden Plate");
         translationBuilder.add(PeonyItems.NATURE_GAS_DETECTOR, "Nature Gas Detector");
 
         translationBuilder.add(PeonyItems.NATURE_GAS_BUCKET, "Nature Gas Bucket");
@@ -55,6 +71,7 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.DARK_OAK_CUTTING_BOARD, "Dark Oak Cutting Board");
         translationBuilder.add(PeonyBlocks.MANGROVE_CUTTING_BOARD, "Mangrove Cutting Board");
         translationBuilder.add(PeonyBlocks.SKILLET, "Skillet");
+        translationBuilder.add(PeonyBlocks.BREWING_BARREL, "Brewing Barrel");
         translationBuilder.add(PeonyBlocks.OAK_LOG_STICK, "Oak Log Stick");
         translationBuilder.add(PeonyBlocks.SPRUCE_LOG_STICK, "Spruce Log Stick");
         translationBuilder.add(PeonyBlocks.BIRCH_LOG_STICK, "Birch Log Stick");
@@ -87,6 +104,8 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.NATURE_GAS, "Nature Gas");
         translationBuilder.add(PeonyBlocks.LARD_FLUID, "Lard");
         translationBuilder.add(PeonyBlocks.LARD_CAULDRON, "Lard Cauldron");
+
+        translationBuilder.add(PeonyBlocks.BOWL, "Bowl");
 
         translationBuilder.add(PeonyTranslationKeys.ITEM_GROUP_KEY, "Peony");
 
