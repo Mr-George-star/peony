@@ -153,7 +153,7 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add("config.jade.plugin_peony.pot_stand_with_campfire_component", "套营火的橡木锅架 - 温度数据显示");
 
         translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_MELTING_OIL, "融化油中, 在第%d秒, 还剩%d秒");
-        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_CONTINUE, "放入原料以进入下一步");
+        translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_CONTINUE, "放入原料以进入下一步，在第%d秒，还剩%d秒");
         translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_HEATING_TIME, "烹饪中, 在第%d秒，还剩%d秒");
         translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_OVERFLOW_TIME, "超时了! 已超时%d秒, 还剩%d秒");
         translationBuilder.add(PeonyTranslationKeys.JADE_SKILLET_STIR_FRYING_COUNT, "翻炒中，需翻炒%d次，已翻炒%d次");

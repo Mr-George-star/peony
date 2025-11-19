@@ -1,8 +1,8 @@
 package net.george.peony;
 
 import net.fabricmc.api.ModInitializer;
-import net.george.peony.api.action.ActionType;
 import net.george.peony.api.action.ActionTypes;
+import net.george.peony.api.data.CommonIngredientTypes;
 import net.george.peony.block.PeonyBlocks;
 import net.george.peony.block.entity.PeonyBlockEntities;
 import net.george.peony.compat.PeonyCompat;
@@ -32,6 +32,7 @@ public class Peony implements ModInitializer {
 		PeonyRecipes.register();
 		PeonySoundEvents.register();
 		ActionTypes.register();
+		CommonIngredientTypes.register();
 		PeonyFeatures.register();
 		PeonyCompat.register();
 		PeonyWorldGeneration.generate();

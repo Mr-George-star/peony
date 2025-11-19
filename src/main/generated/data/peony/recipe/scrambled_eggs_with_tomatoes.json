@@ -1,5 +1,6 @@
 {
   "type": "peony:sequential_cooking",
+  "basicIngredient": "peony:peeled_tomato",
   "needOil": false,
   "output": {
     "container": "peony:wooden_plate",
@@ -9,23 +10,6 @@
     }
   },
   "steps": [
-    {
-      "ingredient": {
-        "item": "peony:coriander"
-      },
-      "maxTimeOverflow": 60,
-      "requiredTime": 80
-    },
-    {
-      "ingredient": {
-        "item": "peony:peeled_tomato"
-      },
-      "maxTimeOverflow": 60,
-      "requiredTime": 100,
-      "requiredTool": {
-        "item": "peony:spatula"
-      }
-    },
     {
       "fryingData": {
         "times": 3
@@ -38,6 +22,13 @@
       "requiredTool": {
         "item": "peony:spatula"
       }
+    },
+    {
+      "ingredient": {
+        "item": "peony:coriander"
+      },
+      "maxTimeOverflow": 60,
+      "requiredTime": 80
     }
   ],
   "temperature": 550

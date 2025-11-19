@@ -1,15 +1,24 @@
 package net.george.peony.recipe;
 
+import net.george.peony.api.data.CommonIngredient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.input.RecipeInput;
+import org.jetbrains.annotations.Nullable;
 
 public class SequentialCookingRecipeInput implements RecipeInput {
     protected final ItemStack stack;
     protected final boolean needOil;
+    @Nullable
+    private final CommonIngredient commonIngredient;
 
-    public SequentialCookingRecipeInput(ItemStack stack, boolean needOil) {
-        this.stack = stack;
+    public SequentialCookingRecipeInput(ItemStack input, boolean needOil) {
+        this(input, needOil, null);
+    }
+
+    public SequentialCookingRecipeInput(ItemStack input, boolean needOil, @Nullable CommonIngredient commonIngredient) {
+        this.stack = input;
         this.needOil = needOil;
+        this.commonIngredient = commonIngredient;
     }
 
     @Override
@@ -23,6 +32,11 @@ public class SequentialCookingRecipeInput implements RecipeInput {
 
     public boolean isNeedOil() {
         return this.needOil;
+    }
+
+    @Nullable
+    public CommonIngredient getCommonIngredient() {
+        return this.commonIngredient;
     }
 
     @Override

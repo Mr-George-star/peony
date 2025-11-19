@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_coriander": {
+    "has_scrambled_eggs": {
       "conditions": {
         "items": [
           {
-            "items": "peony:coriander"
+            "items": "peony:scrambled_eggs"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_coriander"
+      "has_scrambled_eggs"
     ]
   ],
   "rewards": {

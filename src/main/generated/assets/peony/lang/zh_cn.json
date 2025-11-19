@@ -104,7 +104,7 @@
   "item.peony.wooden_plate": "木碟",
   "itemGroup.peony.item_group": "牡丹",
   "jade.peony.tooltip.skillet.container": "烹饪已完成，为取出结果需要的容器：",
-  "jade.peony.tooltip.skillet.continue": "放入原料以进入下一步",
+  "jade.peony.tooltip.skillet.continue": "放入原料以进入下一步，在第%d秒，还剩%d秒",
   "jade.peony.tooltip.skillet.heating.time": "烹饪中, 在第%d秒，还剩%d秒",
   "jade.peony.tooltip.skillet.melting.oil": "融化油中, 在第%d秒, 还剩%d秒",
   "jade.peony.tooltip.skillet.non.container": "烹饪已完成",

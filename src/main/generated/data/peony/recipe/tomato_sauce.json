@@ -1,5 +1,6 @@
 {
   "type": "peony:sequential_cooking",
+  "basicIngredient": "peony:peeled_tomato",
   "needOil": false,
   "output": {
     "container": "minecraft:bowl",
@@ -9,16 +10,6 @@
     }
   },
   "steps": [
-    {
-      "ingredient": {
-        "item": "peony:peeled_tomato"
-      },
-      "maxTimeOverflow": 60,
-      "requiredTime": 200,
-      "requiredTool": {
-        "item": "peony:spatula"
-      }
-    },
     {
       "ingredient": {
         "item": "peony:peeled_tomato"

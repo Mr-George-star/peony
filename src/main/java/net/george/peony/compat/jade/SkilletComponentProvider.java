@@ -34,7 +34,7 @@ public enum SkilletComponentProvider implements IBlockComponentProvider, IServer
                     String stateName = nbt.getString("State");
                     state = SkilletBlockEntity.CookingStates.valueOf(stateName);
                     Peony.LOGGER.debug("Restored state from NBT: {}", stateName);
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException exception) {
                     state = SkilletBlockEntity.CookingStates.IDLE;
                     Peony.LOGGER.warn("Failed to restore state from NBT, defaulting to IDLE");
                 }
@@ -52,14 +52,14 @@ public enum SkilletComponentProvider implements IBlockComponentProvider, IServer
                         int displayRequiredHeatingTime = Math.round((float) requiredHeatingTime / 20);
                         tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_MELTING_OIL,
                                 displayHeatingTime, displayRequiredHeatingTime));
-                        if (displayHeatingTime >= 4 && displayRequiredHeatingTime >= 4) {
+                        if (heatingTime >= requiredHeatingTime) {
                             IElementHelper elements = IElementHelper.get();
                             IElement icon = elements.item(new ItemStack(PeonyItems.SPATULA), 0.5f).size(new Vec2f(10, 10)).translate(new Vec2f(0, -1));
                             tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_TOOL_USAGE_TOOLTIP));
                             tooltip.append(icon);
                         }
                     } else {
-                        tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_CONTINUE));
+                        tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_CONTINUE, 0, 0));
                     }
                 }
                 case HEATING -> {
@@ -68,6 +68,22 @@ public enum SkilletComponentProvider implements IBlockComponentProvider, IServer
                     if (heatingTime > 0 && requiredHeatingTime > 0) {
                         tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_HEATING_TIME,
                                 Math.round((float) heatingTime / 20), Math.round((float) requiredHeatingTime / 20)));
+                    }
+                }
+                case COMMON_INGREDIENT_PROCESSING -> {
+                    int commonIngredientStage = this.getIntData(nbt, "CommonIngredientStage");
+                    if (commonIngredientStage == 0) {
+                        int heatingTime = this.getIntData(nbt, "HeatingTime");
+                        int requiredHeatingTime = this.getIntData(nbt, "RequiredHeatingTime");
+                        int displayHeatingTime = Math.round((float) heatingTime / 20);
+                        int displayRequiredHeatingTime = Math.round((float) requiredHeatingTime / 20);
+                        tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_HEATING_TIME,
+                                displayHeatingTime, displayRequiredHeatingTime));
+                    } else {
+                        int waitingTime = this.getIntData(nbt, "WaitingTime");
+                        int displayWaitingTime = Math.round((float) waitingTime / 20);
+                        tooltip.add(Text.translatable(PeonyTranslationKeys.JADE_SKILLET_CONTINUE,
+                                displayWaitingTime, 6));
                     }
                 }
                 case STIR_FRYING -> {

@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.george.peony.Peony;
 import net.george.peony.api.action.ActionTypes;
+import net.george.peony.api.data.CommonIngredientTypes;
 import net.george.peony.block.*;
 import net.george.peony.block.data.CookingSteps;
 import net.george.peony.block.data.StirFryingData;
@@ -183,7 +184,7 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .step(new CookingSteps.Step(240, 20, PeonyItems.PEANUT_KERNEL))
                 .offerTo(exporter);
         SequentialCookingRecipeJsonBuilder.create(550, false, PeonyItems.TOMATO_SAUCE, Items.BOWL)
-                .step(new CookingSteps.Step(200, 60, PeonyItems.SPATULA, PeonyItems.PEELED_TOMATO))
+                .basicIngredient(CommonIngredientTypes.PEELED_TOMATO)
                 .step(new CookingSteps.Step(200, 20, PeonyItems.PEELED_TOMATO))
                 .offerTo(exporter);
         SequentialCookingRecipeJsonBuilder.create(550, true, PeonyItems.SCRAMBLED_EGGS, Items.BOWL)
@@ -191,9 +192,9 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .step(new CookingSteps.Step(240, 20, PeonyItems.SPATULA, Items.EGG, new StirFryingData(3)))
                 .offerTo(exporter);
         SequentialCookingRecipeJsonBuilder.create(550, false, PeonyItems.SCRAMBLED_EGGS_WITH_TOMATOES, PeonyItems.WOODEN_PLATE)
-                .step(new CookingSteps.Step(80, 60, PeonyItems.CORIANDER))
-                .step(new CookingSteps.Step(100, 60, PeonyItems.SPATULA, PeonyItems.PEELED_TOMATO))
+                .basicIngredient(CommonIngredientTypes.PEELED_TOMATO)
                 .step(new CookingSteps.Step(280, 20, PeonyItems.SPATULA, PeonyItems.SCRAMBLED_EGGS, new StirFryingData(3)))
+                .step(new CookingSteps.Step(80, 60, PeonyItems.CORIANDER))
                 .offerTo(exporter);
         SequentialCookingRecipeJsonBuilder.create(550, true, PeonyItems.FRIED_SHREDDED_POTATOES, PeonyItems.WOODEN_PLATE)
                 .step(new CookingSteps.Step(100, 80, PeonyItems.SHREDDED_POTATO))

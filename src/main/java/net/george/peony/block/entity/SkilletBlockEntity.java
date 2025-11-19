@@ -5,6 +5,8 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.george.networking.api.GameNetworking;
 import net.george.peony.Peony;
+import net.george.peony.api.data.CommonIngredient;
+import net.george.peony.api.data.CommonIngredientType;
 import net.george.peony.api.heat.HeatCalculationUtils;
 import net.george.peony.api.heat.HeatLevel;
 import net.george.peony.api.heat.HeatParticleHelper;
@@ -12,10 +14,7 @@ import net.george.peony.api.heat.HeatProvider;
 import net.george.peony.api.util.CountdownManager;
 import net.george.peony.api.util.NbtSerializable;
 import net.george.peony.block.SkilletBlock;
-import net.george.peony.block.data.CookingSteps;
-import net.george.peony.block.data.Output;
-import net.george.peony.block.data.RecipeStepsCursor;
-import net.george.peony.block.data.StirFryingData;
+import net.george.peony.block.data.*;
 import net.george.peony.compat.PeonyDamageTypes;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.networking.payload.ItemStackSyncS2CPayload;
@@ -64,7 +63,10 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Block entity for the Skillet block that handles sequential cooking recipes
@@ -94,7 +96,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     protected final RecipeManager.MatchGetter<SequentialCookingRecipeInput, SequentialCookingRecipe> matchGetter;
 
     /** Dummy recipe used for oil processing stages */
-    protected final SequentialCookingRecipe dummyRecipe = new SequentialCookingRecipe(550, false, List.of(), null);
+    protected final SequentialCookingRecipe dummyRecipe = new SequentialCookingRecipe(550, false, null, List.of(), null);
 
     /** Manages various countdown timers during cooking process */
     protected CountdownManager countdownManager;
@@ -456,18 +458,13 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
      * @return the current recipe, if any
      */
     protected Optional<RecipeEntry<SequentialCookingRecipe>> getCurrentRecipe(World world, ItemStack input, boolean needOil) {
-        if (this.context.hasOil) {
-            if (this.context.oilProcessingStage == 0) {
-                return Optional.of(new RecipeEntry<>(DUMMY_RECIPE_ID, this.dummyRecipe));
-            }
-            if (this.context.oilProcessingStage == 1 && this.cachedRecipe != null) {
-                return this.findMatchingRecipe(world, input, needOil);
-            }
+        SequentialCookingRecipeInput recipeInput;
+        if (this.context.isCommonIngredientProcessed() && this.context.currentCommonIngredient != null) {
+            recipeInput = new SequentialCookingRecipeInput(input, needOil, this.context.currentCommonIngredient);
+        } else {
+            recipeInput = new SequentialCookingRecipeInput(input, needOil);
         }
-        if (this.cachedRecipe != null) {
-            return Optional.of(this.cachedRecipe);
-        }
-        return this.findMatchingRecipe(world, input, needOil);
+        return this.findMatchingRecipe(world, recipeInput, needOil);
     }
 
     /**
@@ -479,16 +476,38 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
      * @return the matching recipe, if any
      */
     private Optional<RecipeEntry<SequentialCookingRecipe>> findMatchingRecipe(World world, ItemStack input, boolean needOil) {
+        return this.findMatchingRecipe(world, new SequentialCookingRecipeInput(input, needOil), needOil);
+    }
+
+    /**
+     * Finds matching recipe considering oil requirements.
+     *
+     * @param world the world
+     * @param input the recipe input
+     * @param needOil whether oil-based recipes should be considered
+     * @return the matching recipe, if any
+     */
+    private Optional<RecipeEntry<SequentialCookingRecipe>> findMatchingRecipe(World world, SequentialCookingRecipeInput input, boolean needOil) {
         Peony.LOGGER.debug("Allow to match needOil=true recipe: " + this.context.allowOilBasedRecipes);
         List<RecipeEntry<SequentialCookingRecipe>> allRecipes = world.getRecipeManager()
                 .listAllOfType(PeonyRecipes.SEQUENTIAL_COOKING_TYPE);
 
-        // Filter recipes by oil requirement and ingredient match
         Optional<RecipeEntry<SequentialCookingRecipe>> matchedRecipe = allRecipes.stream()
                 .filter(recipe -> {
                     boolean matchesOil = recipe.value().isNeedOil() == needOil;
-                    boolean matchesInput = recipe.value().matches(new SequentialCookingRecipeInput(input, needOil), world);
-                    return matchesOil && matchesInput;
+                    boolean matchesInput = recipe.value().matches(input, world);
+
+                    // If there are common ingredients, check if the formula requires them.
+                    if (input.getCommonIngredient() != null) {
+                        CommonIngredientType<?> recipeBasicIngredient = recipe.value().getBasicIngredient();
+                        boolean matchesCommonIngredient = recipeBasicIngredient != null &&
+                                recipeBasicIngredient.equals(input.getCommonIngredient().getType());
+                        return matchesOil && matchesInput && matchesCommonIngredient;
+                    } else {
+                        // If there are no common ingredients, ensure that the formula does not require common ingredients either.
+                        boolean noCommonIngredientRequired = recipe.value().getBasicIngredient() == null;
+                        return matchesOil && matchesInput && noCommonIngredientRequired;
+                    }
                 })
                 .findFirst();
 
@@ -797,6 +816,22 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         return new InsertResult(true, -1);
     }
 
+    public InsertResult startCommonIngredientProcessing(ItemStack ingredientStack, CommonIngredient commonIngredient) {
+        Peony.LOGGER.debug("Starting common ingredient processing: {}", commonIngredient.getType().getId());
+
+        this.resetCookingVariables();
+        this.setInputStack(ingredientStack.copyWithCount(1));
+        this.addedIngredients.add(ingredientStack.copyWithCount(1));
+        this.context.hasIngredient = true;
+        this.context.currentCommonIngredient = commonIngredient;
+        this.context.commonIngredientProcessed = false;
+        this.updateAddedItems();
+        this.markDirty();
+
+        this.context.transitionTo(CookingStates.COMMON_INGREDIENT_PROCESSING);
+        return new InsertResult(true, -1);
+    }
+
     /**
      * Cooking context containing all cooking state and references.
      * This class manages the complete state of the cooking process.
@@ -814,6 +849,12 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         public boolean hasOil = false;
         public int oilProcessingStage = 0;
         public boolean allowOilBasedRecipes = false;
+        // Common ingredient processing
+        @Nullable
+        public CommonIngredient currentCommonIngredient;
+        public int commonIngredientStage = 0;
+        public boolean commonIngredientProcessed = false;
+        public int waitingTime = 0;
 
         // Stir-frying related state
         public boolean inStirFrying = false;
@@ -943,6 +984,34 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         }
 
         /**
+         * Gets the current preprocessing step for the common ingredient
+         * @return the preprocessing step, or null if none
+         */
+        @Nullable
+        public RecipeStep getCurrentCommonIngredientStep() {
+            if (this.currentCommonIngredient == null) {
+                return null;
+            }
+            return this.currentCommonIngredient.getStep(RecipeStepTypes.COOKING);
+        }
+
+        /**
+         * Checks if a common ingredient is currently being processed or is processed
+         * @return true if there's an active common ingredient
+         */
+        public boolean hasCommonIngredient() {
+            return this.currentCommonIngredient != null;
+        }
+
+        /**
+         * Checks if the current common ingredient has been processed
+         * @return true if the common ingredient preprocessing is complete
+         */
+        public boolean isCommonIngredientProcessed() {
+            return this.commonIngredientProcessed && this.currentCommonIngredient != null;
+        }
+
+        /**
          * Resets all cooking variables to their initial state.
          */
         public void reset() {
@@ -957,6 +1026,10 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             this.hasOil = false;
             this.oilProcessingStage = 0;
             this.allowOilBasedRecipes = false;
+            this.currentCommonIngredient = null;
+            this.commonIngredientStage = 0;
+            this.commonIngredientProcessed = false;
+            this.waitingTime = 0;
             this.inStirFrying = false;
             this.stirFryingCount = 0;
             this.requiredStirFryingCount = 0;
@@ -989,6 +1062,14 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             nbt.putBoolean("HasOil", this.hasOil);
             nbt.putInt("OilProcessingStage", this.oilProcessingStage);
             nbt.putBoolean("AllowOilBasedRecipes", this.allowOilBasedRecipes);
+            // Common ingredient state
+            nbt.putBoolean("HasCommonIngredient", this.currentCommonIngredient != null);
+            nbt.putInt("CommonIngredientStage", this.commonIngredientStage);
+            nbt.putBoolean("CommonIngredientProcessed", this.commonIngredientProcessed);
+            nbt.putInt("WaitingTime", this.waitingTime);
+            if (this.currentCommonIngredient != null) {
+                nbt.putString("CommonIngredientType", this.currentCommonIngredient.getType().getId().toString());
+            }
 
             // Stir-fry status
             nbt.putBoolean("InStirFrying", this.inStirFrying);
@@ -1022,6 +1103,19 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             this.hasOil = nbt.getBoolean("HasOil");
             this.oilProcessingStage = nbt.getInt("OilProcessingStage");
             this.allowOilBasedRecipes = nbt.getBoolean("AllowOilBasedRecipes");
+            // Common ingredient state
+            this.commonIngredientStage = nbt.getInt("CommonIngredientStage");
+            this.commonIngredientProcessed = nbt.getBoolean("CommonIngredientProcessed");
+            this.waitingTime = nbt.getInt("WaitingTime");
+            if (nbt.getBoolean("HasCommonIngredient") && nbt.contains("CommonIngredientType")) {
+                Identifier typeId = Identifier.tryParse(nbt.getString("CommonIngredientType"));
+                if (typeId != null) {
+                    CommonIngredientType<?> type = CommonIngredientType.REGISTRY.get(typeId);
+                    if (type != null) {
+                        this.currentCommonIngredient = type.createInstance();
+                    }
+                }
+            }
 
             // Read stir-fry status
             this.inStirFrying = nbt.getBoolean("InStirFrying");
@@ -1037,6 +1131,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     public enum CookingStates implements StringIdentifiable {
         IDLE("idle", new IdleState()),
         OIL_PROCESSING("oil_processing", new OilProcessingState()),
+        COMMON_INGREDIENT_PROCESSING("common_ingredient_processing", new CommonIngredientProcessingState()),
         HEATING("heating", new HeatingState()),
         STIR_FRYING("stir_frying", new StirFryingState()),
         OVERFLOW("overflow", new OverflowState()),
@@ -1089,7 +1184,22 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             SkilletBlockEntity skillet = context.skillet;
             World world = interactionContext.world;
 
-            // First check if it's oil
+            // If there are pre-processed common ingredient, try matching the recipe first.
+            if (context.isCommonIngredientProcessed()) {
+                Optional<RecipeEntry<SequentialCookingRecipe>> recipe = skillet.getCurrentRecipe(world, givenStack);
+                if (recipe.isPresent()) {
+                    return skillet.startRecipe(recipe.get(), givenStack);
+                }
+            }
+
+            // Then check if it is a new common ingredient.
+            CommonIngredientType<?> commonIngredientType = CommonIngredientType.LOOKUP.find(givenStack, null);
+            if (commonIngredientType != null && !context.hasCommonIngredient()) {
+                CommonIngredient commonIngredient = commonIngredientType.createInstance();
+                return skillet.startCommonIngredientProcessing(givenStack, commonIngredient);
+            }
+
+            // Then check if it's oil.
             if (SkilletBlockEntity.isCookingOil(givenStack)) {
                 return skillet.startOilProcessing(givenStack);
             }
@@ -1182,7 +1292,6 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
 
                 Output oilOutput = Output.OIL_OUTPUTS.find(context.skillet.addedIngredients.getFirst(), null);
                 if (oilOutput != null) {
-                    Peony.LOGGER.info(oilOutput.toString());
                     if (givenStack.isOf(oilOutput.getContainer().asItem())) {
                         ItemStack outputStack = oilOutput.getOutputStack().copy();
                         interactionContext.user.giveItemStack(outputStack);
@@ -1251,6 +1360,136 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             context.transitionTo(heatingMode);
 
             Peony.LOGGER.debug("New recipe with oil started successfully with mode: {}", heatingMode);
+            return new InsertResult(true, -1);
+        }
+    }
+
+    @ApiStatus.NonExtendable
+    public static class CommonIngredientProcessingState implements CookingState {
+        @Override
+        public void tick(CookingContext context, World world, BlockPos pos, BlockState state) {
+            boolean hasHeatSource = context.skillet.checkHeatSource(world, pos);
+
+            if (context.commonIngredientStage == 0) {
+                if (context.hasIngredient && hasHeatSource) {
+                    if (context.requiredHeatingTime <= 0) {
+                        RecipeStep preprocessingStep = context.getCurrentCommonIngredientStep();
+                        if (preprocessingStep instanceof CookingSteps.Step cookingStep) {
+                            context.requiredHeatingTime = calculateRequiredHeatingTime(world, pos, cookingStep);
+                            context.maxOverflowTime = cookingStep.getMaxTimeOverflow();
+                            Peony.LOGGER.debug("Set common ingredient preprocessing time: {}", context.requiredHeatingTime);
+                        }
+                    }
+
+                    if (context.requiredHeatingTime > 0 && context.heatingTime < context.requiredHeatingTime) {
+                        context.heatingTime++;
+                        context.skillet.markDirty();
+                    } else if (context.heatingTime >= context.requiredHeatingTime) {
+                        context.inOverflow = true;
+                        context.skillet.markDirty();
+                        Peony.LOGGER.debug("Common ingredient heating completed, waiting for tool");
+                    }
+                } else {
+                    if (context.heatingTime > 0 && !context.inOverflow) {
+                        context.heatingTime = Math.max(0, context.heatingTime - 1);
+                        context.skillet.markDirty();
+                    }
+                }
+            } else if (context.commonIngredientStage == 1) {
+                // Pre-processing is complete; players are now ready to add other ingredients to begin the recipe.
+                context.waitingTime++;
+
+                if (context.waitingTime > 120) {
+                    Peony.LOGGER.debug("Common ingredient wait timeout, resetting");
+                    context.skillet.failCooking(world, pos);
+                }
+
+                context.skillet.markDirty();
+            }
+        }
+
+        @Override
+        public InsertResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
+            World world = interactionContext.world;
+
+            if (context.commonIngredientStage == 0 && context.inOverflow) {
+                RecipeStep preprocessingStep = context.getCurrentCommonIngredientStep();
+                if (preprocessingStep instanceof CookingSteps.Step cookingStep) {
+                    if (cookingStep.getRequiredTool().test(givenStack) &&
+                            !context.skillet.isToolRequirementEmpty(cookingStep)) {
+
+                        Peony.LOGGER.debug("Tool used successfully, common ingredient preprocessing complete");
+                        context.commonIngredientStage = 1;
+                        context.waitingTime = 0;
+                        context.heatingTime = 0;
+                        context.requiredHeatingTime = 0;
+                        context.overflowTime = 0;
+                        context.inOverflow = false;
+                        context.commonIngredientProcessed = true;
+
+                        context.skillet.updateAddedItems();
+                        context.skillet.markDirty();
+                        return new InsertResult(true, -1);
+                    }
+                }
+            } else if (context.commonIngredientStage == 1) {
+                // Pretreatment is complete; try starting the new recipe.
+                Optional<RecipeEntry<SequentialCookingRecipe>> newRecipe = context.skillet.getCurrentRecipe(world, givenStack);
+                if (newRecipe.isPresent()) {
+                    Peony.LOGGER.debug("Found matching recipe with common ingredient: {}", newRecipe.get().id());
+
+                    // Start a new recipe, retaining common ingredient data.
+                    return startNewRecipeWithCommonIngredient(context, newRecipe.get(), givenStack);
+                } else {
+                    Peony.LOGGER.debug("No matching recipe found for common ingredient with item: {}", givenStack.getItem());
+                    return new InsertResult(false, -1);
+                }
+            }
+
+            return new InsertResult(false, -1);
+        }
+
+        @Override
+        public void onEnter(CookingContext context, World world, BlockPos pos) {
+            Peony.LOGGER.debug("Entered COMMON_INGREDIENT_PROCESSING state");
+            context.commonIngredientStage = 0;
+            context.commonIngredientProcessed = false;
+            context.waitingTime = 0;
+        }
+
+        @Override
+        public void onExit(CookingContext context, World world, BlockPos pos) {
+            Peony.LOGGER.debug("Exited COMMON_INGREDIENT_PROCESSING state");
+        }
+
+        @Override
+        public CookingStates asState() {
+            return CookingStates.COMMON_INGREDIENT_PROCESSING;
+        }
+
+        private InsertResult startNewRecipeWithCommonIngredient(CookingContext context, RecipeEntry<SequentialCookingRecipe> recipe, ItemStack givenStack) {
+            Peony.LOGGER.debug("Starting new recipe with common ingredient: {}", recipe.id());
+
+            // Retain common ingredient data, but reset other states.
+            CommonIngredient commonIngredient = context.currentCommonIngredient;
+            boolean allowed = context.allowOilBasedRecipes;
+
+            context.reset();
+            context.currentCommonIngredient = commonIngredient;
+            context.commonIngredientProcessed = true;
+            context.skillet.updateRecipeData(recipe);
+            context.setInputStack(givenStack.copyWithCount(1));
+            context.skillet.addedIngredients.add(givenStack);
+            context.hasIngredient = true;
+            context.allowOilBasedRecipes = allowed;
+            context.skillet.updateAddedItems();
+            context.skillet.markDirty();
+
+            // Determine heating mode
+            CookingStates heatingMode = context.skillet.determineHeatingMode(context.skillet.world);
+            context.transitionTo(heatingMode);
+
+            Peony.LOGGER.debug("New recipe with common ingredient started successfully with mode: {}", heatingMode);
             return new InsertResult(true, -1);
         }
     }

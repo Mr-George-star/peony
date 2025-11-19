@@ -124,7 +124,7 @@ public class PeonyCompat {
                 BlockPos pos = hitResult.getBlockPos();
                 BlockState state = world.getBlockState(pos);
                 if (state.isOf(PeonyBlocks.SKILLET)) {
-                    return ActionResult.FAIL;
+                    return ActionResult.PASS;
                 }
                 ItemPlacementContext ctx = new ItemPlacementContext(world, player, hand, stack, hitResult);
                 return BlockPlacements.placeBlock(ctx, PeonyBlocks.BOWL);

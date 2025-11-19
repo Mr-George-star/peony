@@ -1,6 +1,7 @@
 package net.george.peony.data.json;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.george.peony.api.data.CommonIngredientType;
 import net.george.peony.block.data.CookingSteps;
 import net.george.peony.block.data.Output;
 import net.george.peony.recipe.SequentialCookingRecipe;
@@ -18,12 +19,15 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 public class SequentialCookingRecipeJsonBuilder implements RecipeJsonBuilder {
     private final int temperature;
     private final boolean needOil;
+    @Nullable
+    private CommonIngredientType<?> basicIngredient = null;
     private final Output output;
     private final List<CookingSteps.Step> steps = new ArrayList<>();
     private RecipeCategory category = RecipeCategory.MISC;
@@ -85,6 +89,11 @@ public class SequentialCookingRecipeJsonBuilder implements RecipeJsonBuilder {
         return this;
     }
 
+    public SequentialCookingRecipeJsonBuilder basicIngredient(CommonIngredientType<?> basicIngredient) {
+        this.basicIngredient = basicIngredient;
+        return this;
+    }
+
     @SuppressWarnings("UnusedReturnValue")
     public SequentialCookingRecipeJsonBuilder criterion(ItemConvertible item) {
         return criterion(RecipeProvider.hasItem(item), RecipeProvider.conditionsFromItem(item));
@@ -107,7 +116,7 @@ public class SequentialCookingRecipeJsonBuilder implements RecipeJsonBuilder {
         }
         Advancement.Builder builder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
         Objects.requireNonNull(this.criteria).forEach(builder::criterion);
-        SequentialCookingRecipe recipe = new SequentialCookingRecipe(this.temperature, this.needOil, this.steps, this.output);
+        SequentialCookingRecipe recipe = new SequentialCookingRecipe(this.temperature, this.needOil, this.basicIngredient, this.steps, this.output);
         exporter.accept(recipeId, recipe, builder.build(recipeId.withPrefixedPath("recipes/" + this.category.getName() + "/")));
     }
 }
