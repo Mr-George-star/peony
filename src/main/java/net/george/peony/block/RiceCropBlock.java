@@ -2,45 +2,45 @@ package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
 import net.george.peony.item.PeonyItems;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CropBlock;
-import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.*;
 import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
-import org.jetbrains.annotations.Nullable;
 
-public class RiceCropBlock extends CropBlock {
+public class RiceCropBlock extends CropBlock implements Waterloggable {
     public static final MapCodec<RiceCropBlock> CODEC = createCodec(RiceCropBlock::new);
-    public static final int MAX_AGE = 7;
-    public static final IntProperty AGE = Properties.AGE_7;
+    public static final int MAX_AGE = 3;
+    public static final IntProperty AGE = Properties.AGE_3;
     public static final EnumProperty<DoubleBlockHalf> HALF = Properties.DOUBLE_BLOCK_HALF;
+    public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
 
     public RiceCropBlock(Settings settings) {
         super(settings);
         this.setDefaultState(this.getDefaultState()
                 .with(AGE, 0)
-                .with(HALF, DoubleBlockHalf.LOWER));
+                .with(HALF, DoubleBlockHalf.LOWER)
+                .with(WATERLOGGED, false));
     }
 
     @Override
@@ -50,7 +50,7 @@ public class RiceCropBlock extends CropBlock {
 
     @Override
     protected ItemConvertible getSeedsItem() {
-        return PeonyItems.BARLEY_SEEDS;
+        return PeonyItems.BROWN_RICE;
     }
 
     @Override
@@ -64,6 +64,29 @@ public class RiceCropBlock extends CropBlock {
     }
 
     @Override
+    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        if (state.get(HALF) == DoubleBlockHalf.LOWER) {
+            return switch (state.get(AGE)) {
+                case 0 ->  ofHeight(5);
+                case 1 -> ofHeight(10);
+                case 2 -> ofHeight(14);
+                default -> VoxelShapes.fullCube();
+            };
+        } else {
+            return switch (state.get(AGE)) {
+                case 0 -> ofHeight(9);
+                case 1 -> ofHeight(13);
+                case 2 -> ofHeight(14);
+                default -> VoxelShapes.fullCube();
+            };
+        }
+    }
+
+    public static VoxelShape ofHeight(int height) {
+        return Block.createCuboidShape(0, 0, 0, 16, height, 16);
+    }
+
+    @Override
     public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
         if (state.get(HALF) == DoubleBlockHalf.UPPER) {
             BlockState lowerState = world.getBlockState(pos.down());
@@ -71,8 +94,7 @@ public class RiceCropBlock extends CropBlock {
         } else {
             BlockPos down = pos.down();
             BlockState floor = world.getBlockState(down);
-            return super.canPlaceAt(state, world, pos) &&
-                    isInWater(world, pos) &&
+            return isInWater(world, pos) &&
                     floor.isIn(BlockTags.DIRT);
         }
     }
@@ -83,40 +105,39 @@ public class RiceCropBlock extends CropBlock {
     }
 
     @Override
-    public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
+    public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         if (!world.isClient) {
             DoubleBlockHalf half = state.get(HALF);
-            boolean isMature = this.isMature(state);
 
-            if (!player.isCreative() && isMature) {
-                dropStacks(state, world, pos, null, player, player.getMainHandStack());
+            if (half == DoubleBlockHalf.UPPER) {
+                BlockPos lowerPos = pos.down();
+                BlockState lowerState = world.getBlockState(lowerPos);
 
-                int seedCount = world.random.nextInt(2) + 1;
-                ItemStack seeds = new ItemStack(getSeedsItem(), seedCount);
-                ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), seeds);
-            }
+                if (lowerState.isOf(this) && lowerState.get(HALF) == DoubleBlockHalf.LOWER) {
+                    world.setBlockState(lowerPos, lowerState.with(AGE, MAX_AGE), Block.NOTIFY_ALL);
+                }
+            } else if (half == DoubleBlockHalf.LOWER) {
+                BlockPos upperPos = pos.up();
+                BlockState upperState = world.getBlockState(upperPos);
 
-            BlockPos otherHalfPos = half == DoubleBlockHalf.LOWER ? pos.up() : pos.down();
-            BlockState otherHalf = world.getBlockState(otherHalfPos);
-
-            if (otherHalf.isOf(this) && otherHalf.get(HALF) != half) {
-                if (half == DoubleBlockHalf.UPPER) {
-                    world.setBlockState(otherHalfPos, otherHalf.with(AGE, MAX_AGE), Block.NOTIFY_ALL);
-                } else {
-                    world.setBlockState(otherHalfPos, Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL);
+                if (upperState.isOf(this) && upperState.get(HALF) == DoubleBlockHalf.UPPER) {
+                    world.setBlockState(upperPos, Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL);
                 }
             }
         }
-        super.afterBreak(world, player, pos, state, blockEntity, tool);
+
+        return super.onBreak(world, pos, state, player);
     }
 
     @Override
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        if (world.getBaseLightLevel(pos, 0) >= 9) {
+        BlockPos checkPos = state.get(HALF) == DoubleBlockHalf.LOWER ? pos.up() : pos;
+        if (world.getBaseLightLevel(checkPos, 0) >= 8) {
             int age = this.getAge(state);
-            if (age < this.getMaxAge()) {
-                float moisture = getAvailableMoisture(this, world, pos);
-                if (random.nextInt((int)(25.0F / moisture) + 1) == 0) {
+            if (age < this.getMaxAge() || (age == this.getMaxAge() && state.get(HALF) == DoubleBlockHalf.LOWER)) {
+                float moisture = getMoisture(this, world, pos);
+
+                if (random.nextInt((int)(20.0F / moisture) + 1) == 0) {
                     this.applyGrowth(world, pos, state);
                 }
             }
@@ -125,7 +146,8 @@ public class RiceCropBlock extends CropBlock {
 
     @Override
     public void applyGrowth(World world, BlockPos pos, BlockState state) {
-        int newAge = this.getAge(state) + this.getGrowthAmount(world);
+        int currentAge = this.getAge(state);
+        int newAge = currentAge + this.getGrowthAmount(world);
         int maxAge = this.getMaxAge();
 
         if (newAge > maxAge) {
@@ -138,26 +160,46 @@ public class RiceCropBlock extends CropBlock {
             BlockPos upperPos = pos.up();
             BlockState upperState = world.getBlockState(upperPos);
 
-            if (upperState.isAir() && canPlaceAt(upperState, world, upperPos)) {
-                world.setBlockState(upperPos,
-                        this.getDefaultState()
-                                .with(HALF, DoubleBlockHalf.UPPER)
-                                .with(AGE, 0),
-                        Block.NOTIFY_ALL);
-            }
-        } else if (half == DoubleBlockHalf.LOWER && newAge < maxAge) {
-            BlockPos upperPos = pos.up();
-            BlockState upperState = world.getBlockState(upperPos);
+            if (upperState.isAir()) {
+                BlockState newUpperState = this.getDefaultState()
+                        .with(HALF, DoubleBlockHalf.UPPER)
+                        .with(AGE, 0)
+                        .with(WATERLOGGED, world.getFluidState(upperPos).isOf(Fluids.WATER));
 
-            if (upperState.isOf(this) && upperState.get(HALF) == DoubleBlockHalf.UPPER) {
+                if (newUpperState.canPlaceAt(world, upperPos)) {
+                    world.setBlockState(upperPos, newUpperState, Block.NOTIFY_ALL);
+                    world.setBlockState(pos, state.with(AGE, maxAge), Block.NOTIFY_LISTENERS);
+                }
+            } else if (upperState.isOf(this) && upperState.get(HALF) == DoubleBlockHalf.UPPER) {
                 int upperAge = upperState.get(AGE);
                 if (upperAge < maxAge) {
-                    world.setBlockState(upperPos, upperState.with(AGE, Math.min(upperAge + 1, maxAge)), Block.NOTIFY_ALL);
+                    int upperNewAge = upperAge + this.getGrowthAmount(world);
+                    if (upperNewAge > maxAge) upperNewAge = maxAge;
+                    world.setBlockState(upperPos, upperState.with(AGE, upperNewAge), Block.NOTIFY_ALL);
                 }
             }
+        } else if (half == DoubleBlockHalf.UPPER) {
+            BlockPos lowerPos = pos.down();
+            BlockState lowerState = world.getBlockState(lowerPos);
+            if (lowerState.isOf(this) && lowerState.get(HALF) == DoubleBlockHalf.LOWER) {
+                world.setBlockState(pos, state.with(AGE, newAge), Block.NOTIFY_LISTENERS);
+            }
+        } else {
+            world.setBlockState(pos, state.with(AGE, newAge), Block.NOTIFY_LISTENERS);
         }
+    }
 
-        world.setBlockState(pos, state.with(AGE, newAge), Block.NOTIFY_LISTENERS);
+    @Override
+    protected int getGrowthAmount(World world) {
+        return MathHelper.nextInt(world.random, 1, 2);
+    }
+
+    protected float getMoisture(Block block, WorldView world, BlockPos pos) {
+        float baseMoisture = getAvailableMoisture(block, world, pos);
+        if (isInWater(world, pos)) {
+            return baseMoisture * 1.5f;
+        }
+        return baseMoisture;
     }
 
     @Override
@@ -170,9 +212,9 @@ public class RiceCropBlock extends CropBlock {
             }
 
             BlockState upperState = world.getBlockState(pos.up());
-            return upperState.isOf(this) &&
-                    upperState.get(HALF) == DoubleBlockHalf.UPPER &&
-                    !this.isMature(upperState);
+            if (upperState.isOf(this) && upperState.get(HALF) == DoubleBlockHalf.UPPER) {
+                return !this.isMature(upperState);
+            } else return upperState.isAir();
         } else {
             return !this.isMature(state);
         }
@@ -185,6 +227,27 @@ public class RiceCropBlock extends CropBlock {
 
     @Override
     public void grow(ServerWorld world, Random random, BlockPos pos, BlockState state) {
+        int currentAge = this.getAge(state);
+        int maxAge = this.getMaxAge();
+        DoubleBlockHalf half = state.get(HALF);
+
+        if (half == DoubleBlockHalf.LOWER && currentAge >= maxAge) {
+            BlockPos upperPos = pos.up();
+            BlockState upperState = world.getBlockState(upperPos);
+
+            if (upperState.isAir()) {
+                BlockState newUpperState = this.getDefaultState()
+                        .with(HALF, DoubleBlockHalf.UPPER)
+                        .with(AGE, 0)
+                        .with(WATERLOGGED, world.getFluidState(upperPos).isOf(Fluids.WATER));
+
+                if (newUpperState.canPlaceAt(world, upperPos)) {
+                    world.setBlockState(upperPos, newUpperState, Block.NOTIFY_ALL);
+                    return;
+                }
+            }
+        }
+
         this.applyGrowth(world, pos, state);
     }
 
@@ -192,27 +255,35 @@ public class RiceCropBlock extends CropBlock {
     protected BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         DoubleBlockHalf half = state.get(HALF);
 
-        if (direction.getAxis() == Direction.Axis.Y &&
-                half == DoubleBlockHalf.LOWER == (direction == Direction.UP) &&
-                (!neighborState.isOf(this) || neighborState.get(HALF) == half)) {
-            return Blocks.AIR.getDefaultState();
-        } else {
-            return half == DoubleBlockHalf.LOWER && direction == Direction.DOWN && !state.canPlaceAt(world, pos) ?
-                    Blocks.AIR.getDefaultState() :
-                    super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        if (direction.getAxis() == Direction.Axis.Y) {
+            if (half == DoubleBlockHalf.UPPER) {
+                if (direction == Direction.DOWN && (!neighborState.isOf(this) || neighborState.get(HALF) != DoubleBlockHalf.LOWER)) {
+                    return Blocks.AIR.getDefaultState();
+                }
+            } else {
+                if (direction == Direction.UP && neighborState.isOf(this) && neighborState.get(HALF) == DoubleBlockHalf.UPPER) {
+                    return state;
+                }
+                if (direction == Direction.DOWN && !state.canPlaceAt(world, pos)) {
+                    return Blocks.AIR.getDefaultState();
+                }
+            }
         }
+
+        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        BlockPos blockPos = ctx.getBlockPos();
-        World world = ctx.getWorld();
+    public BlockState getPlacementState(ItemPlacementContext context) {
+        BlockPos blockPos = context.getBlockPos();
+        World world = context.getWorld();
 
         if (blockPos.getY() < world.getTopY() - 1 &&
-                world.getBlockState(blockPos.up()).canReplace(ctx) &&
+                world.getBlockState(blockPos.up()).canReplace(context) &&
                 isInWater(world, blockPos) &&
                 canPlantOnTop(world.getBlockState(blockPos.down()), world, blockPos.down())) {
-            return super.getPlacementState(ctx);
+            return this.getDefaultState()
+                    .with(WATERLOGGED, world.getFluidState(blockPos).isOf(Fluids.WATER));
         }
         return null;
     }
@@ -229,7 +300,12 @@ public class RiceCropBlock extends CropBlock {
     }
 
     @Override
+    public FluidState getFluidState(BlockState state) {
+        return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
+    }
+
+    @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(AGE, HALF);
+        builder.add(AGE, HALF, WATERLOGGED);
     }
 }

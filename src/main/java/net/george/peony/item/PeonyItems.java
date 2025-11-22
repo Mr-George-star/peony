@@ -47,6 +47,10 @@ public class PeonyItems {
             createDefaultSettings().food(FoodComponents.POTATO));
     // todo: seeds && crops of coriander
     public static final Item CORIANDER = register("coriander", Item::new, createDefaultSettings());
+    public static final Item RICE_PANICLE = register("rice_panicle", Item::new, createDefaultSettings());
+    public static final Item BROWN_RICE = register("brown_rice", settings ->
+            new AliasedBlockItem(PeonyBlocks.RICE_CROP, settings), createDefaultSettings());
+    public static final Item RICE = register("rice", Item::new, createDefaultSettings());
 
     /* ingredients */
     public static final Item HAM = register("ham", Item::new,

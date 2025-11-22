@@ -29,6 +29,9 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyItems.PEELED_POTATO, "去皮的土豆");
         translationBuilder.add(PeonyItems.SHREDDED_POTATO, "土豆丝");
         translationBuilder.add(PeonyItems.CORIANDER, "香菜");
+        translationBuilder.add(PeonyItems.RICE_PANICLE, "大米穗");
+        translationBuilder.add(PeonyItems.BROWN_RICE, "糙米");
+        translationBuilder.add(PeonyItems.RICE, "大米");
         translationBuilder.add(PeonyItems.HAM, "火腿片");
         translationBuilder.add(PeonyItems.BAKED_FLATBREAD, "烤过的面饼");
         translationBuilder.add(PeonyItems.TOMATO_SAUCE, "番茄酱");
@@ -100,6 +103,7 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.BARLEY_CROP, "大麦作物");
         translationBuilder.add(PeonyBlocks.PEANUT_CROP, "花生作物");
         translationBuilder.add(PeonyBlocks.TOMATO_VINES, "西红柿藤");
+        translationBuilder.add(PeonyBlocks.RICE_CROP, "大米作物");
 
         translationBuilder.add(PeonyBlocks.BOWL, "碗");
 

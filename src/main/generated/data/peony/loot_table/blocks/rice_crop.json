@@ -1,0 +1,191 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "block": "peony:rice_crop",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "half": "lower"
+              }
+            },
+            {
+              "condition": "minecraft:inverted",
+              "term": {
+                "block": "peony:rice_crop",
+                "condition": "minecraft:block_state_property",
+                "properties": {
+                  "age": "7"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:air"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "block": "peony:rice_crop",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "half": "lower"
+              }
+            },
+            {
+              "block": "peony:rice_crop",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "age": "7"
+              }
+            }
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "peony:brown_rice"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "block": "peony:rice_crop",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "half": "upper"
+              }
+            },
+            {
+              "condition": "minecraft:inverted",
+              "term": {
+                "block": "peony:rice_crop",
+                "condition": "minecraft:block_state_property",
+                "properties": {
+                  "age": "7"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "peony:brown_rice"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "block": "peony:rice_crop",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "half": "upper"
+              }
+            },
+            {
+              "block": "peony:rice_crop",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "age": "7"
+              }
+            }
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "peony:brown_rice"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "chances": [
+                0.1,
+                0.14285715,
+                0.25,
+                1.0
+              ],
+              "condition": "minecraft:table_bonus",
+              "enchantment": "minecraft:fortune"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "peony:rice_panicle"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

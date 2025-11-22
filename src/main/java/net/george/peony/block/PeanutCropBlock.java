@@ -12,7 +12,7 @@ import net.minecraft.state.property.Properties;
 
 public class PeanutCropBlock extends CropBlock {
     public static final MapCodec<PeanutCropBlock> CODEC = createCodec(PeanutCropBlock::new);
-    public static final int MAX_AGE = 7;
+    public static final int MAX_AGE = Properties.AGE_7_MAX;
     public static final IntProperty AGE = Properties.AGE_7;
 
     public PeanutCropBlock(Settings settings) {

@@ -29,6 +29,9 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyItems.PEELED_POTATO, "Peeled Potato");
         translationBuilder.add(PeonyItems.SHREDDED_POTATO, "Shredded Potato");
         translationBuilder.add(PeonyItems.CORIANDER, "Coriander");
+        translationBuilder.add(PeonyItems.RICE_PANICLE, "Rice Panicle");
+        translationBuilder.add(PeonyItems.BROWN_RICE, "Brown Rice");
+        translationBuilder.add(PeonyItems.RICE, "Rice");
         translationBuilder.add(PeonyItems.HAM, "Ham");
         translationBuilder.add(PeonyItems.BAKED_FLATBREAD, "Baked Flatbread");
         translationBuilder.add(PeonyItems.TOMATO_SAUCE, "Tomato Sauce");
@@ -100,6 +103,7 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.BARLEY_CROP, "Barley Crop");
         translationBuilder.add(PeonyBlocks.PEANUT_CROP, "Peanut Crop");
         translationBuilder.add(PeonyBlocks.TOMATO_VINES, "Tomato Vines");
+        translationBuilder.add(PeonyBlocks.RICE_CROP, "Rice Crop");
 
         translationBuilder.add(PeonyBlocks.NATURE_GAS, "Nature Gas");
         translationBuilder.add(PeonyBlocks.LARD_FLUID, "Lard");

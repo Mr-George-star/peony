@@ -165,6 +165,8 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
         generateMillingRecipe(Blocks.HAY_BLOCK, Items.WHEAT, 9, 2, exporter);
         generateMillingRecipe(Items.WHEAT, PeonyBlocks.FLOUR, 2, 2, exporter);
         generateMillingRecipe(PeonyItems.ROASTED_PEANUT_KERNEL, PeonyItems.CRUSHED_PEANUTS, 2, 1, exporter);
+        generateMillingRecipe(PeonyItems.RICE_PANICLE, PeonyItems.BROWN_RICE, 4, 1, exporter);
+        generateMillingRecipe(PeonyItems.BROWN_RICE, PeonyItems.RICE, 1, 1, exporter);
 
         /* SEQUENTIAL CRAFTING */
         SequentialCraftingRecipeJsonBuilder.create(PeonyBlocks.DOUGH)

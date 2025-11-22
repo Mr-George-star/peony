@@ -1,7 +1,6 @@
 package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
-import net.george.peony.Peony;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.sound.PeonySoundEvents;
 import net.george.peony.util.PeonyTags;
@@ -30,17 +29,17 @@ import net.minecraft.world.WorldView;
 import net.minecraft.world.event.GameEvent;
 
 public class TomatoVinesBlock extends CropBlock {
-    public static final MapCodec<PeanutCropBlock> CODEC = createCodec(PeanutCropBlock::new);
+    public static final MapCodec<TomatoVinesBlock> CODEC = createCodec(TomatoVinesBlock::new);
     public static final int MAX_AGE = 3;
     public static final IntProperty AGE = Properties.AGE_3;
 
     public TomatoVinesBlock(Settings settings) {
-        super(settings);
+        super(settings.ticksRandomly());
         this.setDefaultState(this.getDefaultState().with(AGE, 0));
     }
 
     @Override
-    public MapCodec<PeanutCropBlock> getCodec() {
+    public MapCodec<TomatoVinesBlock> getCodec() {
         return CODEC;
     }
 
@@ -71,10 +70,17 @@ public class TomatoVinesBlock extends CropBlock {
 
     @Override
     public void grow(ServerWorld world, Random random, BlockPos pos, BlockState state) {
-        if (this.getAge(state) == this.getMaxAge() && this.canSpread(world, pos)) {
+        int currentAge = this.getAge(state);
+        int newAge = Math.min(this.getMaxAge(), currentAge + this.getGrowthAmount(world));
+
+        if (newAge > currentAge) {
+            world.setBlockState(pos, state.with(AGE, newAge), Block.NOTIFY_LISTENERS);
+
+            if (newAge == this.getMaxAge() && this.canSpread(world, pos)) {
+                this.trySpread(world, pos);
+            }
+        } else if (currentAge == this.getMaxAge() && this.canSpread(world, pos)) {
             this.trySpread(world, pos);
-        } else {
-            super.grow(world, random, pos, state);
         }
     }
 
@@ -85,12 +91,17 @@ public class TomatoVinesBlock extends CropBlock {
 
     @Override
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        super.randomTick(state, world, pos, random);
-        if (world.getBaseLightLevel(pos, 0) >= 9 &&
-                !(world.getBlockState(pos.up()).getBlock() instanceof TomatoVinesBlock)) {
+        if (world.getBaseLightLevel(pos, 0) >= 8) {
             int currentAge = this.getAge(state);
 
-            if (currentAge > 1 && random.nextFloat() < 0.5f && this.canSpread(world, pos)) {
+            if (currentAge < this.getMaxAge()) {
+                if (random.nextInt(5) == 0) {
+                    this.grow(world, random, pos, state);
+                }
+            } else if (currentAge == this.getMaxAge() &&
+                    random.nextInt(10) == 0 &&
+                    !(world.getBlockState(pos.up()).getBlock() instanceof TomatoVinesBlock) &&
+                    this.canSpread(world, pos)) {
                 this.trySpread(world, pos);
             }
         }
@@ -98,7 +109,9 @@ public class TomatoVinesBlock extends CropBlock {
 
     private boolean canSpread(WorldView world, BlockPos pos) {
         BlockPos abovePos = pos.up();
-        if (!this.isTomatoVinesAvailable(world, abovePos)) {
+        BlockState aboveState = world.getBlockState(abovePos);
+
+        if (!aboveState.isAir()) {
             return false;
         }
         for (Direction direction : Direction.Type.HORIZONTAL) {
@@ -142,7 +155,11 @@ public class TomatoVinesBlock extends CropBlock {
 
     @Override
     protected boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        return this.isTomatoVinesAvailable(world, pos) || hasEnoughLightAt(world, pos);
+        return this.isTomatoVinesAvailable(world, pos) && hasEnoughLightAt(world, pos);
+    }
+
+    protected static boolean hasEnoughLightAt(WorldView world, BlockPos pos) {
+        return world.getBaseLightLevel(pos, 0) >= 8;
     }
 
     private boolean isTomatoVinesAvailable(WorldView world, BlockPos pos) {

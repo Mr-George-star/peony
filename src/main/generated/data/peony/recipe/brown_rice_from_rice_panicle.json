@@ -1,0 +1,13 @@
+{
+  "type": "peony:milling",
+  "ingredient": {
+    "item": "peony:rice_panicle"
+  },
+  "milling_times": 1,
+  "output": {
+    "outputStack": {
+      "count": 4,
+      "id": "peony:brown_rice"
+    }
+  }
+}

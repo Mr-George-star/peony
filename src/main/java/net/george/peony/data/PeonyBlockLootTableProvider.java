@@ -4,8 +4,8 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.george.peony.block.*;
 import net.george.peony.item.PeonyItems;
-import net.george.peony.util.PeonyTags;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Items;
@@ -13,9 +13,11 @@ import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.BlockStatePropertyLootCondition;
 import net.minecraft.loot.condition.LootCondition;
+import net.minecraft.loot.condition.TableBonusLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.function.ApplyBonusLootFunction;
 import net.minecraft.loot.function.SetCountLootFunction;
+import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.predicate.StatePredicate;
 import net.minecraft.registry.Registries;
@@ -63,6 +65,8 @@ public class PeonyBlockLootTableProvider extends FabricBlockLootTableProvider {
         BlockStatePropertyLootCondition.Builder tomatoLootCondition = BlockStatePropertyLootCondition.builder(PeonyBlocks.TOMATO_VINES)
                 .properties(StatePredicate.Builder.create().exactMatch(TomatoVinesBlock.AGE, TomatoVinesBlock.MAX_AGE));
         this.addDrop(PeonyBlocks.TOMATO_VINES, this.tomatoDrops(tomatoLootCondition));
+        // rice drop
+        this.riceDrops();
     }
 
     public LootTable.Builder peanutDrops(LootCondition.Builder condition) {
@@ -87,6 +91,48 @@ public class PeonyBlockLootTableProvider extends FabricBlockLootTableProvider {
                                         .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1, 2))))
                                         .apply(ApplyBonusLootFunction.binomialWithBonusCount(impl.getOrThrow(Enchantments.FORTUNE), 0.5714286F, 3))
                         )
+        );
+    }
+
+    public void riceDrops() {
+        RegistryWrapper.Impl<Enchantment> impl = this.registryLookup.getWrapperOrThrow(RegistryKeys.ENCHANTMENT);
+
+        LootCondition.Builder lowerHalf = BlockStatePropertyLootCondition.builder(PeonyBlocks.RICE_CROP)
+                .properties(StatePredicate.Builder.create().exactMatch(RiceCropBlock.HALF, DoubleBlockHalf.LOWER));
+        LootCondition.Builder upperHalf = BlockStatePropertyLootCondition.builder(PeonyBlocks.RICE_CROP)
+                .properties(StatePredicate.Builder.create().exactMatch(RiceCropBlock.HALF, DoubleBlockHalf.UPPER));
+        LootCondition.Builder isMature = BlockStatePropertyLootCondition.builder(PeonyBlocks.RICE_CROP)
+                .properties(StatePredicate.Builder.create().exactMatch(RiceCropBlock.AGE, 7));
+        LootCondition.Builder notMature = isMature.invert();
+
+        this.addDrop(PeonyBlocks.RICE_CROP, LootTable.builder()
+                .pool(LootPool.builder()
+                        .conditionally(lowerHalf.and(notMature))
+                        .with(ItemEntry.builder(Items.AIR))
+                )
+                .pool(LootPool.builder()
+                        .conditionally(lowerHalf.and(isMature))
+                        .with(ItemEntry.builder(PeonyItems.BROWN_RICE)
+                                .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1.0f, 2.0f)))
+                        )
+                )
+                .pool(LootPool.builder()
+                        .conditionally(upperHalf.and(notMature))
+                        .with(ItemEntry.builder(PeonyItems.BROWN_RICE)
+                                .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(1.0f)))
+                        )
+                )
+                .pool(LootPool.builder()
+                        .conditionally(upperHalf.and(isMature))
+                        .with(ItemEntry.builder(PeonyItems.BROWN_RICE)
+                                .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(2.0f, 3.0f)))
+                        )
+                        .with(ItemEntry.builder(PeonyItems.RICE_PANICLE)
+                                .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1.0f, 2.0f)))
+                                .conditionally(TableBonusLootCondition.builder(impl.getOrThrow(Enchantments.FORTUNE),
+                                        0.1f, 0.14285715f, 0.25f, 1.0f))
+                        )
+                )
         );
     }
 }

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/crop",
+  "textures": {
+    "crop": "peony:block/rice_crop_upper_stage1"
+  }
+}

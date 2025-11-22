@@ -1,14 +1,20 @@
 package net.george.peony.data;
 
+import it.unimi.dsi.fastutil.Pair;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.george.peony.block.*;
 import net.george.peony.data.model.PeonyModels;
 import net.george.peony.item.PeonyItems;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.LeveledCauldronBlock;
+import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.data.client.*;
 import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 
 public class PeonyModelProvider extends FabricModelProvider {
     public PeonyModelProvider(FabricDataOutput output) {
@@ -20,6 +26,7 @@ public class PeonyModelProvider extends FabricModelProvider {
         generator.registerCrop(PeonyBlocks.BARLEY_CROP, BarleyCropBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7);
         generator.registerCrop(PeonyBlocks.PEANUT_CROP, PeanutCropBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7);
         generator.registerCrop(PeonyBlocks.TOMATO_VINES, TomatoVinesBlock.AGE, 0, 1, 2, 3);
+        this.registerRiceCrop(generator);
 
         Registries.BLOCK.stream().filter(block -> block instanceof CuttingBoardBlock).forEach(board ->
                 PeonyModels.registerCuttingBoard(generator, board));
@@ -55,6 +62,8 @@ public class PeonyModelProvider extends FabricModelProvider {
         generator.register(PeonyItems.PEELED_POTATO, Models.GENERATED);
         generator.register(PeonyItems.SHREDDED_POTATO, Models.GENERATED);
         generator.register(PeonyItems.CORIANDER, Models.GENERATED);
+        generator.register(PeonyItems.RICE_PANICLE, Models.GENERATED);
+        generator.register(PeonyItems.RICE, Models.GENERATED);
         generator.register(PeonyItems.HAM, Models.GENERATED);
         generator.register(PeonyItems.BAKED_FLATBREAD, Models.GENERATED);
         generator.register(PeonyItems.TOMATO_SAUCE, Models.GENERATED);
@@ -82,5 +91,17 @@ public class PeonyModelProvider extends FabricModelProvider {
         generator.register(PeonyItems.LARD_BUCKET, Models.GENERATED);
 
         generator.register(PeonyItems.MUSIC_DISC_SURPRISE, Models.GENERATED);
+    }
+
+    private void registerRiceCrop(BlockStateModelGenerator generator) {
+        Block rice = PeonyBlocks.RICE_CROP;
+        Object2ObjectMap<Pair<Integer, DoubleBlockHalf>, Identifier> values = new Object2ObjectOpenHashMap<>();
+        BlockStateVariantMap blockStateVariantMap = BlockStateVariantMap.create(RiceCropBlock.AGE, RiceCropBlock.HALF).register((age, half) -> {
+            Identifier identifier = values.computeIfAbsent(Pair.of(age, half), value ->
+                    generator.createSubModel(rice,  "_" + half + "_stage" + age, Models.CROP, TextureMap::crop));
+            return BlockStateVariant.create().put(VariantSettings.MODEL, identifier);
+        });
+        generator.registerItemModel(rice.asItem());
+        generator.blockStateCollector.accept(VariantsBlockStateSupplier.create(rice).coordinate(blockStateVariantMap));
     }
 }

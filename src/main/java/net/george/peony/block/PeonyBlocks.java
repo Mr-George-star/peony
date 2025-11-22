@@ -123,6 +123,10 @@ public class PeonyBlocks {
             createDefaultSettings().nonOpaque().noCollision().ticksRandomly().breakInstantly()
                     .mapColor(MapColor.DARK_GREEN).sounds(BlockSoundGroup.CROP).pistonBehavior(PistonBehavior.DESTROY),
             false);
+    public static final Block RICE_CROP = register("rice_crop", RiceCropBlock::new,
+            createDefaultSettings().nonOpaque().noCollision().ticksRandomly().breakInstantly()
+                    .mapColor(MapColor.TERRACOTTA_YELLOW).sounds(BlockSoundGroup.CROP).pistonBehavior(PistonBehavior.DESTROY),
+            false);
 
     /* FLUIDS */
     public static final Block NATURE_GAS = register("nature_gas", NatureGasBlock::new, createDefaultSettings()

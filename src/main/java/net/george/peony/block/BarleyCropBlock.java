@@ -12,7 +12,7 @@ import net.minecraft.state.property.Properties;
 
 public class BarleyCropBlock extends CropBlock {
     public static final MapCodec<BarleyCropBlock> CODEC = createCodec(BarleyCropBlock::new);
-    public static final int MAX_AGE = 7;
+    public static final int MAX_AGE = Properties.AGE_7_MAX;
     public static final IntProperty AGE = Properties.AGE_7;
 
     public BarleyCropBlock(Settings settings) {
