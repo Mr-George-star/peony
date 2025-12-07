@@ -51,6 +51,13 @@ public interface ItemDecrementBehaviour extends TriFunction<World, PlayerEntity,
         };
     }
 
+    static ItemDecrementBehaviour createFlatbread() {
+        return (world, user, hand) -> {
+            ItemStack heldStack = user.getStackInHand(hand);
+            user.setStackInHand(hand, ItemExchangeBehaviour.get(heldStack.getItem()).exchange(world, user, heldStack));
+        };
+    }
+
     static ItemDecrementBehaviour createDecreaseSpecified(int decrement) {
         return (world, user, hand) -> {
             ItemStack heldStack = user.getStackInHand(hand);

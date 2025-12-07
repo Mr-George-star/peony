@@ -25,6 +25,10 @@ public class PeonyBlockEntities {
             PotStandBlockEntity::new, RegistryDataUtils.BLOCK.filterToArray(block -> block instanceof PotStandBlock));
     public static final BlockEntityType<PotStandWithCampfireBlockEntity> POT_STAND_WITH_CAMPFIRE = register("pot_stand_with_campfire",
             PotStandWithCampfireBlockEntity::new, RegistryDataUtils.BLOCK.filterToArray(block -> block instanceof PotStandWithCampfireBlock));
+    public static final BlockEntityType<FlatbreadBlockEntity> FLATBREAD = register("flatbread",
+            FlatbreadBlockEntity::new, PeonyBlocks.FLATBREAD);
+    public static final BlockEntityType<BowlBlockEntity> BOWL = register("bowl",
+            BowlBlockEntity::new, PeonyBlocks.BOWL);
 
     private static <T extends BlockEntity> BlockEntityType<T> register(String name, BlockEntityType.BlockEntityFactory<T> factory, Block... blocks) {
         if (ImmutableList.copyOf(blocks).isEmpty()) {

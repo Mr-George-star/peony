@@ -29,21 +29,29 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyItems.PEELED_POTATO, "Peeled Potato");
         translationBuilder.add(PeonyItems.SHREDDED_POTATO, "Shredded Potato");
         translationBuilder.add(PeonyItems.CORIANDER, "Coriander");
+        translationBuilder.add(PeonyItems.CORIANDER_SEEDS, "Coriander Seeds");
         translationBuilder.add(PeonyItems.RICE_PANICLE, "Rice Panicle");
         translationBuilder.add(PeonyItems.BROWN_RICE, "Brown Rice");
         translationBuilder.add(PeonyItems.RICE, "Rice");
+        translationBuilder.add(PeonyItems.GARLIC, "Garlic");
+        translationBuilder.add(PeonyItems.GARLIC_CLOVE, "Garlic Clove");
+        translationBuilder.add(PeonyItems.GARLIC_SCAPE, "Garlic Scape");
+        translationBuilder.add(PeonyItems.MINCED_GARLIC, "Minced Garlic");
         translationBuilder.add(PeonyItems.HAM, "Ham");
         translationBuilder.add(PeonyItems.BAKED_FLATBREAD, "Baked Flatbread");
         translationBuilder.add(PeonyItems.TOMATO_SAUCE, "Tomato Sauce");
         translationBuilder.add(PeonyItems.SCRAMBLED_EGGS, "Scrambled Eggs");
         translationBuilder.add(PeonyItems.SCRAMBLED_EGGS_WITH_TOMATOES, "Scrambled Eggs With Tomatoes");
         translationBuilder.add(PeonyItems.FRIED_SHREDDED_POTATOES, "Fried Shredded Potatoes");
+        translationBuilder.add(PeonyItems.STIR_FRIED_GARLIC_SCAPE_WITH_PORK, "Stir-Fried Garlic Scape With Pork");
         translationBuilder.add(PeonyItems.CHEESE, "Cheese");
+        translationBuilder.add(PeonyItems.SHREDDED_CHEESE, "Shredded Cheese");
 
         translationBuilder.add(PeonyItems.LARD, "Lard");
         translationBuilder.add(PeonyItems.LARD_BOTTLE, "Lard Bottle");
         translationBuilder.add(PeonyItems.CONDIMENT_BOTTLE, "Condiment Bottle");
         translationBuilder.add(PeonyItems.BLACK_VINEGAR, "Black Vinegar");
+        translationBuilder.add(PeonyItems.SWEET_SOUR_SAUCE, "Sweet Sour Sauce");
 
         translationBuilder.add(PeonyItems.KITCHEN_KNIFE, "Kitchen Knife");
         translationBuilder.add(PeonyItems.SPATULA, "Spatula");
@@ -63,6 +71,11 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.DOUGH, "Dough");
         translationBuilder.add(PeonyBlocks.FLOUR, "Flour");
         translationBuilder.add(PeonyBlocks.FLATBREAD, "Flatbread");
+
+        translationBuilder.add(PeonyBlocks.RAW_MARGHERITA_PIZZA, "Raw Margherita Pizza");
+        translationBuilder.add(PeonyBlocks.RAW_MARGHERITA_PIZZA.asItem(), "Raw Margherita Pizza");
+        translationBuilder.add(PeonyBlocks.MARGHERITA_PIZZA, "Margherita Pizza");
+        translationBuilder.add(PeonyBlocks.MARGHERITA_PIZZA.asItem(), "Margherita Pizza");
 
         translationBuilder.add(PeonyBlocks.MILLSTONE, "Millstone");
         translationBuilder.add(PeonyBlocks.OAK_CUTTING_BOARD, "Oak Cutting Board");
@@ -104,6 +117,8 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.PEANUT_CROP, "Peanut Crop");
         translationBuilder.add(PeonyBlocks.TOMATO_VINES, "Tomato Vines");
         translationBuilder.add(PeonyBlocks.RICE_CROP, "Rice Crop");
+        translationBuilder.add(PeonyBlocks.CORIANDER_CROP, "Coriander Crop");
+        translationBuilder.add(PeonyBlocks.GARLIC_CROP, "Garlic Crop");
 
         translationBuilder.add(PeonyBlocks.NATURE_GAS, "Nature Gas");
         translationBuilder.add(PeonyBlocks.LARD_FLUID, "Lard");
@@ -137,6 +152,11 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(HeatLevel.LOW.getTranslationKey(), "Low");
         translationBuilder.add(HeatLevel.HIGH.getTranslationKey(), "High");
         translationBuilder.add(HeatLevel.BLAZING.getTranslationKey(), "Blazing");
+
+        /* MESSAGES */
+        translationBuilder.add(PeonyTranslationKeys.MESSAGE_FLATBREAD_NO_INGREDIENTS, "No ingredients were added");
+        translationBuilder.add(PeonyTranslationKeys.MESSAGE_FLATBREAD_CREATE_SUCCESS, "Successfully created a pizza!");
+        translationBuilder.add(PeonyTranslationKeys.MESSAGE_FLATBREAD_NO_RECIPE, "This is not a kind of pizza!");
 
         /* CONFIG */
         translationBuilder.add(PeonyTranslationKeys.CONFIG_SCREEN_TITLE, "Peony");

@@ -29,21 +29,29 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyItems.PEELED_POTATO, "去皮的土豆");
         translationBuilder.add(PeonyItems.SHREDDED_POTATO, "土豆丝");
         translationBuilder.add(PeonyItems.CORIANDER, "香菜");
+        translationBuilder.add(PeonyItems.CORIANDER_SEEDS, "香菜种子");
         translationBuilder.add(PeonyItems.RICE_PANICLE, "大米穗");
         translationBuilder.add(PeonyItems.BROWN_RICE, "糙米");
         translationBuilder.add(PeonyItems.RICE, "大米");
+        translationBuilder.add(PeonyItems.GARLIC, "大蒜");
+        translationBuilder.add(PeonyItems.GARLIC_CLOVE, "蒜瓣");
+        translationBuilder.add(PeonyItems.GARLIC_SCAPE, "蒜薹");
+        translationBuilder.add(PeonyItems.MINCED_GARLIC, "蒜末");
         translationBuilder.add(PeonyItems.HAM, "火腿片");
         translationBuilder.add(PeonyItems.BAKED_FLATBREAD, "烤过的面饼");
         translationBuilder.add(PeonyItems.TOMATO_SAUCE, "番茄酱");
         translationBuilder.add(PeonyItems.SCRAMBLED_EGGS, "炒蛋");
         translationBuilder.add(PeonyItems.SCRAMBLED_EGGS_WITH_TOMATOES, "西红柿炒鸡蛋");
         translationBuilder.add(PeonyItems.FRIED_SHREDDED_POTATOES, "炒土豆丝");
+        translationBuilder.add(PeonyItems.STIR_FRIED_GARLIC_SCAPE_WITH_PORK, "蒜薹炒肉");
         translationBuilder.add(PeonyItems.CHEESE, "芝士");
+        translationBuilder.add(PeonyItems.SHREDDED_CHEESE, "芝士丝");
 
         translationBuilder.add(PeonyItems.LARD, "猪油");
         translationBuilder.add(PeonyItems.LARD_BOTTLE, "猪油瓶");
         translationBuilder.add(PeonyItems.CONDIMENT_BOTTLE, "调料瓶");
         translationBuilder.add(PeonyItems.BLACK_VINEGAR, "黑醋");
+        translationBuilder.add(PeonyItems.SWEET_SOUR_SAUCE, "糖醋汁");
 
         translationBuilder.add(PeonyItems.KITCHEN_KNIFE, "菜刀");
         translationBuilder.add(PeonyItems.SPATULA, "炒菜铲");
@@ -63,6 +71,11 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.DOUGH, "面团");
         translationBuilder.add(PeonyBlocks.FLOUR, "面粉");
         translationBuilder.add(PeonyBlocks.FLATBREAD, "面饼");
+
+        translationBuilder.add(PeonyBlocks.RAW_MARGHERITA_PIZZA, "生芝士披萨");
+        translationBuilder.add(PeonyBlocks.RAW_MARGHERITA_PIZZA.asItem(), "生芝士披萨");
+        translationBuilder.add(PeonyBlocks.MARGHERITA_PIZZA, "芝士披萨");
+        translationBuilder.add(PeonyBlocks.MARGHERITA_PIZZA.asItem(), "生芝士披萨");
 
         translationBuilder.add(PeonyBlocks.MILLSTONE, "石磨");
         translationBuilder.add(PeonyBlocks.OAK_CUTTING_BOARD, "橡木菜板");
@@ -104,6 +117,8 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.PEANUT_CROP, "花生作物");
         translationBuilder.add(PeonyBlocks.TOMATO_VINES, "西红柿藤");
         translationBuilder.add(PeonyBlocks.RICE_CROP, "大米作物");
+        translationBuilder.add(PeonyBlocks.CORIANDER_CROP, "香菜作物");
+        translationBuilder.add(PeonyBlocks.GARLIC_CROP, "大蒜作物");
 
         translationBuilder.add(PeonyBlocks.BOWL, "碗");
 
@@ -137,6 +152,11 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(HeatLevel.LOW.getTranslationKey(), "低");
         translationBuilder.add(HeatLevel.HIGH.getTranslationKey(), "高");
         translationBuilder.add(HeatLevel.BLAZING.getTranslationKey(), "炽灼");
+
+        /* MESSAGES */
+        translationBuilder.add(PeonyTranslationKeys.MESSAGE_FLATBREAD_NO_INGREDIENTS, "没有放入任何原料");
+        translationBuilder.add(PeonyTranslationKeys.MESSAGE_FLATBREAD_CREATE_SUCCESS, "成功合成披萨!");
+        translationBuilder.add(PeonyTranslationKeys.MESSAGE_FLATBREAD_NO_RECIPE, "这不是一种披萨!");
 
         /* CONFIG */
         translationBuilder.add(PeonyTranslationKeys.CONFIG_SCREEN_TITLE, "牡丹");

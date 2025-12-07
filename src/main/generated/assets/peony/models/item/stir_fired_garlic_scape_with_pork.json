@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "peony:item/stir_fired_garlic_scape_with_pork"
+  }
+}

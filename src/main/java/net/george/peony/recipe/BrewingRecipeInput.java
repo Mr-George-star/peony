@@ -2,17 +2,17 @@ package net.george.peony.recipe;
 
 import net.george.peony.util.FluidStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.input.RecipeInput;
 import net.minecraft.util.collection.DefaultedList;
 
-public record BrewingRecipeInput(DefaultedList<ItemStack> stacks, FluidStack fluid) implements RecipeInput {
-    @Override
-    public ItemStack getStackInSlot(int slot) {
-        return this.stacks.get(slot);
+public class BrewingRecipeInput extends ListedRecipeInput {
+    private final FluidStack fluid;
+
+    public BrewingRecipeInput(DefaultedList<ItemStack> inputs, FluidStack fluid) {
+        super(inputs);
+        this.fluid = fluid;
     }
 
-    @Override
-    public int getSize() {
-        return this.stacks.size();
+    public FluidStack getFluid() {
+        return this.fluid;
     }
 }

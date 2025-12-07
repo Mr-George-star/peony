@@ -19,7 +19,9 @@ public class PeonyFoodComponents {
     public static final FoodComponent SCRAMBLED_EGGS = createStew(7).build();
     public static final FoodComponent SCRAMBLED_EGGS_WITH_TOMATOES = createPlate().nutrition(10).saturationModifier(1F).build();
     public static final FoodComponent FRIED_SHREDDED_POTATOES = createPlate().nutrition(8).saturationModifier(0.8F).build();
+    public static final FoodComponent STIR_FRIED_GARLIC_SCAPE_WITH_PORK = createPlate().nutrition(7).saturationModifier(0.7F).build();
     public static final FoodComponent CHEESE = new FoodComponent.Builder().nutrition(3).saturationModifier(0.2F).build();
+    public static final FoodComponent MARGHERITA_PIZZA = new FoodComponent.Builder().nutrition(6).saturationModifier(0.4F).build();
 
     public static FoodComponent.Builder createStew(int hunger) {
         return new FoodComponent.Builder().nutrition(hunger).saturationModifier(0.6F).usingConvertsTo(Items.BOWL);

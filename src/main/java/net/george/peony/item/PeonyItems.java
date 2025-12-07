@@ -45,12 +45,17 @@ public class PeonyItems {
             createDefaultSettings().food(FoodComponents.POTATO));
     public static final Item SHREDDED_POTATO = register("shredded_potato", Item::new,
             createDefaultSettings().food(FoodComponents.POTATO));
-    // todo: seeds && crops of coriander
     public static final Item CORIANDER = register("coriander", Item::new, createDefaultSettings());
+    public static final Item CORIANDER_SEEDS = register("coriander_seeds", settings ->
+            new AliasedBlockItem(PeonyBlocks.CORIANDER_CROP, settings), createDefaultSettings());
     public static final Item RICE_PANICLE = register("rice_panicle", Item::new, createDefaultSettings());
     public static final Item BROWN_RICE = register("brown_rice", settings ->
             new AliasedBlockItem(PeonyBlocks.RICE_CROP, settings), createDefaultSettings());
     public static final Item RICE = register("rice", Item::new, createDefaultSettings());
+    public static final Item GARLIC = register("garlic", GarlicItem::new, createDefaultSettings());
+    public static final Item GARLIC_CLOVE = register("garlic_clove", Item::new, createDefaultSettings());
+    public static final Item GARLIC_SCAPE = register("garlic_scape", Item::new, createDefaultSettings());
+    public static final Item MINCED_GARLIC = register("minced_garlic", Item::new, createDefaultSettings());
 
     /* ingredients */
     public static final Item HAM = register("ham", Item::new,
@@ -67,9 +72,12 @@ public class PeonyItems {
             createDefaultSettings().maxCount(1).food(PeonyFoodComponents.SCRAMBLED_EGGS_WITH_TOMATOES));
     public static final Item FRIED_SHREDDED_POTATOES = register("fried_shredded_potatoes", Item::new,
             createDefaultSettings().maxCount(1).food(PeonyFoodComponents.FRIED_SHREDDED_POTATOES));
+    public static final Item STIR_FRIED_GARLIC_SCAPE_WITH_PORK = register("stir_fired_garlic_scape_with_pork", Item::new,
+            createDefaultSettings().maxCount(1).food(PeonyFoodComponents.STIR_FRIED_GARLIC_SCAPE_WITH_PORK));
     // todo: fermentation tank
     public static final Item CHEESE = register("cheese", Item::new,
             createDefaultSettings().food(PeonyFoodComponents.CHEESE));
+    public static final Item SHREDDED_CHEESE = register("shredded_cheese", Item::new, createDefaultSettings());
 
     /* oil */
     public static final Item LARD = register("lard", Item::new, createDefaultSettings().food(PeonyFoodComponents.LARD));
@@ -79,6 +87,8 @@ public class PeonyItems {
     public static final Item CONDIMENT_BOTTLE = register("condiment_bottle", Item::new,
             createDefaultSettings().maxCount(16));
     public static final Item BLACK_VINEGAR = register("black_vinegar", Item::new,
+            createDefaultSettings().maxCount(16));
+    public static final Item SWEET_SOUR_SAUCE = register("sweet_sour_sauce", Item::new,
             createDefaultSettings().maxCount(16));
 
     /* kitchen tools */

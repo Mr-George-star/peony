@@ -21,6 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potions;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
@@ -159,6 +160,8 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 0.35F, 200, PEONY_ITEMS);
         offerSmelting(exporter, List.of(PeonyBlocks.FLATBREAD), RecipeCategory.FOOD, PeonyItems.BAKED_FLATBREAD,
                 0.35F, 200, PEONY_ITEMS);
+        offerSmelting(exporter, List.of(PeonyBlocks.RAW_MARGHERITA_PIZZA), RecipeCategory.FOOD, PeonyBlocks.MARGHERITA_PIZZA,
+                0.4F, 200, PEONY_ITEMS);
 
         /* CUSTOM RECIPE */
         /* MILLING */
@@ -180,6 +183,11 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
         SequentialCraftingRecipeJsonBuilder.create(PeonyItems.HAM, 2)
                 .step(ActionTypes.cutting(), Items.PORKCHOP)
                 .offerTo(exporter, Peony.id("ham_from_porkchop"));
+        SequentialCraftingRecipeJsonBuilder.create(PeonyItems.MINCED_GARLIC)
+                .step(ActionTypes.cutting(), PeonyItems.GARLIC_SCAPE)
+                .step(ActionTypes.cutting(), PeonyItems.GARLIC_SCAPE)
+                .step(ActionTypes.cutting(), PeonyItems.PLACEHOLDER)
+                .offerTo(exporter, Peony.id("minced_garlic_from_garlic_scape"));
 
         /* SEQUENTIAL COOKING */
         SequentialCookingRecipeJsonBuilder.create(550, false, PeonyItems.ROASTED_PEANUT_KERNEL)
@@ -215,7 +223,18 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .brewingTime(200).offerTo(exporter, Peony.id("honey_bottle_brewing_from_honeycomb"));
 
         /* SHREDDING */
-        ShreddingRecipeJsonBuilder.create(PeonyItems.PEELED_POTATO, PeonyItems.SHREDDED_POTATO, 1)
+        ShreddingRecipeJsonBuilder.create(PeonyItems.PEELED_POTATO, PeonyItems.SHREDDED_POTATO, 1).offerTo(exporter);
+        ShreddingRecipeJsonBuilder.create(PeonyItems.CHEESE, PeonyItems.SHREDDED_CHEESE, 1).offerTo(exporter);
+
+        /* PIZZA CRAFTING */
+        PizzaCraftingRecipeJsonBuilder.create(PeonyBlocks.RAW_MARGHERITA_PIZZA)
+                .add(Ingredient.ofItems(PeonyItems.SHREDDED_CHEESE))
+                .offerTo(exporter);
+
+        /* FLAVOURING PREPARING */
+        FlavouringPreparingRecipeJsonBuilder
+                .create(PeonyItems.SWEET_SOUR_SAUCE.getDefaultStack(), PeonyItems.CONDIMENT_BOTTLE, Items.SUGAR, PeonyItems.BLACK_VINEGAR, Items.POTION)
+                .stirringTimes(3)
                 .offerTo(exporter);
 
         // Vanilla Extend

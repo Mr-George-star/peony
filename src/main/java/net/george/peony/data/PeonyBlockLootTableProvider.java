@@ -11,18 +11,19 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
-import net.minecraft.loot.condition.BlockStatePropertyLootCondition;
-import net.minecraft.loot.condition.LootCondition;
-import net.minecraft.loot.condition.TableBonusLootCondition;
+import net.minecraft.loot.condition.*;
+import net.minecraft.loot.entry.AlternativeEntry;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.function.ApplyBonusLootFunction;
 import net.minecraft.loot.function.SetCountLootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.predicate.StatePredicate;
+import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.tag.ItemTags;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -67,6 +68,12 @@ public class PeonyBlockLootTableProvider extends FabricBlockLootTableProvider {
         this.addDrop(PeonyBlocks.TOMATO_VINES, this.tomatoDrops(tomatoLootCondition));
         // rice drop
         this.riceDrops();
+        // coriander drop
+        BlockStatePropertyLootCondition.Builder corianderLootCondition = BlockStatePropertyLootCondition.builder(PeonyBlocks.CORIANDER_CROP)
+                .properties(StatePredicate.Builder.create().exactMatch(CorianderCropBlock.AGE, CorianderCropBlock.MAX_AGE));
+        this.addDrop(PeonyBlocks.CORIANDER_CROP, this.corianderDrops(corianderLootCondition));
+        // garlic drop
+        this.garlicDrops();
     }
 
     public LootTable.Builder peanutDrops(LootCondition.Builder condition) {
@@ -134,5 +141,40 @@ public class PeonyBlockLootTableProvider extends FabricBlockLootTableProvider {
                         )
                 )
         );
+    }
+
+    public LootTable.Builder corianderDrops(LootCondition.Builder condition) {
+        RegistryWrapper.Impl<Enchantment> impl = this.registryLookup.getWrapperOrThrow(RegistryKeys.ENCHANTMENT);
+        return this.applyExplosionDecay(PeonyBlocks.CORIANDER_CROP,
+                LootTable.builder()
+                        .pool(LootPool.builder()
+                                .conditionally(condition)
+                                .with(ItemEntry.builder(PeonyItems.CORIANDER)
+                                        .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(2, 3))))
+                                .apply(ApplyBonusLootFunction.binomialWithBonusCount(impl.getOrThrow(Enchantments.FORTUNE), 0.5714286F, 3))
+                        )
+        );
+    }
+
+    public void garlicDrops() {
+        RegistryWrapper.Impl<Enchantment> impl = this.registryLookup.getWrapperOrThrow(RegistryKeys.ENCHANTMENT);
+
+        this.addDrop(PeonyBlocks.GARLIC_CROP, LootTable.builder()
+                .pool(LootPool.builder()
+                        .with(AlternativeEntry.builder(
+                                ItemEntry.builder(PeonyItems.GARLIC)
+                                        .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(2, 3)))
+                                        .apply(ApplyBonusLootFunction.uniformBonusCount(impl.getOrThrow(Enchantments.FORTUNE)))
+                                        .conditionally(MatchToolLootCondition.builder(ItemPredicate.Builder.create().tag(ItemTags.HOES))),
+                                ItemEntry.builder(PeonyItems.GARLIC)
+                                        .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(2, 3)))
+                                        .conditionally(MatchToolLootCondition.builder(ItemPredicate.Builder.create().tag(ItemTags.HOES)).invert())
+                        ))
+                        .build())
+                .pool(LootPool.builder()
+                        .with(ItemEntry.builder(PeonyItems.GARLIC_SCAPE)
+                                .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(3, 4)))
+                                .conditionally(MatchToolLootCondition.builder(ItemPredicate.Builder.create().tag(ItemTags.HOES)).invert()))
+                        .build()));
     }
 }

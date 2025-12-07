@@ -30,7 +30,7 @@ import net.minecraft.world.WorldView;
 
 public class RiceCropBlock extends CropBlock implements Waterloggable {
     public static final MapCodec<RiceCropBlock> CODEC = createCodec(RiceCropBlock::new);
-    public static final int MAX_AGE = 3;
+    public static final int MAX_AGE = Properties.AGE_3_MAX;
     public static final IntProperty AGE = Properties.AGE_3;
     public static final EnumProperty<DoubleBlockHalf> HALF = Properties.DOUBLE_BLOCK_HALF;
     public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;

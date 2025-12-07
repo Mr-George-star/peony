@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "blocks",
+  "cookingtime": 200,
+  "experience": 0.4,
+  "group": "peony-items",
+  "ingredient": {
+    "item": "peony:raw_margherita_pizza"
+  },
+  "result": {
+    "id": "peony:margherita_pizza"
+  }
+}

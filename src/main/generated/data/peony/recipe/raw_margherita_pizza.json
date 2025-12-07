@@ -1,0 +1,11 @@
+{
+  "type": "peony:pizza_crafting",
+  "ingredients": [
+    {
+      "item": "peony:shredded_cheese"
+    }
+  ],
+  "output": {
+    "id": "peony:raw_margherita_pizza"
+  }
+}

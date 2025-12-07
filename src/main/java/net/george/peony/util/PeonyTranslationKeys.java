@@ -14,6 +14,10 @@ public class PeonyTranslationKeys {
     public static final String MILLING_RECIPE_MILLING_TIMES = createTranslationKey("category", "milling", "milling", "times");
     public static final String SEQUENTIAL_CRAFTING_RECIPE_CATEGORY_TITLE = createTranslationKey("category", "sequential", "crafting");
 
+    public static final String MESSAGE_FLATBREAD_NO_INGREDIENTS = createTranslationKey("message", "flatbread", "no", "ingredients");
+    public static final String MESSAGE_FLATBREAD_CREATE_SUCCESS = createTranslationKey("message", "flatbread", "create", "success");
+    public static final String MESSAGE_FLATBREAD_NO_RECIPE = createTranslationKey("message", "flatbread", "no", "recipe");
+
     /* CONFIG */
     public static final String CONFIG_SCREEN_TITLE = createConfigTranslationKey("title");
     public static final String CONFIG_CATEGORY_COMMON = createConfigTranslationKey("category", "common");

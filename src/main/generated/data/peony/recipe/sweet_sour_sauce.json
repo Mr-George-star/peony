@@ -1,0 +1,22 @@
+{
+  "type": "peony:flavouring_preparing",
+  "ingredients": [
+    {
+      "id": "minecraft:sugar"
+    },
+    {
+      "id": "peony:black_vinegar"
+    },
+    {
+      "id": "minecraft:potion"
+    }
+  ],
+  "output": {
+    "container": "peony:condiment_bottle",
+    "outputStack": {
+      "count": 1,
+      "id": "peony:sweet_sour_sauce"
+    }
+  },
+  "stirringTimes": 3
+}

@@ -23,10 +23,15 @@ public class PeonyModelProvider extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator generator) {
+        PeonyModels.registerPizza(generator, PeonyBlocks.RAW_MARGHERITA_PIZZA);
+        PeonyModels.registerPizza(generator, PeonyBlocks.MARGHERITA_PIZZA);
+
         generator.registerCrop(PeonyBlocks.BARLEY_CROP, BarleyCropBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7);
         generator.registerCrop(PeonyBlocks.PEANUT_CROP, PeanutCropBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7);
         generator.registerCrop(PeonyBlocks.TOMATO_VINES, TomatoVinesBlock.AGE, 0, 1, 2, 3);
         this.registerRiceCrop(generator);
+        generator.registerCrop(PeonyBlocks.CORIANDER_CROP, CorianderCropBlock.AGE, 0, 1, 2, 3, 4);
+        generator.registerCrop(PeonyBlocks.GARLIC_CROP, GarlicCropBlock.AGE, 0, 1, 2, 3, 4);
 
         Registries.BLOCK.stream().filter(block -> block instanceof CuttingBoardBlock).forEach(board ->
                 PeonyModels.registerCuttingBoard(generator, board));
@@ -64,18 +69,24 @@ public class PeonyModelProvider extends FabricModelProvider {
         generator.register(PeonyItems.CORIANDER, Models.GENERATED);
         generator.register(PeonyItems.RICE_PANICLE, Models.GENERATED);
         generator.register(PeonyItems.RICE, Models.GENERATED);
+        generator.register(PeonyItems.GARLIC_CLOVE, Models.GENERATED);
+        generator.register(PeonyItems.GARLIC_SCAPE, Models.GENERATED);
+        generator.register(PeonyItems.MINCED_GARLIC, Models.GENERATED);
         generator.register(PeonyItems.HAM, Models.GENERATED);
         generator.register(PeonyItems.BAKED_FLATBREAD, Models.GENERATED);
         generator.register(PeonyItems.TOMATO_SAUCE, Models.GENERATED);
         generator.register(PeonyItems.SCRAMBLED_EGGS, Models.GENERATED);
         generator.register(PeonyItems.SCRAMBLED_EGGS_WITH_TOMATOES, Models.GENERATED);
         generator.register(PeonyItems.FRIED_SHREDDED_POTATOES, Models.GENERATED);
+        generator.register(PeonyItems.STIR_FRIED_GARLIC_SCAPE_WITH_PORK, Models.GENERATED);
         generator.register(PeonyItems.CHEESE, Models.GENERATED);
+        generator.register(PeonyItems.SHREDDED_CHEESE, Models.GENERATED);
 
         generator.register(PeonyItems.LARD, Models.GENERATED);
         generator.register(PeonyItems.LARD_BOTTLE, Models.GENERATED);
         generator.register(PeonyItems.CONDIMENT_BOTTLE, Models.GENERATED);
         generator.register(PeonyItems.BLACK_VINEGAR, Models.GENERATED);
+        generator.register(PeonyItems.SWEET_SOUR_SAUCE, Models.GENERATED);
 
         generator.register(PeonyItems.KITCHEN_KNIFE, Models.HANDHELD);
         generator.register(PeonyItems.SPATULA, Models.GENERATED);

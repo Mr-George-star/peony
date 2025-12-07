@@ -106,11 +106,12 @@ public class PeonyModels {
         TextureMap map = new TextureMap()
                 .put(TextureKey.TEXTURE, TextureMap.getId(pizza))
                 .put(TextureKey.TEXTURE, TextureMap.getId(pizza));
-        Identifier fullId = PIZZA_FULL.upload(pizza, map, generator.modelCollector);
-        Identifier fourThirdsId = PIZZA_FOUR_THIRDS.upload(pizza, map, generator.modelCollector);
-        Identifier halfId = PIZZA_HALF.upload(pizza, map, generator.modelCollector);
-        Identifier oneQuarterId = PIZZA_ONE_QUARTER.upload(pizza, map, generator.modelCollector);
+        Identifier fullId = PIZZA_FULL.upload(ModelIds.getBlockSubModelId(pizza, "_full"), map, generator.modelCollector);
+        Identifier fourThirdsId = PIZZA_FOUR_THIRDS.upload(ModelIds.getBlockSubModelId(pizza, "_four_thirds"), map, generator.modelCollector);
+        Identifier halfId = PIZZA_HALF.upload(ModelIds.getBlockSubModelId(pizza, "_half"), map, generator.modelCollector);
+        Identifier oneQuarterId = PIZZA_ONE_QUARTER.upload(ModelIds.getBlockSubModelId(pizza, "_one_quarter"), map, generator.modelCollector);
 
+        generator.registerItemModel(pizza.asItem());
         generator.blockStateCollector.accept(VariantsBlockStateSupplier.create(pizza)
                 .coordinate(BlockStateVariantMap.create(PizzaBlock.EATEN_STAGE)
                         .register(0, BlockStateVariant.create().put(VariantSettings.MODEL, fullId))

@@ -1,0 +1,30 @@
+{
+  "type": "peony:sequential_crafting",
+  "output": {
+    "count": 1,
+    "id": "peony:minced_garlic"
+  },
+  "steps": [
+    {
+      "action": {
+        "type": "peony:cutting"
+      },
+      "ingredient": {
+        "item": "peony:garlic_scape"
+      }
+    },
+    {
+      "action": {
+        "type": "peony:cutting"
+      },
+      "ingredient": {
+        "item": "peony:garlic_scape"
+      }
+    },
+    {
+      "action": {
+        "type": "peony:cutting"
+      }
+    }
+  ]
+}

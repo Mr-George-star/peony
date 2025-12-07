@@ -41,7 +41,7 @@ public record BrewingRecipe(List<ItemStack> ingredients, FluidStack basicFluid, 
             }
         }
 
-        return input.fluid().equals(this.basicFluid);
+        return input.getFluid().equals(this.basicFluid);
     }
 
     @Override

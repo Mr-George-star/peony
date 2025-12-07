@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "eaten_stage=0,facing=east": {
+      "model": "peony:block/raw_margherita_pizza_full",
+      "y": 90
+    },
+    "eaten_stage=0,facing=north": {
+      "model": "peony:block/raw_margherita_pizza_full"
+    },
+    "eaten_stage=0,facing=south": {
+      "model": "peony:block/raw_margherita_pizza_full",
+      "y": 180
+    },
+    "eaten_stage=0,facing=west": {
+      "model": "peony:block/raw_margherita_pizza_full",
+      "y": 270
+    },
+    "eaten_stage=1,facing=east": {
+      "model": "peony:block/raw_margherita_pizza_four_thirds",
+      "y": 90
+    },
+    "eaten_stage=1,facing=north": {
+      "model": "peony:block/raw_margherita_pizza_four_thirds"
+    },
+    "eaten_stage=1,facing=south": {
+      "model": "peony:block/raw_margherita_pizza_four_thirds",
+      "y": 180
+    },
+    "eaten_stage=1,facing=west": {
+      "model": "peony:block/raw_margherita_pizza_four_thirds",
+      "y": 270
+    },
+    "eaten_stage=2,facing=east": {
+      "model": "peony:block/raw_margherita_pizza_half",
+      "y": 90
+    },
+    "eaten_stage=2,facing=north": {
+      "model": "peony:block/raw_margherita_pizza_half"
+    },
+    "eaten_stage=2,facing=south": {
+      "model": "peony:block/raw_margherita_pizza_half",
+      "y": 180
+    },
+    "eaten_stage=2,facing=west": {
+      "model": "peony:block/raw_margherita_pizza_half",
+      "y": 270
+    },
+    "eaten_stage=3,facing=east": {
+      "model": "peony:block/raw_margherita_pizza_one_quarter",
+      "y": 90
+    },
+    "eaten_stage=3,facing=north": {
+      "model": "peony:block/raw_margherita_pizza_one_quarter"
+    },
+    "eaten_stage=3,facing=south": {
+      "model": "peony:block/raw_margherita_pizza_one_quarter",
+      "y": 180
+    },
+    "eaten_stage=3,facing=west": {
+      "model": "peony:block/raw_margherita_pizza_one_quarter",
+      "y": 270
+    }
+  }
+}

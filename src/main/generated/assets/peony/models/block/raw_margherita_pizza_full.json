@@ -1,0 +1,7 @@
+{
+  "parent": "peony:block/pizza_template_full",
+  "textures": {
+    "particle": "peony:block/raw_margherita_pizza",
+    "texture": "peony:block/raw_margherita_pizza"
+  }
+}

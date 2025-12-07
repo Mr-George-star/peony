@@ -1,6 +1,15 @@
 {
   "variants": {
-    "":  {
+    "facing=east":  {
+      "model": "peony:block/bowl"
+    },
+    "facing=north": {
+      "model": "peony:block/bowl"
+    },
+    "facing=south": {
+      "model": "peony:block/bowl"
+    },
+    "facing=west":  {
       "model": "peony:block/bowl"
     }
   }

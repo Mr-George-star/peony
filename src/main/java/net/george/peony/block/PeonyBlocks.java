@@ -9,9 +9,11 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.base.FullItemFluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.george.peony.Peony;
 import net.george.peony.PeonyItemGroups;
+import net.george.peony.api.block.PizzaBlockState;
 import net.george.peony.block.entity.ItemExchangeBehaviour;
 import net.george.peony.event.PotStandFamilyRegistryCallback;
 import net.george.peony.fluid.PeonyFluids;
+import net.george.peony.item.PeonyFoodComponents;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.item.PotStandItem;
 import net.george.peony.item.SolidModelProvider;
@@ -45,6 +47,10 @@ public class PeonyBlocks {
             FlourBlock::new, createDefaultSettings().breakInstantly(), FlourItem::new);
     public static final Block FLATBREAD = register("flatbread",
             FlatbreadBlock::new, createDefaultSettings().breakInstantly(), FlatbreadItem::new);
+
+    /* PIZZAS */
+    public static final Block RAW_MARGHERITA_PIZZA = registerPizza("raw_margherita_pizza");
+    public static final Block MARGHERITA_PIZZA = registerPizza("margherita_pizza", PeonyFoodComponents.MARGHERITA_PIZZA);
 
     public static final Block MILLSTONE = register("millstone", MillstoneBlock::new,
             AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE).nonOpaque());
@@ -112,21 +118,17 @@ public class PeonyBlocks {
     /* CROPS */
 
     public static final Block BARLEY_CROP = register("barley_crop", BarleyCropBlock::new,
-            createDefaultSettings().nonOpaque().noCollision().ticksRandomly().breakInstantly()
-                    .mapColor(MapColor.DARK_GREEN).sounds(BlockSoundGroup.CROP).pistonBehavior(PistonBehavior.DESTROY),
-            false);
+            createCrop(MapColor.DARK_GREEN), false);
     public static final Block PEANUT_CROP = register("peanut_crop", PeanutCropBlock::new,
-            createDefaultSettings().nonOpaque().noCollision().ticksRandomly().breakInstantly()
-                    .mapColor(MapColor.DARK_GREEN).sounds(BlockSoundGroup.CROP).pistonBehavior(PistonBehavior.DESTROY),
-            false);
+            createCrop(MapColor.DARK_GREEN), false);
     public static final Block TOMATO_VINES = register("tomato_vines", TomatoVinesBlock::new,
-            createDefaultSettings().nonOpaque().noCollision().ticksRandomly().breakInstantly()
-                    .mapColor(MapColor.DARK_GREEN).sounds(BlockSoundGroup.CROP).pistonBehavior(PistonBehavior.DESTROY),
-            false);
+            createCrop(MapColor.DARK_GREEN), false);
     public static final Block RICE_CROP = register("rice_crop", RiceCropBlock::new,
-            createDefaultSettings().nonOpaque().noCollision().ticksRandomly().breakInstantly()
-                    .mapColor(MapColor.TERRACOTTA_YELLOW).sounds(BlockSoundGroup.CROP).pistonBehavior(PistonBehavior.DESTROY),
-            false);
+            createCrop(MapColor.TERRACOTTA_YELLOW), false);
+    public static final Block CORIANDER_CROP = register("coriander_crop", CorianderCropBlock::new,
+            createCrop(MapColor.DARK_GREEN), false);
+    public static final Block GARLIC_CROP = register("garlic_crop", GarlicCropBlock::new,
+            createCrop(MapColor.DARK_GREEN), false);
 
     /* FLUIDS */
     public static final Block NATURE_GAS = register("nature_gas", NatureGasBlock::new, createDefaultSettings()
@@ -161,9 +163,20 @@ public class PeonyBlocks {
                 false);
     }
 
+    public static Block registerPizza(String name) {
+        return registerPizza(name, false, new FoodComponent.Builder().build());
+    }
+
     public static Block registerPizza(String name, FoodComponent perPiece) {
-        return register(name, settings ->
-                new PizzaBlock(settings, perPiece), createPizza(), AliasedBlockItem::new);
+        return registerPizza(name, true, perPiece);
+    }
+
+    private static Block registerPizza(String name, boolean isEatable, FoodComponent perPiece) {
+        Block pizza = register(name, settings -> new PizzaBlock(settings, isEatable, perPiece),
+                createPizza(), AliasedBlockItem::new);
+        PizzaBlockState.STATES.registerForItems((itemStack, ignored) ->
+                PizzaBlockState.create(pizza), pizza.asItem());
+        return pizza;
     }
 
     public static Block register(String name,
@@ -225,6 +238,11 @@ public class PeonyBlocks {
 
     public static AbstractBlock.Settings createPizza() {
         return createDefaultSettings().mapColor(MapColor.BROWN).breakInstantly();
+    }
+
+    public static AbstractBlock.Settings createCrop(MapColor color) {
+        return createDefaultSettings().nonOpaque().noCollision().ticksRandomly().breakInstantly()
+                .mapColor(color).sounds(BlockSoundGroup.CROP).pistonBehavior(PistonBehavior.DESTROY);
     }
 
     public static void register() {

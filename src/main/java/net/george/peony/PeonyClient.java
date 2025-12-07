@@ -27,7 +27,8 @@ public class PeonyClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(PeonyBlocks.MILLSTONE, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(PeonyBlocks.SKILLET, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(PeonyBlocks.BREWING_BARREL, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(), PeonyBlocks.BARLEY_CROP, PeonyBlocks.PEANUT_CROP, PeonyBlocks.TOMATO_VINES, PeonyBlocks.RICE_CROP);
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(), PeonyBlocks.BARLEY_CROP, PeonyBlocks.PEANUT_CROP,
+                PeonyBlocks.TOMATO_VINES, PeonyBlocks.RICE_CROP, PeonyBlocks.CORIANDER_CROP, PeonyBlocks.GARLIC_CROP);
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
                 PeonyBlocks.OAK_POT_STAND, PeonyBlocks.SPRUCE_POT_STAND, PeonyBlocks.BIRCH_POT_STAND,
                 PeonyBlocks.JUNGLE_POT_STAND, PeonyBlocks.ACACIA_POT_STAND, PeonyBlocks.CHERRY_POT_STAND,
@@ -45,6 +46,7 @@ public class PeonyClient implements ClientModInitializer {
         BlockEntityRendererFactories.register(PeonyBlockEntities.POT_STAND, PotStandBlockEntityRenderer::new);
         BlockEntityRendererFactories.register(PeonyBlockEntities.POT_STAND_WITH_CAMPFIRE, PotStandWithCampfireBlockEntityRenderer::new);
         BlockEntityRendererFactories.register(PeonyBlockEntities.SKILLET, SkilletBlockEntityRenderer::new);
+        BlockEntityRendererFactories.register(PeonyBlockEntities.BOWL, BowlBlockEntityRenderer::new);
 
         FluidRenderHandlerRegistry.INSTANCE.register(PeonyFluids.STILL_NATURE_GAS, PeonyFluids.FLOWING_NATURE_GAS,
                 SimpleFluidRenderHandler.coloredWater(10066329));

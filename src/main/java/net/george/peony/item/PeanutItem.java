@@ -20,7 +20,7 @@ public class PeanutItem extends Item {
         ItemStack peanutKernels;
 
         if (random.nextBetween(0, 1000) == 0) {
-            peanutKernels = new ItemStack(PeonyItems.PEANUT_KERNEL);
+            peanutKernels = new ItemStack(PeonyItems.PEANUT_KERNEL, 3);
         } else {
             peanutKernels = new ItemStack(PeonyItems.PEANUT_KERNEL, 2);
         }

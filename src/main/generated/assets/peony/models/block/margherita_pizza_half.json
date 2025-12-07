@@ -1,0 +1,6 @@
+{
+  "parent": "peony:block/pizza_template_half",
+  "textures": {
+    "texture": "peony:block/margherita_pizza"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_flatbread": {
+      "conditions": {
+        "items": [
+          {
+            "items": "peony:flatbread"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "peony:raw_margherita_pizza"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_flatbread"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "peony:raw_margherita_pizza"
+    ]
+  }
+}

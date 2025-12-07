@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/crop",
+  "textures": {
+    "crop": "peony:block/coriander_crop_stage0"
+  }
+}
