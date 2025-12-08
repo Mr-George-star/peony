@@ -4,6 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.george.peony.block.entity.BowlBlockEntity;
 import net.george.peony.block.entity.NonBlockRenderingItems;
+import net.george.peony.util.math.PositioningHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -33,12 +34,12 @@ public class BowlBlockEntityRenderer implements BlockEntityRenderer<BowlBlockEnt
     @Override
     public void render(BowlBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         Direction direction = entity.getDirection();
-//        ItemStack stack = entity.getStack(0);
         int pos = (int) entity.getPos().asLong();
+        float yOffset = PositioningHelper.yOffsetFromFloor(1);
 
-        for (int index = 1; index < entity.getItems().size(); index++) {
+        for (int index = 0; index < entity.getItems().size(); index++) {
             ItemStack stack = entity.getStack(index);
-            if (stack != ItemStack.EMPTY) {
+            if (!stack.isEmpty()) {
                 matrices.push();
                 ItemRenderer renderer = MinecraftClient.getInstance().getItemRenderer();
 
@@ -48,11 +49,8 @@ public class BowlBlockEntityRenderer implements BlockEntityRenderer<BowlBlockEnt
                 matrices.pop();
 
                 Item item = stack.getItem();
-                if (item instanceof BlockItem && !NonBlockRenderingItems.getInstance().contains(item)) {
-                    this.block(matrices, direction, index);
-                } else {
-                    this.item(matrices, direction, index);
-                }
+                boolean isBlockItem = item instanceof BlockItem && !NonBlockRenderingItems.getInstance().contains(item);
+                yOffset += this.positionItem(matrices, direction, yOffset, isBlockItem);
 
                 renderer.renderItem(stack, ModelTransformationMode.FIXED, light, OverlayTexture.DEFAULT_UV,
                         matrices, vertexConsumers, entity.getWorld(), pos);
@@ -61,20 +59,21 @@ public class BowlBlockEntityRenderer implements BlockEntityRenderer<BowlBlockEnt
         }
     }
 
-    protected void block(MatrixStack matrices, Direction direction, int index) {
+    protected float positionItem(MatrixStack matrices, Direction direction, float yOffset, boolean isBlockItem) {
         float rotation = -direction.asRotation();
 
-        matrices.translate(0.5D, 0.125 * index, 0.5D);
-        matrices.scale(0.8F, 0.8F, 0.8F);
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(rotation));
-    }
 
-    protected void item(MatrixStack matrices, Direction direction, int index) {
-        float rotation = -direction.asRotation();
-
-        matrices.translate(0.5, 0.125 * index, 0.5);
-        matrices.scale(0.6F, 0.6F, 0.6F);
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(rotation));
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
+        if (isBlockItem) {
+            matrices.translate(0.5F, yOffset, 0.5F);
+            matrices.scale(0.7F, 0.7F, 0.7F);
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(rotation));
+            return PositioningHelper.yOffsetFromFloor(1);
+        } else {
+            matrices.translate(0.5F, yOffset, 0.5F);
+            matrices.scale(0.5F, 0.5F, 0.5F);
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(rotation));
+            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
+            return PositioningHelper.yOffsetFromFloor(1);
+        }
     }
 }
