@@ -1,38 +1,30 @@
 {
   "type": "peony:sequential_cooking",
-  "basicIngredient": "peony:minced_garlic",
   "needOil": true,
   "output": {
     "container": "peony:wooden_plate",
     "outputStack": {
       "count": 1,
-      "id": "peony:fried_shredded_potatoes"
+      "id": "peony:sweet_and_sour_pork"
     }
   },
   "steps": [
     {
       "ingredient": {
-        "item": "peony:shredded_potato"
+        "item": "peony:pork_tenderloin"
       },
       "maxTimeOverflow": 80,
-      "requiredTime": 100
-    },
-    {
-      "ingredient": {
-        "item": "peony:black_vinegar"
-      },
-      "maxTimeOverflow": 20,
-      "requiredTime": 80
+      "requiredTime": 240
     },
     {
       "fryingData": {
-        "times": 4
+        "times": 3
       },
       "ingredient": {
-        "item": "peony:shredded_potato"
+        "item": "peony:sweet_sour_sauce"
       },
-      "maxTimeOverflow": 20,
-      "requiredTime": 260,
+      "maxTimeOverflow": 80,
+      "requiredTime": 100,
       "requiredTool": {
         "item": "peony:spatula"
       }

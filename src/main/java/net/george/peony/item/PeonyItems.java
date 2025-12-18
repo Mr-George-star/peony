@@ -21,7 +21,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @SuppressWarnings("UnusedReturnValue")
-// todo: new api create :: for registering tool variants |||| Rice & beans
 public class PeonyItems {
     public static final Item WOODEN_PLATE = register("wooden_plate", Item::new,
             createDefaultSettings().maxCount(16));
@@ -56,6 +55,7 @@ public class PeonyItems {
     public static final Item GARLIC_CLOVE = register("garlic_clove", Item::new, createDefaultSettings());
     public static final Item GARLIC_SCAPE = register("garlic_scape", Item::new, createDefaultSettings());
     public static final Item MINCED_GARLIC = register("minced_garlic", Item::new, createDefaultSettings());
+    public static final Item SOYBEAN = register("soybean", Item::new, createDefaultSettings());
 
     /* ingredients */
     public static final Item HAM = register("ham", Item::new,
@@ -74,7 +74,8 @@ public class PeonyItems {
             createDefaultSettings().maxCount(1).food(PeonyFoodComponents.FRIED_SHREDDED_POTATOES));
     public static final Item STIR_FRIED_GARLIC_SCAPE_WITH_PORK = register("stir_fired_garlic_scape_with_pork", Item::new,
             createDefaultSettings().maxCount(1).food(PeonyFoodComponents.STIR_FRIED_GARLIC_SCAPE_WITH_PORK));
-    // todo: fermentation tank
+    public static final Item SWEET_AND_SOUR_PORK = register("sweet_and_sour_pork", Item::new,
+            createDefaultSettings().maxCount(1).food(PeonyFoodComponents.SWEET_AND_SOUR_PORK));
     public static final Item CHEESE = register("cheese", Item::new,
             createDefaultSettings().food(PeonyFoodComponents.CHEESE));
     public static final Item SHREDDED_CHEESE = register("shredded_cheese", Item::new, createDefaultSettings());
@@ -82,6 +83,10 @@ public class PeonyItems {
     /* oil */
     public static final Item LARD = register("lard", Item::new, createDefaultSettings().food(PeonyFoodComponents.LARD));
     public static final Item LARD_BOTTLE = register("lard_bottle", Item::new, createDefaultSettings().maxCount(16));
+
+    /* vanilla extensions */
+    public static final Item PORK_TENDERLOIN = register("pork_tenderloin", Item::new,
+            createDefaultSettings().food(PeonyFoodComponents.PORK_TENDERLOIN));
 
     /* condiments */
     public static final Item CONDIMENT_BOTTLE = register("condiment_bottle", Item::new,
@@ -96,7 +101,6 @@ public class PeonyItems {
             new KitchenKnifeItem(PeonyToolMaterials.KITCHEN_KNIFE, settings), createDefaultSettings().maxCount(1));
     public static final Item SPATULA = register("spatula", settings ->
             new SpatulaItem(PeonyToolMaterials.SPATULA, settings), createDefaultSettings().maxCount(1));
-    // todo: more variants
     public static final Item IRON_PARING_KNIFE = register("iron_paring_knife", settings ->
             new ParingKnifeItem(ToolMaterials.IRON, settings), createDefaultSettings().maxCount(1));
     public static final Item IRON_SHREDDER = register("iron_shredder", settings ->

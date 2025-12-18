@@ -101,10 +101,16 @@ public class PeonyCompat {
                         .with(ItemEntry.builder(PeonyItems.BARLEY_SEEDS));
                 builder.pool(pool);
             } else if (registryKey.getValue().equals(PIG_LOOT)) {
-                LootPool.Builder pool = LootPool.builder()
+                LootPool.Builder lardPool = LootPool.builder()
                         .rolls(UniformLootNumberProvider.create(3, 5))
+                        .apply(ApplyBonusLootFunction.uniformBonusCount(enchantmentImpl.getOrThrow(Enchantments.FORTUNE), 2))
                         .with(ItemEntry.builder(PeonyItems.LARD));
-                builder.pool(pool);
+                LootPool.Builder porkTenderloinPool = LootPool.builder()
+                        .rolls(UniformLootNumberProvider.create(1, 2))
+                        .apply(ApplyBonusLootFunction.uniformBonusCount(enchantmentImpl.getOrThrow(Enchantments.FORTUNE), 2))
+                        .with(ItemEntry.builder(PeonyItems.PORK_TENDERLOIN));
+                builder.pool(lardPool);
+                builder.pool(porkTenderloinPool);
             }
         });
     }

@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:tomato_seeds_from_tomato"
+        "recipe": "peony:tomato_seeds_from_tomato"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:tomato_seeds_from_tomato"
+      "peony:tomato_seeds_from_tomato"
     ]
   }
 }

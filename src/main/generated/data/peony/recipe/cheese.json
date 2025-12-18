@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "peony-items",
+  "ingredients": [
+    {
+      "item": "peony:cheese_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "peony:cheese"
+  }
+}

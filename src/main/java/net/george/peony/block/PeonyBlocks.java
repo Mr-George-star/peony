@@ -47,6 +47,8 @@ public class PeonyBlocks {
             FlourBlock::new, createDefaultSettings().breakInstantly(), FlourItem::new);
     public static final Block FLATBREAD = register("flatbread",
             FlatbreadBlock::new, createDefaultSettings().breakInstantly(), FlatbreadItem::new);
+    public static final Block CHEESE_BLOCK = register("cheese_block",
+            Block::new, createDefaultSettings().mapColor(MapColor.YELLOW).sounds(BlockSoundGroup.WOOL));
 
     /* PIZZAS */
     public static final Block RAW_MARGHERITA_PIZZA = registerPizza("raw_margherita_pizza");

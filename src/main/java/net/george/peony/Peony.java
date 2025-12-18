@@ -36,8 +36,6 @@ public class Peony implements ModInitializer {
 		PeonyFeatures.register();
 		PeonyCompat.register();
 		PeonyWorldGeneration.generate();
-
-		LOGGER.info("Hello Fabric world!");
 	}
 
 	public static void debug(String moduleName) {

@@ -37,6 +37,7 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyItems.GARLIC_CLOVE, "Garlic Clove");
         translationBuilder.add(PeonyItems.GARLIC_SCAPE, "Garlic Scape");
         translationBuilder.add(PeonyItems.MINCED_GARLIC, "Minced Garlic");
+        translationBuilder.add(PeonyItems.SOYBEAN, "Soybean");
         translationBuilder.add(PeonyItems.HAM, "Ham");
         translationBuilder.add(PeonyItems.BAKED_FLATBREAD, "Baked Flatbread");
         translationBuilder.add(PeonyItems.TOMATO_SAUCE, "Tomato Sauce");
@@ -44,11 +45,13 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyItems.SCRAMBLED_EGGS_WITH_TOMATOES, "Scrambled Eggs With Tomatoes");
         translationBuilder.add(PeonyItems.FRIED_SHREDDED_POTATOES, "Fried Shredded Potatoes");
         translationBuilder.add(PeonyItems.STIR_FRIED_GARLIC_SCAPE_WITH_PORK, "Stir-Fried Garlic Scape With Pork");
+        translationBuilder.add(PeonyItems.SWEET_AND_SOUR_PORK, "Sweet And Sour Pork");
         translationBuilder.add(PeonyItems.CHEESE, "Cheese");
         translationBuilder.add(PeonyItems.SHREDDED_CHEESE, "Shredded Cheese");
 
         translationBuilder.add(PeonyItems.LARD, "Lard");
         translationBuilder.add(PeonyItems.LARD_BOTTLE, "Lard Bottle");
+        translationBuilder.add(PeonyItems.PORK_TENDERLOIN, "Pork Tenderloin");
         translationBuilder.add(PeonyItems.CONDIMENT_BOTTLE, "Condiment Bottle");
         translationBuilder.add(PeonyItems.BLACK_VINEGAR, "Black Vinegar");
         translationBuilder.add(PeonyItems.SWEET_SOUR_SAUCE, "Sweet Sour Sauce");
@@ -71,6 +74,7 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         translationBuilder.add(PeonyBlocks.DOUGH, "Dough");
         translationBuilder.add(PeonyBlocks.FLOUR, "Flour");
         translationBuilder.add(PeonyBlocks.FLATBREAD, "Flatbread");
+        translationBuilder.add(PeonyBlocks.CHEESE_BLOCK, "Block of Cheese");
 
         translationBuilder.add(PeonyBlocks.RAW_MARGHERITA_PIZZA, "Raw Margherita Pizza");
         translationBuilder.add(PeonyBlocks.RAW_MARGHERITA_PIZZA.asItem(), "Raw Margherita Pizza");

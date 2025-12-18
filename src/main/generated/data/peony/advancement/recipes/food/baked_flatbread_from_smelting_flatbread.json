@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:baked_flatbread_from_smelting_flatbread"
+        "recipe": "peony:baked_flatbread_from_smelting_flatbread"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:baked_flatbread_from_smelting_flatbread"
+      "peony:baked_flatbread_from_smelting_flatbread"
     ]
   }
 }

@@ -129,6 +129,16 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .group(PEONY_ITEMS)
                 .criterion(hasItem(Blocks.GLASS), conditionsFromTag(ConventionalItemTags.GLASS_BLOCKS))
                 .offerTo(exporter);
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.FOOD, PeonyBlocks.CHEESE_BLOCK)
+                .input(PeonyItems.CHEESE, 9)
+                .group(PEONY_BLOCKS)
+                .criterion(hasItem(PeonyItems.CHEESE), conditionsFromItem(PeonyItems.CHEESE))
+                .offerTo(exporter);
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.FOOD, PeonyItems.CHEESE, 9)
+                .input(PeonyBlocks.CHEESE_BLOCK)
+                .group(PEONY_ITEMS)
+                .criterion(hasItem(PeonyBlocks.CHEESE_BLOCK), conditionsFromItem(PeonyBlocks.CHEESE_BLOCK))
+                .offerTo(exporter);
 
         /* LARD CONVERTING */
         ShapelessRecipeJsonBuilder.create(RecipeCategory.MISC, PeonyItems.LARD_BUCKET)
@@ -207,9 +217,14 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .step(new CookingSteps.Step(80, 60, PeonyItems.CORIANDER))
                 .offerTo(exporter);
         SequentialCookingRecipeJsonBuilder.create(550, true, PeonyItems.FRIED_SHREDDED_POTATOES, PeonyItems.WOODEN_PLATE)
+                .basicIngredient(CommonIngredientTypes.MINCED_GARLIC)
                 .step(new CookingSteps.Step(100, 80, PeonyItems.SHREDDED_POTATO))
                 .step(new CookingSteps.Step(80, 20, PeonyItems.BLACK_VINEGAR))
                 .step(new CookingSteps.Step(260, 20, PeonyItems.SPATULA, PeonyItems.SHREDDED_POTATO, new StirFryingData(4)))
+                .offerTo(exporter);
+        SequentialCookingRecipeJsonBuilder.create(550, true, PeonyItems.SWEET_AND_SOUR_PORK, PeonyItems.WOODEN_PLATE)
+                .step(new CookingSteps.Step(240, 80, PeonyItems.PORK_TENDERLOIN))
+                .step(new CookingSteps.Step(100, 80, PeonyItems.SPATULA, PeonyItems.SWEET_SOUR_SAUCE, new StirFryingData(3)))
                 .offerTo(exporter);
 
         /* PARING */
