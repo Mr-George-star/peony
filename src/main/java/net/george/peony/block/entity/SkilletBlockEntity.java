@@ -1315,7 +1315,10 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                     context.skillet.updateRecipeData(new RecipeEntry<>(SkilletBlockEntity.DUMMY_RECIPE_ID, context.skillet.dummyRecipe));
                     context.skillet.updateAddedItems();
                     context.skillet.markDirty();
-                    return new InsertResult(true, -1);
+                    return new InsertResult(true, 0);
+                } else {
+                    Peony.LOGGER.debug("In overflow stage, only tools are accepted");
+                    return new InsertResult(false, -1);
                 }
             } else if (context.oilProcessingStage == 1) {
                 Peony.LOGGER.debug("Oil stage 1 - ingredient required");
@@ -1516,7 +1519,10 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
 
                         context.skillet.updateAddedItems();
                         context.skillet.markDirty();
-                        return new InsertResult(true, -1);
+                        return new InsertResult(true, 0);
+                    } else {
+                        Peony.LOGGER.debug("In common ingredient overflow stage, only tools are accepted");
+                        return new InsertResult(false, -1);
                     }
                 }
             } else if (context.commonIngredientStage == 1) {
@@ -1719,10 +1725,11 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                     advanceToNextStep(context, world, interactionContext.pos);
                 }
 
-                return new InsertResult(true, -1);
+                return new InsertResult(true, 0);
+            } else {
+                Peony.LOGGER.debug("In stir-frying stage, only tools are accepted");
+                return new InsertResult(false, -1);
             }
-
-            return new InsertResult(false, -1);
         }
 
         @Override
@@ -1806,7 +1813,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             // If no tool required, auto-advance to next step
             CookingSteps.Step currentStep = context.getCurrentStep(world);
             if (currentStep != null && context.skillet.isToolRequirementEmpty(currentStep)) {
-                advanceToNextStep(context, world, pos);
+                this.advanceToNextStep(context, world, pos);
             }
 
             context.skillet.markDirty();
@@ -1820,11 +1827,12 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             if (currentStep != null && currentStep.getRequiredTool().test(givenStack) &&
                     !context.skillet.isToolRequirementEmpty(currentStep)) {
                 // Use tool to advance to next step
-                advanceToNextStep(context, world, interactionContext.pos);
-                return new InsertResult(true, -1);
+                this.advanceToNextStep(context, world, interactionContext.pos);
+                return new InsertResult(true, 0);
+            } else {
+                Peony.LOGGER.debug("In overflow stage, only tools are accepted");
+                return new InsertResult(false, -1);
             }
-
-            return new InsertResult(false, -1);
         }
 
         @Override
@@ -1919,9 +1927,10 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
 
                 Peony.LOGGER.debug("Ingredient placed successfully, moving to {} state", heatingMode);
                 return new InsertResult(true, -1);
+            } else {
+                Peony.LOGGER.debug("Item does not match recipe ingredient requirement: {}", givenStack.getItem());
+                return new InsertResult(false, -1);
             }
-
-            return new InsertResult(false, -1);
         }
 
         @Override
