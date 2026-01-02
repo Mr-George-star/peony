@@ -4,6 +4,8 @@ import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.george.peony.block.PeonyJukeboxSongs;
 import net.george.peony.compat.PeonyDamageTypes;
+import net.george.peony.data.lang.PeonyChineseTranslationProvider;
+import net.george.peony.data.lang.PeonyEnglishTranslationProvider;
 import net.george.peony.data.tag.PeonyBlockTagsProvider;
 import net.george.peony.data.tag.PeonyFluidTagsProvider;
 import net.george.peony.data.tag.PeonyItemTagsProvider;
@@ -27,6 +29,8 @@ public class PeonyDataGenerator implements DataGeneratorEntrypoint {
 		pack.addProvider(PeonyItemTagsProvider::new);
 		pack.addProvider(PeonyBlockTagsProvider::new);
 		pack.addProvider(PeonyFluidTagsProvider::new);
+
+		pack.addProvider(PeonyAdvancementProvider::new);
 	}
 
 	@Override

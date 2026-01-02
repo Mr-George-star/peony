@@ -75,6 +75,7 @@ public class PeonyModelProvider extends FabricModelProvider {
         generator.register(PeonyItems.GARLIC_SCAPE, Models.GENERATED);
         generator.register(PeonyItems.MINCED_GARLIC, Models.GENERATED);
         generator.register(PeonyItems.SOYBEAN, Models.GENERATED);
+        generator.register(PeonyItems.SOYBEAN_POD, Models.GENERATED);
         generator.register(PeonyItems.HAM, Models.GENERATED);
         generator.register(PeonyItems.BAKED_FLATBREAD, Models.GENERATED);
         generator.register(PeonyItems.TOMATO_SAUCE, Models.GENERATED);

@@ -64,7 +64,7 @@ public record FlavouringPreparingRecipe(List<ItemStack> ingredients, int stirrin
     public static class Serializer implements RecipeSerializer<FlavouringPreparingRecipe> {
         public static final MapCodec<FlavouringPreparingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 ItemStack.VALIDATED_UNCOUNTED_CODEC.listOf().fieldOf("ingredients").forGetter(FlavouringPreparingRecipe::ingredients),
-                Codecs.NONNEGATIVE_INT.fieldOf("stirringTimes").forGetter(FlavouringPreparingRecipe::stirringTimes),
+                Codecs.NONNEGATIVE_INT.fieldOf("stirring_times").forGetter(FlavouringPreparingRecipe::stirringTimes),
                 Output.CODEC.fieldOf("output").forGetter(FlavouringPreparingRecipe::output)
         ).apply(instance, FlavouringPreparingRecipe::new));
         public static final PacketCodec<RegistryByteBuf, FlavouringPreparingRecipe> PACKET_CODEC = PacketCodec.tuple(

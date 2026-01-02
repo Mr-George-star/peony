@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
@@ -18,6 +19,7 @@ public class FluidStack {
                     Codec.LONG.fieldOf("amount").forGetter(FluidStack::getAmount)
             ).apply(instance, FluidStack::new)
     );
+    public static final FluidStack EMPTY = FluidStack.of(Fluids.EMPTY, -1);
 
     public static final PacketCodec<RegistryByteBuf, FluidStack> PACKET_CODEC =
             PacketCodec.tuple(

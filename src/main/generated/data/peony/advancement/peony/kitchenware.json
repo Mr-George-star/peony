@@ -1,0 +1,35 @@
+{
+  "parent": "peony:peony/root",
+  "criteria": {
+    "get_any_kitchenware": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#peony:kitchenware"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancement.peony.kitchenware.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "peony:skillet"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.peony.kitchenware"
+    }
+  },
+  "requirements": [
+    [
+      "get_any_kitchenware"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

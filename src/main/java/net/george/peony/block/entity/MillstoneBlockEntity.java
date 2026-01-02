@@ -161,16 +161,16 @@ public class MillstoneBlockEntity extends BlockEntity implements ImplementedInve
                 this.millingTimes = 0;
                 this.setInputStack(givenStack);
                 this.markDirty();
-                return new InsertResult(true, -1);
+                return AccessibleInventory.createResult(true, -1);
             } else if (canItemStacksBeStacked(inputStack, givenStack)) {
                 this.requiredMillingTimes = recipe.get().value().millingTimes();
                 this.millingTimes = 0;
                 this.setInputStack(new ItemStack(inputStack.getItem(), inputStack.getCount() + givenStack.getCount()));
                 this.markDirty();
-                return new InsertResult(true, -1);
+                return AccessibleInventory.createResult(true, -1);
             }
         }
-        return new InsertResult(false, -1);
+        return AccessibleInventory.createResult(false, -1);
     }
 
     @Override
@@ -218,10 +218,10 @@ public class MillstoneBlockEntity extends BlockEntity implements ImplementedInve
                 }
 
                 this.markDirty();
-                return new InsertResult(true, containersToUse);
+                return AccessibleInventory.createResult(true, containersToUse);
             }
         }
-        return new InsertResult(false, -1);
+        return AccessibleInventory.createResult(false, -1);
     }
 
     protected Direction getRotatedDirection(Direction side, Direction localDirection) {

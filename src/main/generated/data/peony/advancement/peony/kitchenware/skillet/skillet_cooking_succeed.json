@@ -1,0 +1,32 @@
+{
+  "parent": "peony:peony/kitchenware/skillet",
+  "criteria": {
+    "cooking_succeed": {
+      "conditions": {
+        "finishing_type": "success",
+        "type_id": "peony:skillet"
+      },
+      "trigger": "peony:cooking_finished"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.peony.skillet.cooking_succeed.description"
+    },
+    "frame": "goal",
+    "hidden": true,
+    "icon": {
+      "count": 1,
+      "id": "peony:scrambled_eggs_with_tomatoes"
+    },
+    "title": {
+      "translate": "advancement.peony.skillet.cooking_succeed"
+    }
+  },
+  "requirements": [
+    [
+      "cooking_succeed"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

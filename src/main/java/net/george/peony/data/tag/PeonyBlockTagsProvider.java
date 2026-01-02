@@ -29,6 +29,17 @@ public class PeonyBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
                 .add(Blocks.MAGMA_BLOCK).add(Blocks.LAVA).add(Blocks.LAVA_CAULDRON);
         getOrCreateTagBuilder(PeonyTags.Blocks.VINE_CROPS_ATTACHABLE)
                 .forceAddTag(BlockTags.LOGS).forceAddTag(BlockTags.FENCES);
+        getOrCreateTagBuilder(PeonyTags.Blocks.CUTTING_BOARDS)
+                .add(PeonyBlocks.OAK_CUTTING_BOARD).add(PeonyBlocks.SPRUCE_CUTTING_BOARD).add(PeonyBlocks.BIRCH_CUTTING_BOARD)
+                .add(PeonyBlocks.JUNGLE_CUTTING_BOARD).add(PeonyBlocks.ACACIA_CUTTING_BOARD).add(PeonyBlocks.CHERRY_CUTTING_BOARD)
+                .add(PeonyBlocks.DARK_OAK_CUTTING_BOARD).add(PeonyBlocks.MANGROVE_CUTTING_BOARD);
+        getOrCreateTagBuilder(PeonyTags.Blocks.KITCHENWARE)
+                .add(PeonyBlocks.MILLSTONE)
+                .forceAddTag(PeonyTags.Blocks.CUTTING_BOARDS)
+                .add(PeonyBlocks.SKILLET)
+                .add(PeonyBlocks.BREWING_BARREL)
+                .add(PeonyBlocks.FERMENTATION_TANK);
+
         getOrCreateTagBuilder(BlockTags.CAMPFIRES)
                 .add(RegistryDataUtils.BLOCK.filterToArray(block -> block instanceof PotStandWithCampfireBlock));
 

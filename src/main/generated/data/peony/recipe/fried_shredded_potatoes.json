@@ -1,7 +1,7 @@
 {
   "type": "peony:sequential_cooking",
-  "basicIngredient": "peony:minced_garlic",
-  "needOil": true,
+  "basic_ingredient": "peony:minced_garlic",
+  "need_oil": true,
   "output": {
     "container": "peony:wooden_plate",
     "outputStack": {
@@ -14,26 +14,26 @@
       "ingredient": {
         "item": "peony:shredded_potato"
       },
-      "maxTimeOverflow": 80,
-      "requiredTime": 100
+      "max_time_overflow": 80,
+      "required_time": 100
     },
     {
       "ingredient": {
         "item": "peony:black_vinegar"
       },
-      "maxTimeOverflow": 20,
-      "requiredTime": 80
+      "max_time_overflow": 20,
+      "required_time": 80
     },
     {
-      "fryingData": {
+      "frying_data": {
         "times": 4
       },
       "ingredient": {
         "item": "peony:shredded_potato"
       },
-      "maxTimeOverflow": 20,
-      "requiredTime": 260,
-      "requiredTool": {
+      "max_time_overflow": 20,
+      "required_time": 260,
+      "required_tool": {
         "item": "peony:spatula"
       }
     }

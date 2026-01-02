@@ -193,17 +193,17 @@ public class CookingSteps extends RecipeSteps<CookingSteps.Step> {
 
         static {
             CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    Codecs.NONNEGATIVE_INT.optionalFieldOf("requiredTime", 0)
+                    Codecs.NONNEGATIVE_INT.optionalFieldOf("required_time", 0)
                             .forGetter(Step::getRequiredTime),
-                    Codecs.NONNEGATIVE_INT.optionalFieldOf("maxTimeOverflow", 0)
+                    Codecs.NONNEGATIVE_INT.optionalFieldOf("max_time_overflow", 0)
                             .forGetter(Step::getMaxTimeOverflow),
-                    Ingredient.DISALLOW_EMPTY_CODEC.optionalFieldOf("requiredTool")
+                    Ingredient.DISALLOW_EMPTY_CODEC.optionalFieldOf("required_tool")
                             .xmap(
                                     optional -> optional.orElseGet(CraftingSteps.Step::getDefaultIngredient),
                                     ingredient -> ingredient.equals(getDefaultIngredient()) ? Optional.empty() : Optional.of(ingredient)
                             ).forGetter(Step::getRequiredTool),
                     Ingredient.DISALLOW_EMPTY_CODEC.fieldOf("ingredient").forGetter(Step::getIngredient),
-                    StirFryingData.CODEC.optionalFieldOf("fryingData")
+                    StirFryingData.CODEC.optionalFieldOf("frying_data")
                             .xmap(
                                     optional -> optional.orElse(StirFryingData.DEFAULT),
                                     data -> data.equals(StirFryingData.DEFAULT) ? Optional.empty() : Optional.of(data)

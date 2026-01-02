@@ -32,7 +32,7 @@ public interface TagRegistration<T> {
             Registration registration = clazz.getAnnotation(Registration.class);
             return registration.modId();
         } else {
-            return "none";
+            return "c";
         }
     }
 

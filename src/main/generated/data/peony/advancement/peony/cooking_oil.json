@@ -1,0 +1,33 @@
+{
+  "parent": "peony:peony/root",
+  "criteria": {
+    "get_any_cooking_oil": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#peony:cooking_oil"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.peony.cooking_oil.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "peony:lard"
+    },
+    "title": {
+      "translate": "advancement.peony.cooking_oil"
+    }
+  },
+  "requirements": [
+    [
+      "get_any_cooking_oil"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

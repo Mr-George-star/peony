@@ -103,7 +103,7 @@ public interface AccessibleInventory {
         public PlayerEntity user;
         public Hand hand;
 
-        InteractionContext(World world, BlockPos pos, PlayerEntity user, Hand hand) {
+        private InteractionContext(World world, BlockPos pos, PlayerEntity user, Hand hand) {
             this.world = world;
             this.pos = pos;
             this.user = user;
@@ -119,7 +119,7 @@ public interface AccessibleInventory {
         public boolean result;
         public int decrementCount;
 
-        public InsertResult(boolean result, int decrementCount) {
+        private InsertResult(boolean result, int decrementCount) {
             this.result = result;
             this.decrementCount = decrementCount;
         }

@@ -1,0 +1,34 @@
+{
+  "parent": "peony:peony/kitchenware",
+  "criteria": {
+    "get_skillet": {
+      "conditions": {
+        "items": [
+          {
+            "items": "peony:skillet"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.peony.skillet.description"
+    },
+    "hidden": true,
+    "icon": {
+      "count": 1,
+      "id": "peony:skillet"
+    },
+    "title": {
+      "translate": "advancement.peony.skillet"
+    }
+  },
+  "requirements": [
+    [
+      "get_skillet"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

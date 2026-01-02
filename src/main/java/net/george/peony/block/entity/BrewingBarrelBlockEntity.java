@@ -10,7 +10,7 @@ import net.george.peony.block.SkilletBlock;
 import net.george.peony.block.data.Cursor;
 import net.george.peony.block.data.Output;
 import net.george.peony.recipe.BrewingRecipe;
-import net.george.peony.recipe.BrewingRecipeInput;
+import net.george.peony.recipe.MixedIngredientsRecipeInput;
 import net.george.peony.recipe.PeonyRecipes;
 import net.george.peony.util.FluidStack;
 import net.minecraft.block.BlockState;
@@ -137,6 +137,14 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
     }
 
     @Override
+    public void markDirty() {
+        super.markDirty();
+        if (this.world != null) {
+            this.world.updateListeners(this.pos, getCachedState(), getCachedState(), 3);
+        }
+    }
+
+    @Override
     public InsertResult insertItemSpecified(InteractionContext context, ItemStack givenStack) {
         if (!this.outputStack.isEmpty() &&
                 this.requiredContainer != null && givenStack.getItem() == this.requiredContainer.asItem()) {
@@ -150,7 +158,7 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
             if (matchedRecipe.isPresent() && this.fluidStorage.amount >= matchedRecipe.get().value().basicFluid().getAmount()) {
                 this.startedBrewing = true;
             }
-            return new InsertResult(true, -1);
+            return AccessibleInventory.createResult(true, -1);
         }
         return this.insertItem(context.world, givenStack);
     }
@@ -162,14 +170,14 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
 
     protected InsertResult insertItem(World world, ItemStack givenStack) {
         if (this.inputCursor.overflowing() || !this.outputStack.isEmpty() || this.startedBrewing) {
-            return new InsertResult(false, -1);
+            return AccessibleInventory.createResult(false, -1);
         } else {
             this.inputs.set(this.inputCursor.getCursoringIndex(), givenStack.copyWithCount(1));
             this.inputCursor.next();
             this.tryStartBrewing(world);
 
             this.markDirty();
-            return new InsertResult(true, -1);
+            return AccessibleInventory.createResult(true, -1);
         }
     }
 
@@ -222,10 +230,10 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
                 }
 
                 this.markDirty();
-                return new InsertResult(true, containersToUse);
+                return AccessibleInventory.createResult(true, containersToUse);
             }
         }
-        return new InsertResult(false, -1);
+        return AccessibleInventory.createResult(false, -1);
     }
 
     protected void clearInputs() {
@@ -259,7 +267,7 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
     private Optional<RecipeEntry<BrewingRecipe>> findMatchingRecipe(World world) {
         List<RecipeEntry<BrewingRecipe>> allRecipes = world.getRecipeManager().listAllOfType(PeonyRecipes.BREWING_TYPE);
         Optional<RecipeEntry<BrewingRecipe>> matchedRecipe = allRecipes.stream()
-                .filter(recipe -> recipe.value().matches(new BrewingRecipeInput(this.inputs, FluidStack.of(this.fluidStorage.variant, this.fluidStorage.amount)), world))
+                .filter(recipe -> recipe.value().matches(new MixedIngredientsRecipeInput(this.inputs, FluidStack.of(this.fluidStorage.variant, this.fluidStorage.amount)), world))
                 .findFirst();
         matchedRecipe.ifPresent(this::updateRecipeData);
         return matchedRecipe;

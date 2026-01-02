@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public record BrewingRecipe(List<ItemStack> ingredients, FluidStack basicFluid, int brewingTime, Output output) implements Recipe<BrewingRecipeInput> {
+public record BrewingRecipe(List<ItemStack> ingredients, FluidStack basicFluid, int brewingTime, Output output) implements Recipe<MixedIngredientsRecipeInput> {
     public static final FluidStack DEFAULT_FLUID_STACK = FluidStack.of(FluidVariant.of(Fluids.WATER), FluidConstants.BOTTLE);
 
     @Override
-    public boolean matches(BrewingRecipeInput input, World world) {
+    public boolean matches(MixedIngredientsRecipeInput input, World world) {
         List<ItemStack> inputs = padListStream(this.ingredients, input.getSize(), ItemStack.EMPTY);
 
         for (int i = 0; i < input.getSize(); i++) {
@@ -45,7 +45,7 @@ public record BrewingRecipe(List<ItemStack> ingredients, FluidStack basicFluid, 
     }
 
     @Override
-    public ItemStack craft(BrewingRecipeInput input, RegistryWrapper.WrapperLookup lookup) {
+    public ItemStack craft(MixedIngredientsRecipeInput input, RegistryWrapper.WrapperLookup lookup) {
         return this.output.getOutputStack().copy();
     }
 
@@ -80,8 +80,8 @@ public record BrewingRecipe(List<ItemStack> ingredients, FluidStack basicFluid, 
     public static class Serializer implements RecipeSerializer<BrewingRecipe> {
         public static final MapCodec<BrewingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 ItemStack.OPTIONAL_CODEC.listOf().fieldOf("ingredients").forGetter(BrewingRecipe::ingredients),
-                FluidStack.CODEC.optionalFieldOf("basicFluid", DEFAULT_FLUID_STACK).forGetter(BrewingRecipe::basicFluid),
-                Codecs.NONNEGATIVE_INT.fieldOf("brewingTime").forGetter(BrewingRecipe::brewingTime),
+                FluidStack.CODEC.optionalFieldOf("basic_fluid", DEFAULT_FLUID_STACK).forGetter(BrewingRecipe::basicFluid),
+                Codecs.NONNEGATIVE_INT.fieldOf("brewing_time").forGetter(BrewingRecipe::brewingTime),
                 Output.CONTAINER_NOT_EMPTY_CODEC.fieldOf("output").forGetter(BrewingRecipe::output)
         ).apply(instance, BrewingRecipe::new));
         public static final PacketCodec<RegistryByteBuf, BrewingRecipe> PACKET_CODEC = PacketCodec.tuple(

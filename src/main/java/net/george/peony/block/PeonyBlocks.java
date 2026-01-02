@@ -77,7 +77,9 @@ public class PeonyBlocks {
             createDefaultSettings().nonOpaque().requiresTool().mapColor(MapColor.IRON_GRAY),
             PeonyItems.createDefaultSettings().maxCount(1));
     public static final Block BREWING_BARREL = register("brewing_barrel", BrewingBarrelBlock::new,
-            createDefaultSettings().nonOpaque().mapColor(MapColor.SPRUCE_BROWN));
+            createDefaultSettings().nonOpaque().strength(2.0F).mapColor(MapColor.SPRUCE_BROWN));
+    public static final Block FERMENTATION_TANK = register("fermentation_tank", FermentationTankBlock::new,
+            createDefaultSettings().nonOpaque().strength(2.0F).mapColor(MapColor.SPRUCE_BROWN));
 
     // use log top map color
     public static final Block OAK_LOG_STICK = registerLogStick("oak", Blocks.OAK_LOG, MapColor.OAK_TAN);

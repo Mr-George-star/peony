@@ -61,7 +61,7 @@ public record ShreddingRecipe(Ingredient input, int durationDecrement, ItemStack
         public static final MapCodec<ShreddingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance ->
                 instance.group(
                         Ingredient.DISALLOW_EMPTY_CODEC.fieldOf("input").forGetter(ShreddingRecipe::input),
-                        Codecs.NONNEGATIVE_INT.optionalFieldOf("durationDecrement", 1).forGetter(ShreddingRecipe::durationDecrement),
+                        Codecs.NONNEGATIVE_INT.optionalFieldOf("duration_decrement", 1).forGetter(ShreddingRecipe::durationDecrement),
                         ItemStack.VALIDATED_UNCOUNTED_CODEC.fieldOf("output").forGetter(ShreddingRecipe::output)
                 ).apply(instance, ShreddingRecipe::new));
         public static final PacketCodec<RegistryByteBuf, ShreddingRecipe> PACKET_CODEC = PacketCodec.tuple(

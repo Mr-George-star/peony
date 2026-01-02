@@ -1,6 +1,6 @@
 {
   "type": "peony:sequential_cooking",
-  "needOil": true,
+  "need_oil": true,
   "output": {
     "container": "peony:wooden_plate",
     "outputStack": {
@@ -13,19 +13,19 @@
       "ingredient": {
         "item": "peony:pork_tenderloin"
       },
-      "maxTimeOverflow": 80,
-      "requiredTime": 240
+      "max_time_overflow": 80,
+      "required_time": 240
     },
     {
-      "fryingData": {
+      "frying_data": {
         "times": 3
       },
       "ingredient": {
         "item": "peony:sweet_sour_sauce"
       },
-      "maxTimeOverflow": 80,
-      "requiredTime": 100,
-      "requiredTool": {
+      "max_time_overflow": 80,
+      "required_time": 100,
+      "required_tool": {
         "item": "peony:spatula"
       }
     }

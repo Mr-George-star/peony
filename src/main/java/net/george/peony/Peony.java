@@ -1,6 +1,7 @@
 package net.george.peony;
 
 import net.fabricmc.api.ModInitializer;
+import net.george.peony.advancement.PeonyCriteria;
 import net.george.peony.api.action.ActionTypes;
 import net.george.peony.api.data.CommonIngredientTypes;
 import net.george.peony.block.PeonyBlocks;
@@ -10,6 +11,7 @@ import net.george.peony.item.PeonyItems;
 import net.george.peony.networking.PeonyNetworking;
 import net.george.peony.recipe.PeonyRecipes;
 import net.george.peony.sound.PeonySoundEvents;
+import net.george.peony.util.PeonyStats;
 import net.george.peony.world.PeonyFeatures;
 import net.george.peony.world.gen.PeonyWorldGeneration;
 import net.minecraft.registry.Registry;
@@ -35,6 +37,8 @@ public class Peony implements ModInitializer {
 		CommonIngredientTypes.register();
 		PeonyFeatures.register();
 		PeonyCompat.register();
+		PeonyStats.register();
+		PeonyCriteria.register();
 		PeonyWorldGeneration.generate();
 	}
 

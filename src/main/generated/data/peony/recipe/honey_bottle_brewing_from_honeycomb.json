@@ -1,6 +1,6 @@
 {
   "type": "peony:brewing",
-  "brewingTime": 200,
+  "brewing_time": 200,
   "ingredients": [
     {
       "count": 1,

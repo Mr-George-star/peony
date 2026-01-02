@@ -26,6 +26,8 @@ public class PeonyRecipes {
     public static final RecipeType<PizzaCraftingRecipe> PIZZA_CRAFTING_TYPE = register("pizza_crafting");
     public static final RecipeSerializer<FlavouringPreparingRecipe> FLAVOURING_PREPARING = register("flavouring_preparing", new FlavouringPreparingRecipe.Serializer());
     public static final RecipeType<FlavouringPreparingRecipe> FLAVOURING_PREPARING_TYPE = register("flavouring_preparing");
+    public static final RecipeSerializer<FermentingRecipe> FERMENTING = register("fermenting", new FermentingRecipe.Serializer());
+    public static final RecipeType<FermentingRecipe> FERMENTING_TYPE = register("fermenting");
 
     public static <T extends Recipe<?>> RecipeSerializer<T> register(String name, RecipeSerializer<T> serializer) {
         return Registry.register(Registries.RECIPE_SERIALIZER, Peony.id(name), serializer);

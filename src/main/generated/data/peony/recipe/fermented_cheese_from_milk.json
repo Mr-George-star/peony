@@ -1,0 +1,15 @@
+{
+  "type": "peony:fermenting",
+  "fermenting_time": 1200,
+  "ingredients": [
+    {
+      "item": "minecraft:milk_bucket"
+    }
+  ],
+  "output": {
+    "outputStack": {
+      "count": 1,
+      "id": "peony:cheese_block"
+    }
+  }
+}

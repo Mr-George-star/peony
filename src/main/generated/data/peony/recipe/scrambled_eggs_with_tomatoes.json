@@ -1,7 +1,7 @@
 {
   "type": "peony:sequential_cooking",
-  "basicIngredient": "peony:peeled_tomato",
-  "needOil": false,
+  "basic_ingredient": "peony:peeled_tomato",
+  "need_oil": false,
   "output": {
     "container": "peony:wooden_plate",
     "outputStack": {
@@ -11,15 +11,15 @@
   },
   "steps": [
     {
-      "fryingData": {
+      "frying_data": {
         "times": 3
       },
       "ingredient": {
         "item": "peony:scrambled_eggs"
       },
-      "maxTimeOverflow": 20,
-      "requiredTime": 280,
-      "requiredTool": {
+      "max_time_overflow": 20,
+      "required_time": 280,
+      "required_tool": {
         "item": "peony:spatula"
       }
     },
@@ -27,8 +27,8 @@
       "ingredient": {
         "item": "peony:coriander"
       },
-      "maxTimeOverflow": 60,
-      "requiredTime": 80
+      "max_time_overflow": 60,
+      "required_time": 80
     }
   ],
   "temperature": 550

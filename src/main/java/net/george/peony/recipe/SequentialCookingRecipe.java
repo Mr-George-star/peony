@@ -123,16 +123,11 @@ public class SequentialCookingRecipe implements Recipe<SequentialCookingRecipeIn
         return PeonyRecipes.SEQUENTIAL_COOKING_TYPE;
     }
 
-    @Override
-    public String toString() {
-        return "matchFrom " + this.steps.getSteps().getFirst().getIngredient().getMatchingStacks()[0] + " and it's " + this.needOil;
-    }
-
     public static class Serializer implements RecipeSerializer<SequentialCookingRecipe> {
         public static final MapCodec<SequentialCookingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Codecs.NONNEGATIVE_INT.fieldOf("temperature").forGetter(SequentialCookingRecipe::getTemperature),
-                Codec.BOOL.fieldOf("needOil").forGetter(SequentialCookingRecipe::isNeedOil),
-                CommonIngredientType.REGISTRY.getCodec().optionalFieldOf("basicIngredient").forGetter(recipe ->
+                Codec.BOOL.fieldOf("need_oil").forGetter(SequentialCookingRecipe::isNeedOil),
+                CommonIngredientType.REGISTRY.getCodec().optionalFieldOf("basic_ingredient").forGetter(recipe ->
                         Optional.ofNullable(recipe.getBasicIngredient())),
                 CookingSteps.CODEC.forGetter(SequentialCookingRecipe::getSteps),
                 Output.CODEC.fieldOf("output").forGetter(SequentialCookingRecipe::getOutput)
@@ -146,7 +141,6 @@ public class SequentialCookingRecipe implements Recipe<SequentialCookingRecipeIn
             buf.writeInt(recipe.temperature);
             buf.writeBoolean(recipe.needOil);
 
-            // 编码 basicIngredient
             if (recipe.basicIngredient != null) {
                 buf.writeBoolean(true);
                 buf.writeIdentifier(recipe.basicIngredient.getId());
@@ -162,7 +156,6 @@ public class SequentialCookingRecipe implements Recipe<SequentialCookingRecipeIn
             int temperature = buf.readInt();
             boolean needOil = buf.readBoolean();
 
-            // 解码 basicIngredient
             CommonIngredientType<?> basicIngredient = null;
             boolean hasBasicIngredient = buf.readBoolean();
             if (hasBasicIngredient) {

@@ -27,6 +27,7 @@ public class PeonyClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(PeonyBlocks.MILLSTONE, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(PeonyBlocks.SKILLET, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(PeonyBlocks.BREWING_BARREL, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(PeonyBlocks.FERMENTATION_TANK, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(), PeonyBlocks.BARLEY_CROP, PeonyBlocks.PEANUT_CROP,
                 PeonyBlocks.TOMATO_VINES, PeonyBlocks.RICE_CROP, PeonyBlocks.CORIANDER_CROP, PeonyBlocks.GARLIC_CROP);
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),

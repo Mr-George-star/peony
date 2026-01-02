@@ -8,9 +8,11 @@ import net.george.peony.api.action.ActionTypes;
 import net.george.peony.api.data.CommonIngredientTypes;
 import net.george.peony.block.*;
 import net.george.peony.block.data.CookingSteps;
+import net.george.peony.block.data.Output;
 import net.george.peony.block.data.StirFryingData;
 import net.george.peony.data.json.*;
 import net.george.peony.item.PeonyItems;
+import net.george.peony.util.IngredientCreator;
 import net.george.peony.util.PeonyTags;
 import net.minecraft.block.Blocks;
 import net.minecraft.component.type.PotionContentsComponent;
@@ -251,6 +253,14 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .create(PeonyItems.SWEET_SOUR_SAUCE.getDefaultStack(), PeonyItems.CONDIMENT_BOTTLE, Items.SUGAR, PeonyItems.BLACK_VINEGAR, Items.POTION)
                 .stirringTimes(3)
                 .offerTo(exporter);
+
+        /* FERMENTING */
+        FermentingRecipeJsonBuilder.create(
+                Output.noContainer(PeonyBlocks.CHEESE_BLOCK.asItem().getDefaultStack()),
+                IngredientCreator.create(Items.MILK_BUCKET))
+                .category(RecipeCategory.FOOD)
+                .fermentingTime(1200)
+                .offerTo(exporter, Peony.id("fermented_cheese_from_milk"));
 
         // Vanilla Extend
         createCookingRecipe(Items.BEEF, Items.COOKED_BEEF, exporter);
