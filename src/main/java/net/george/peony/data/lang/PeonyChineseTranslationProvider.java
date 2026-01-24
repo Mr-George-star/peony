@@ -2,6 +2,7 @@ package net.george.peony.data.lang;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.george.peony.api.action.ActionTypes;
 import net.george.peony.api.heat.HeatLevel;
 import net.george.peony.block.PeonyBlocks;
 import net.george.peony.item.PeonyItems;
@@ -80,7 +81,7 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyBlocks.RAW_MARGHERITA_PIZZA, "生芝士披萨");
         builder.add(PeonyBlocks.RAW_MARGHERITA_PIZZA.asItem(), "生芝士披萨");
         builder.add(PeonyBlocks.MARGHERITA_PIZZA, "芝士披萨");
-        builder.add(PeonyBlocks.MARGHERITA_PIZZA.asItem(), "生芝士披萨");
+        builder.add(PeonyBlocks.MARGHERITA_PIZZA.asItem(), "芝士披萨");
 
         builder.add(PeonyBlocks.MILLSTONE, "石磨");
         builder.add(PeonyBlocks.OAK_CUTTING_BOARD, "橡木菜板");
@@ -137,10 +138,6 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyTranslationKeys.NATURE_GAS_DETECTOR_ITEM_FOUND, "§b下方存在天然气！");
         builder.add(PeonyTranslationKeys.NATURE_GAS_DETECTOR_ITEM_NOTHING, "§7下方没有任何天然气。");
 
-        builder.add(PeonyTranslationKeys.MILLING_RECIPE_CATEGORY_TITLE, "磨制");
-        builder.add(PeonyTranslationKeys.MILLING_RECIPE_MILLING_TIMES, "研磨%d次");
-        builder.add(PeonyTranslationKeys.SEQUENTIAL_CRAFTING_RECIPE_CATEGORY_TITLE, "顺序合成");
-
         /* SOUNDS */
         builder.add("sound.peony.shear_using", "使用剪刀");
         builder.add("sound.peony.paring", "削皮");
@@ -179,6 +176,11 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyTranslationKeys.ADVANCEMENT_SKILLET_DESCRIPTION, "煎锅，烹饪的核心之一，一个很重要的厨具");
         builder.add(PeonyTranslationKeys.ADVANCEMENT_SKILLET_COOKING_SUCCEED_TITLE, "烹饪成功！");
         builder.add(PeonyTranslationKeys.ADVANCEMENT_SKILLET_COOKING_SUCCEED_DESCRIPTION, "使用煎锅成功烹饪任何一道菜");
+
+        /* ACTIONS */
+        builder.add(ActionTypes.KNEADING.createTranslationKey(), "揉捏");
+        builder.add(ActionTypes.CUTTING.createTranslationKey(), "切割");
+        builder.add(ActionTypes.SLICING.createTranslationKey(), "切片");
 
         /* CONFIG */
         builder.add(PeonyTranslationKeys.CONFIG_SCREEN_TITLE, "牡丹");
@@ -240,5 +242,30 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         // heat source
         builder.add(PeonyTranslationKeys.JADE_HEAT_SOURCE_AVAILABLE_HEAT_AMOUNT, "可提供的热量范围: %d°C-%d°C");
         builder.add(PeonyTranslationKeys.JADE_HEAT_SOURCE_HEATING_LEVEL, "热量等级: ");
+
+        /* REI */
+        builder.add(PeonyTranslationKeys.REI_CATEGORY_MILLING, "磨制");
+        builder.add(PeonyTranslationKeys.REI_CATEGORY_SEQUENTIAL_CRAFTING, "顺序合成");
+        builder.add(PeonyTranslationKeys.REI_CATEGORY_SEQUENTIAL_COOKING, "顺序烹饪");
+        builder.add(PeonyTranslationKeys.REI_CATEGORY_SHREDDING, "擦丝");
+        builder.add(PeonyTranslationKeys.REI_CATEGORY_PARING, "削皮");
+        builder.add(PeonyTranslationKeys.REI_CATEGORY_FLAVOURING_PREPARING, "调料调制");
+        builder.add(PeonyTranslationKeys.REI_CATEGORY_BREWING, "酿造");
+        builder.add(PeonyTranslationKeys.REI_CATEGORY_PIZZA_CRAFTING, "披萨制作");
+
+        builder.add(PeonyTranslationKeys.REI_MILLING_TIMES, "研磨%d次");
+        builder.add(PeonyTranslationKeys.REI_NO_INGREDIENTS, "无需添加原料");
+        builder.add(PeonyTranslationKeys.REI_REQUIRED_INGREDIENTS, "需要的食材");
+        builder.add(PeonyTranslationKeys.REI_ACTION, "需要的操作");
+        builder.add(PeonyTranslationKeys.REI_REQUIRED_TIME, "%d秒");
+        builder.add(PeonyTranslationKeys.REI_STIR_FRYING, "翻炒%d次");
+        builder.add(PeonyTranslationKeys.REI_HEATING, "加热");
+        builder.add(PeonyTranslationKeys.REI_REQUIRES_CONTAINER, "需要容器取出");
+        builder.add(PeonyTranslationKeys.REI_NO_CONTAINER, "可直接取出");
+        builder.add(PeonyTranslationKeys.REI_TEMPERATURE, "温度: %d°C");
+        builder.add(PeonyTranslationKeys.REI_STEP, "步骤%d");
+        builder.add(PeonyTranslationKeys.REI_DURATION_DECREMENT, "耐久损耗: %d");
+        builder.add(PeonyTranslationKeys.REI_STIRRING_TIMES, "搅拌次数: %d");
+        builder.add(PeonyTranslationKeys.REI_BREWING_TIMES, "酿造时间: %d");
     }
 }

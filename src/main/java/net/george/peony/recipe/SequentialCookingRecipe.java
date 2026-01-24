@@ -60,6 +60,17 @@ public class SequentialCookingRecipe implements Recipe<SequentialCookingRecipeIn
     public CookingSteps getSteps() {
         return this.steps;
     }
+//
+//    public CookingSteps getStepsWithCommonIngredient(RecipeStepTypes type) {
+//        if (this.basicIngredient == null) {
+//            return this.steps;
+//        } else {
+//            CookingSteps.Step step = (CookingSteps.Step) this.basicIngredient.createInstance().getStep(type);
+//            List<CookingSteps.Step> steps = Lists.newArrayList(step);
+//            steps.addAll(this.steps.getSteps());
+//            return new CookingSteps(steps);
+//        }
+//    }
 
     public Output getOutput() {
         return this.output;

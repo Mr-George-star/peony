@@ -179,7 +179,7 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
                 Peony.LOGGER.info("Current Step - Action: {}, Ingredient: {}", action, ingredient);
 
                 // Check for tool action
-                if (action != null && action.test(givenStack)) {
+                if (action != null && action.test(context.world, givenStack)) {
                     if (this.placedIngredient && !this.processed) {
                         givenStack.damage(1, user, EquipmentSlot.MAINHAND);
                         this.processed = true;
@@ -248,7 +248,7 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
                 action, this.placedIngredient, this.processed);
 
         // Check for empty-handed actions
-        if (action != null && action.test(null)) {
+        if (action != null && action.test(context.world, null)) {
             // For placeholder ingredients, skip the placement step and go directly to processing
             if (ingredient.test(PeonyItems.PLACEHOLDER.getDefaultStack())) {
                 if (!this.placedIngredient && !this.processed) {

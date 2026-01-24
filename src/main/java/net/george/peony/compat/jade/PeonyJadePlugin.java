@@ -4,7 +4,10 @@ import net.george.peony.Peony;
 import net.george.peony.block.PotStandWithCampfireBlock;
 import net.george.peony.block.SkilletBlock;
 import net.minecraft.util.Identifier;
-import snownee.jade.api.*;
+import snownee.jade.api.IWailaClientRegistration;
+import snownee.jade.api.IWailaCommonRegistration;
+import snownee.jade.api.IWailaPlugin;
+import snownee.jade.api.WailaPlugin;
 
 @WailaPlugin
 public class PeonyJadePlugin implements IWailaPlugin {

@@ -4,10 +4,7 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
-import net.george.milk.MilkLib;
 import net.george.peony.Peony;
-import net.george.peony.api.block.FluidContainingBinds;
 import net.george.peony.block.*;
 import net.george.peony.block.entity.CarvedRenderingItems;
 import net.george.peony.block.entity.NonBlockRenderingItems;
@@ -151,10 +148,6 @@ public class PeonyCompat {
         });
     }
 
-    private static void registerApi() {
-        FluidContainingBinds.register(FluidVariant.of(MilkLib.STILL_MILK), Items.MILK_BUCKET, Items.BUCKET);
-    }
-
     public static void register() {
         Peony.debug("Combats");
         registerCompostingChances();
@@ -163,6 +156,5 @@ public class PeonyCompat {
         registerCarvedRenderingItems();
         modifyLootTables();
         registerEvents();
-        registerApi();
     }
 }

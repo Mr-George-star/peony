@@ -26,6 +26,6 @@ public class MillstoneDisplay extends BasicDisplay {
 
     @Override
     public CategoryIdentifier<MillstoneDisplay> getCategoryIdentifier() {
-        return MillstoneCategory.MILLSTONE;
+        return PeonyREIPlugin.MILLSTONE;
     }
 }

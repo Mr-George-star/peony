@@ -4,17 +4,19 @@ import com.mojang.serialization.MapCodec;
 import net.george.peony.Peony;
 import net.george.peony.item.KitchenKnifeItem;
 import net.george.peony.item.ParingKnifeItem;
+import net.george.peony.util.math.Size;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.world.WorldAccess;
 
 public final class ActionTypes {
     public static final ActionType<Kneading> KNEADING =
-            ActionType.register("kneading", Kneading.CODEC, Kneading.PACKET_CODEC);
+            ActionType.register("kneading", Kneading.CODEC, Kneading.PACKET_CODEC, Size.create(9, 19));
     public static final ActionType<Cutting> CUTTING =
-            ActionType.register("cutting", Cutting.CODEC, Cutting.PACKET_CODEC);
-    public static final ActionType<Slice> SLICE =
-            ActionType.register("slice", Slice.CODEC, Slice.PACKET_CODEC);
+            ActionType.register("cutting", Cutting.CODEC, Cutting.PACKET_CODEC, Size.create());
+    public static final ActionType<Slicing> SLICING =
+            ActionType.register("slicing", Slicing.CODEC, Slicing.PACKET_CODEC, Size.create());
 
     public static void register() {
         Peony.debug("Action Types");
@@ -28,6 +30,10 @@ public final class ActionTypes {
         return Cutting.INSTANCE;
     }
 
+    public static Slicing slicing() {
+        return Slicing.INSTANCE;
+    }
+
     public static class Kneading implements Action {
         public static final MapCodec<Kneading> CODEC = MapCodec.unit(Kneading::new);
         public static final Kneading INSTANCE = new Kneading();
@@ -36,7 +42,7 @@ public final class ActionTypes {
         private Kneading() {}
 
         @Override
-        public boolean test(ItemStack stack) {
+        public boolean test(WorldAccess world, ItemStack stack) {
             return true;
         }
 
@@ -69,7 +75,7 @@ public final class ActionTypes {
         private Cutting() {}
 
         @Override
-        public boolean test(ItemStack stack) {
+        public boolean test(WorldAccess world, ItemStack stack) {
             return stack.getItem() instanceof KitchenKnifeItem;
         }
 
@@ -94,31 +100,31 @@ public final class ActionTypes {
         }
     }
 
-    public static class Slice implements Action {
-        public static final MapCodec<Slice> CODEC = MapCodec.unit(Slice::new);
-        public static final Slice INSTANCE = new Slice();
-        public static final PacketCodec<RegistryByteBuf, Slice> PACKET_CODEC = PacketCodec.unit(INSTANCE);
+    public static class Slicing implements Action {
+        public static final MapCodec<Slicing> CODEC = MapCodec.unit(Slicing::new);
+        public static final Slicing INSTANCE = new Slicing();
+        public static final PacketCodec<RegistryByteBuf, Slicing> PACKET_CODEC = PacketCodec.unit(INSTANCE);
 
-        private Slice() {}
+        private Slicing() {}
 
         @Override
-        public boolean test(ItemStack stack) {
+        public boolean test(WorldAccess world, ItemStack stack) {
             return stack.getItem() instanceof ParingKnifeItem;
         }
 
         @Override
-        public ActionType<Slice> getType() {
-            return SLICE;
+        public ActionType<Slicing> getType() {
+            return SLICING;
         }
 
         @Override
         public String toString() {
-            return "Slice";
+            return "Slicing";
         }
 
         @Override
         public boolean equals(Object another) {
-            return another instanceof Slice;
+            return another instanceof Slicing;
         }
 
         @Override

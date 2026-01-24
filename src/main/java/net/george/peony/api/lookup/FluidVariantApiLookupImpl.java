@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class FluidVariantApiLookupImpl<A, C> implements FluidVariantApiLookup<A, C> {
-    private static final Logger LOGGER = LoggerFactory.getLogger("fabric-api-lookup-api-v1/item");
+    private static final Logger LOGGER = LoggerFactory.getLogger("lookup/fluid-variant");
     private static final ApiLookupMap<FluidVariantApiLookup<?, ?>> LOOKUPS = ApiLookupMap.create(FluidVariantApiLookupImpl::new);
     private final Identifier identifier;
     private final Class<A> apiClass;

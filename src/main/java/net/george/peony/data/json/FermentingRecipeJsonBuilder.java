@@ -1,9 +1,9 @@
 package net.george.peony.data.json;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.george.peony.api.fluid.FluidStack;
 import net.george.peony.block.data.Output;
 import net.george.peony.recipe.FermentingRecipe;
-import net.george.peony.util.FluidStack;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementCriterion;
 import net.minecraft.advancement.AdvancementRequirements;

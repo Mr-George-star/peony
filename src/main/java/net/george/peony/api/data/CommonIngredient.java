@@ -4,8 +4,11 @@ import com.mojang.serialization.Codec;
 import net.george.peony.block.data.RecipeStep;
 import net.george.peony.block.data.RecipeStepTypes;
 import net.george.peony.recipe.SequentialCookingRecipeInput;
+import net.minecraft.item.Item;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -39,12 +42,14 @@ public interface CommonIngredient {
         return type.getPacketCodec().decode(buf);
     }
 
+    RegistryEntryList<Item> getRequiredEntryList(RegistryWrapper.WrapperLookup registryLookup);
+
     @Nullable
     RecipeStep getStep(RecipeStepTypes type);
 
     CommonIngredientType<?> getType();
 
     default boolean matchesRecipe(SequentialCookingRecipeInput recipeInput, World world) {
-        return true;
+        return recipeInput.getInputStack().isIn(this.getRequiredEntryList(world.getRegistryManager()));
     }
 }

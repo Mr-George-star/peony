@@ -1,7 +1,10 @@
 package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
-import net.george.peony.block.entity.*;
+import net.george.peony.block.entity.AccessibleInventory;
+import net.george.peony.block.entity.BlockEntityTickerProvider;
+import net.george.peony.block.entity.BowlBlockEntity;
+import net.george.peony.block.entity.PeonyBlockEntities;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;

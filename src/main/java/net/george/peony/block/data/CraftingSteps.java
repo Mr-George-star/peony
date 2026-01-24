@@ -8,7 +8,10 @@ import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.recipe.Ingredient;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class CraftingSteps extends RecipeSteps<CraftingSteps.Step> {
     public static final MapCodec<CraftingSteps> CODEC;

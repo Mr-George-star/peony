@@ -196,10 +196,9 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .step(ActionTypes.cutting(), Items.PORKCHOP)
                 .offerTo(exporter, Peony.id("ham_from_porkchop"));
         SequentialCraftingRecipeJsonBuilder.create(PeonyItems.MINCED_GARLIC)
-                .step(ActionTypes.cutting(), PeonyItems.GARLIC_SCAPE)
-                .step(ActionTypes.cutting(), PeonyItems.GARLIC_SCAPE)
+                .step(ActionTypes.cutting(), PeonyItems.GARLIC)
                 .step(ActionTypes.cutting(), PeonyItems.PLACEHOLDER)
-                .offerTo(exporter, Peony.id("minced_garlic_from_garlic_scape"));
+                .offerTo(exporter, Peony.id("minced_garlic_from_garlic"));
 
         /* SEQUENTIAL COOKING */
         SequentialCookingRecipeJsonBuilder.create(550, false, PeonyItems.ROASTED_PEANUT_KERNEL)

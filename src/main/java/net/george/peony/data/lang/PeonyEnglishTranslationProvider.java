@@ -2,6 +2,7 @@ package net.george.peony.data.lang;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.george.peony.api.action.ActionTypes;
 import net.george.peony.api.heat.HeatLevel;
 import net.george.peony.block.PeonyBlocks;
 import net.george.peony.item.PeonyItems;
@@ -137,10 +138,6 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyTranslationKeys.NATURE_GAS_DETECTOR_ITEM_FOUND, "§bThere is natural gas down here!");
         builder.add(PeonyTranslationKeys.NATURE_GAS_DETECTOR_ITEM_NOTHING, "§7There is no natural gas down here.");
 
-        builder.add(PeonyTranslationKeys.MILLING_RECIPE_CATEGORY_TITLE, "Milling");
-        builder.add(PeonyTranslationKeys.MILLING_RECIPE_MILLING_TIMES, "Mill %d Time(s)");
-        builder.add(PeonyTranslationKeys.SEQUENTIAL_CRAFTING_RECIPE_CATEGORY_TITLE, "Sequential Crafting");
-
         /* SOUNDS */
         builder.add("sound.peony.shear_using", "Using Shear");
         builder.add("sound.peony.paring", "Paring");
@@ -179,6 +176,11 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyTranslationKeys.ADVANCEMENT_SKILLET_DESCRIPTION, "The skillet, one of the core components of cooking, is a very important kitchen utensil");
         builder.add(PeonyTranslationKeys.ADVANCEMENT_SKILLET_COOKING_SUCCEED_TITLE, "Cooking succeed!");
         builder.add(PeonyTranslationKeys.ADVANCEMENT_SKILLET_COOKING_SUCCEED_DESCRIPTION, "Successfully cook any dish using a skillet");
+
+        /* ACTION */
+        builder.add(ActionTypes.KNEADING.createTranslationKey(), "Kneading");
+        builder.add(ActionTypes.CUTTING.createTranslationKey(), "Cutting");
+        builder.add(ActionTypes.SLICING.createTranslationKey(), "Slicing");
 
         /* CONFIG */
         builder.add(PeonyTranslationKeys.CONFIG_SCREEN_TITLE, "Peony");
@@ -231,7 +233,7 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyTranslationKeys.JADE_SKILLET_HAS_COMMON_INGREDIENT, "Basic ingredient added");
         builder.add(PeonyTranslationKeys.JADE_SKILLET_PREPARING_INGREDIENT, "Preparing ingredient");
         builder.add(PeonyTranslationKeys.JADE_SKILLET_ADD_INGREDIENT, "Please add ingredient");
-        builder.add(PeonyTranslationKeys.JADE_SKILLET_WAITING_FOR_INGREDIENT, "Waiting for ingredient: %d秒");
+        builder.add(PeonyTranslationKeys.JADE_SKILLET_WAITING_FOR_INGREDIENT, "Waiting for ingredient: %d Seconds");
         builder.add(PeonyTranslationKeys.JADE_SKILLET_OVERFLOW_WARNING, "⚠ About to burn!");
         builder.add(PeonyTranslationKeys.JADE_SKILLET_COMPLETED, "✓ Cooking completed");
         builder.add(PeonyTranslationKeys.JADE_SKILLET_FAILED, "✗ Cooking failed");
@@ -240,5 +242,30 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         // heat source
         builder.add(PeonyTranslationKeys.JADE_HEAT_SOURCE_AVAILABLE_HEAT_AMOUNT, "Available heat range: %d°C-%d°C");
         builder.add(PeonyTranslationKeys.JADE_HEAT_SOURCE_HEATING_LEVEL, "Heating Level: ");
+
+        /* REI */
+        builder.add(PeonyTranslationKeys.REI_CATEGORY_MILLING, "Milling");
+        builder.add(PeonyTranslationKeys.REI_CATEGORY_SEQUENTIAL_CRAFTING, "Sequential Crafting");
+        builder.add(PeonyTranslationKeys.REI_CATEGORY_SEQUENTIAL_COOKING, "Sequential Cooking");
+        builder.add(PeonyTranslationKeys.REI_CATEGORY_SHREDDING, "Shredding");
+        builder.add(PeonyTranslationKeys.REI_CATEGORY_PARING, "Paring");
+        builder.add(PeonyTranslationKeys.REI_CATEGORY_FLAVOURING_PREPARING, "Flavouring Preparing");
+        builder.add(PeonyTranslationKeys.REI_CATEGORY_BREWING, "Brewing");
+        builder.add(PeonyTranslationKeys.REI_CATEGORY_PIZZA_CRAFTING, "Pizza Crafting");
+
+        builder.add(PeonyTranslationKeys.REI_MILLING_TIMES, "Mill %d Time(s)");
+        builder.add(PeonyTranslationKeys.REI_NO_INGREDIENTS, "No Ingredients Required");
+        builder.add(PeonyTranslationKeys.REI_REQUIRED_INGREDIENTS, "Required Ingredients");
+        builder.add(PeonyTranslationKeys.REI_ACTION, "Required Action");
+        builder.add(PeonyTranslationKeys.REI_REQUIRED_TIME, "%ds");
+        builder.add(PeonyTranslationKeys.REI_STIR_FRYING, "Stir %dx");
+        builder.add(PeonyTranslationKeys.REI_HEATING, "Heating");
+        builder.add(PeonyTranslationKeys.REI_REQUIRES_CONTAINER, "Requires Container");
+        builder.add(PeonyTranslationKeys.REI_NO_CONTAINER, "Can Extract Directly");
+        builder.add(PeonyTranslationKeys.REI_TEMPERATURE, "Heat: %d°C");
+        builder.add(PeonyTranslationKeys.REI_STEP, "Step %d");
+        builder.add(PeonyTranslationKeys.REI_DURATION_DECREMENT, "Duration Decrement: %d");
+        builder.add(PeonyTranslationKeys.REI_STIRRING_TIMES, "Stirring Times: %d");
+        builder.add(PeonyTranslationKeys.REI_BREWING_TIMES, "Brewing Times: %d");
     }
 }

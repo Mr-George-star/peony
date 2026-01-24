@@ -4,7 +4,6 @@ import net.george.networking.api.GameNetworking;
 import net.george.peony.Peony;
 import net.george.peony.block.entity.SkilletBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;

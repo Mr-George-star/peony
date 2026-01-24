@@ -10,10 +10,6 @@ public class PeonyTranslationKeys {
     public static final String NATURE_GAS_DETECTOR_ITEM_FOUND = createTranslationKey("item", "nature", "gas", "detector", "found");
     public static final String NATURE_GAS_DETECTOR_ITEM_NOTHING = createTranslationKey("item", "nature", "gas", "detector", "nothing");
 
-    public static final String MILLING_RECIPE_CATEGORY_TITLE = createTranslationKey("category", "milling");
-    public static final String MILLING_RECIPE_MILLING_TIMES = createTranslationKey("category", "milling", "milling", "times");
-    public static final String SEQUENTIAL_CRAFTING_RECIPE_CATEGORY_TITLE = createTranslationKey("category", "sequential", "crafting");
-
     public static final String MESSAGE_FLATBREAD_NO_INGREDIENTS = createTranslationKey("message", "flatbread", "no", "ingredients");
     public static final String MESSAGE_FLATBREAD_CREATE_SUCCESS = createTranslationKey("message", "flatbread", "create", "success");
     public static final String MESSAGE_FLATBREAD_NO_RECIPE = createTranslationKey("message", "flatbread", "no", "recipe");
@@ -45,47 +41,72 @@ public class PeonyTranslationKeys {
 
     /* JADE */
     // global
-    public static final String JADE_STEP = createTranslationKey("jade", "step");
-    public static final String JADE_TIME_REMAINING = createTranslationKey("jade", "time", "remaining");
-    public static final String JADE_TIME_LIMIT = createTranslationKey("jade", "time", "limit");
-    public static final String JADE_REQUIRES = createTranslationKey("jade", "requires");
-    public static final String JADE_NO_HEAT_SOURCE = createTranslationKey("jade", "no", "heat", "source");
+    public static final String JADE_STEP = createJadeTranslationKey("step");
+    public static final String JADE_TIME_REMAINING = createJadeTranslationKey("time", "remaining");
+    public static final String JADE_TIME_LIMIT = createJadeTranslationKey("time", "limit");
+    public static final String JADE_REQUIRES = createJadeTranslationKey("requires");
+    public static final String JADE_NO_HEAT_SOURCE = createJadeTranslationKey("no", "heat", "source");
 
     // skillet statements
-    public static final String JADE_STATE_IDLE = createTranslationKey("jade", "state", "idle");
-    public static final String JADE_STATE_OIL_PROCESSING = createTranslationKey("jade", "state", "oil_processing");
-    public static final String JADE_STATE_COMMON_INGREDIENT_PROCESSING = createTranslationKey("jade", "state", "common_ingredient_processing");
-    public static final String JADE_STATE_HEATING = createTranslationKey("jade", "state", "heating");
-    public static final String JADE_STATE_STIR_FRYING = createTranslationKey("jade", "state", "stir_frying");
-    public static final String JADE_STATE_OVERFLOW = createTranslationKey("jade", "state", "overflow");
-    public static final String JADE_STATE_WAITING_FOR_INGREDIENT = createTranslationKey("jade", "state", "waiting_for_ingredient");
-    public static final String JADE_STATE_COMPLETED = createTranslationKey("jade", "state", "completed");
-    public static final String JADE_STATE_FAILED = createTranslationKey("jade", "state", "failed");
+    public static final String JADE_STATE_IDLE = createJadeTranslationKey("state", "idle");
+    public static final String JADE_STATE_OIL_PROCESSING = createJadeTranslationKey("state", "oil_processing");
+    public static final String JADE_STATE_COMMON_INGREDIENT_PROCESSING = createJadeTranslationKey("state", "common_ingredient_processing");
+    public static final String JADE_STATE_HEATING = createJadeTranslationKey("state", "heating");
+    public static final String JADE_STATE_STIR_FRYING = createJadeTranslationKey("state", "stir_frying");
+    public static final String JADE_STATE_OVERFLOW = createJadeTranslationKey("state", "overflow");
+    public static final String JADE_STATE_WAITING_FOR_INGREDIENT = createJadeTranslationKey("state", "waiting_for_ingredient");
+    public static final String JADE_STATE_COMPLETED = createJadeTranslationKey("state", "completed");
+    public static final String JADE_STATE_FAILED = createJadeTranslationKey("state", "failed");
 
     // skillet
-    public static final String JADE_SKILLET_MELTING_OIL = createTranslationKey("jade", "skillet", "melting", "oil");
-    public static final String JADE_SKILLET_CONTINUE = createTranslationKey("jade", "skillet", "continue");
-    public static final String JADE_SKILLET_HEATING_TIME = createTranslationKey("jade", "skillet", "heating", "time");
-    public static final String JADE_SKILLET_HEATING = createTranslationKey("jade", "skillet", "heating");
-    public static final String JADE_SKILLET_STIR_FRYING_COUNT = createTranslationKey("jade", "skillet", "stir", "frying", "count");
-    public static final String JADE_SKILLET_STIR_FRYING = createTranslationKey("jade", "skillet", "stir", "frying");
-    public static final String JADE_SKILLET_OVERFLOW_TIME = createTranslationKey("jade", "skillet", "overflow", "time");
-    public static final String JADE_SKILLET_TOOL_USAGE_TOOLTIP = createTranslationKey("jade", "skillet", "tool", "usage", "tooltip");
-    public static final String JADE_SKILLET_CONTAINER_TOOLTIP = createTranslationKey("jade", "skillet", "container", "tooltip");
-    public static final String JADE_SKILLET_NON_CONTAINER_TOOLTIP = createTranslationKey("jade", "skillet", "non", "container", "tooltip");
-    public static final String JADE_SKILLET_HAS_OIL = createTranslationKey("jade", "skillet", "has", "oil");
-    public static final String JADE_SKILLET_HAS_COMMON_INGREDIENT = createTranslationKey("jade", "skillet", "has", "common", "ingredient");
-    public static final String JADE_SKILLET_PREPARING_INGREDIENT = createTranslationKey("jade", "skillet", "preparing", "ingredient");
-    public static final String JADE_SKILLET_ADD_INGREDIENT = createTranslationKey("jade", "skillet", "add", "ingredient");
-    public static final String JADE_SKILLET_WAITING_FOR_INGREDIENT = createTranslationKey("jade", "skillet", "waiting", "for", "skillet");
-    public static final String JADE_SKILLET_OVERFLOW_WARNING = createTranslationKey("jade", "skillet", "overflow", "warning");
-    public static final String JADE_SKILLET_COMPLETED = createTranslationKey("jade", "skillet", "completed");
-    public static final String JADE_SKILLET_FAILED = createTranslationKey("jade", "skillet", "failed");
-    public static final String JADE_SKILLET_READY_TO_EXTRACT = createTranslationKey("jade", "skillet", "ready", "to", "extract");
+    public static final String JADE_SKILLET_MELTING_OIL = createJadeTranslationKey("skillet", "melting", "oil");
+    public static final String JADE_SKILLET_CONTINUE = createJadeTranslationKey("skillet", "continue");
+    public static final String JADE_SKILLET_HEATING_TIME = createJadeTranslationKey("skillet", "heating", "time");
+    public static final String JADE_SKILLET_HEATING = createJadeTranslationKey("skillet", "heating");
+    public static final String JADE_SKILLET_STIR_FRYING_COUNT = createJadeTranslationKey("skillet", "stir", "frying", "count");
+    public static final String JADE_SKILLET_STIR_FRYING = createJadeTranslationKey("skillet", "stir", "frying");
+    public static final String JADE_SKILLET_OVERFLOW_TIME = createJadeTranslationKey("skillet", "overflow", "time");
+    public static final String JADE_SKILLET_TOOL_USAGE_TOOLTIP = createJadeTranslationKey("skillet", "tool", "usage", "tooltip");
+    public static final String JADE_SKILLET_CONTAINER_TOOLTIP = createJadeTranslationKey("skillet", "container", "tooltip");
+    public static final String JADE_SKILLET_NON_CONTAINER_TOOLTIP = createJadeTranslationKey("skillet", "non", "container", "tooltip");
+    public static final String JADE_SKILLET_HAS_OIL = createJadeTranslationKey("skillet", "has", "oil");
+    public static final String JADE_SKILLET_HAS_COMMON_INGREDIENT = createJadeTranslationKey("skillet", "has", "common", "ingredient");
+    public static final String JADE_SKILLET_PREPARING_INGREDIENT = createJadeTranslationKey("skillet", "preparing", "ingredient");
+    public static final String JADE_SKILLET_ADD_INGREDIENT = createJadeTranslationKey("skillet", "add", "ingredient");
+    public static final String JADE_SKILLET_WAITING_FOR_INGREDIENT = createJadeTranslationKey("skillet", "waiting", "for", "skillet");
+    public static final String JADE_SKILLET_OVERFLOW_WARNING = createJadeTranslationKey("skillet", "overflow", "warning");
+    public static final String JADE_SKILLET_COMPLETED = createJadeTranslationKey("skillet", "completed");
+    public static final String JADE_SKILLET_FAILED = createJadeTranslationKey("skillet", "failed");
+    public static final String JADE_SKILLET_READY_TO_EXTRACT = createJadeTranslationKey("skillet", "ready", "to", "extract");
 
     // heat source
     public static final String JADE_HEAT_SOURCE_AVAILABLE_HEAT_AMOUNT = createConfigTranslationKey("jade", "heat", "source", "available", "heat", "amount");
     public static final String JADE_HEAT_SOURCE_HEATING_LEVEL = createConfigTranslationKey("jade", "heat", "source", "heating", "level");
+
+    /* REI */
+    public static final String REI_CATEGORY_MILLING = createTranslationKey("category.rei", "milling");
+    public static final String REI_CATEGORY_SEQUENTIAL_CRAFTING = createTranslationKey("category.rei", "sequential_crafting");
+    public static final String REI_CATEGORY_SEQUENTIAL_COOKING = createTranslationKey("category.rei", "sequential_cooking");
+    public static final String REI_CATEGORY_SHREDDING = createTranslationKey("category.rei", "shredding");
+    public static final String REI_CATEGORY_PARING = createTranslationKey("category.rei", "paring");
+    public static final String REI_CATEGORY_FLAVOURING_PREPARING = createTranslationKey("category.rei", "flavouring_preparing");
+    public static final String REI_CATEGORY_BREWING = createTranslationKey("category.rei", "brewing");
+    public static final String REI_CATEGORY_PIZZA_CRAFTING = createTranslationKey("category.rei", "pizza_crafting");
+
+    public static final String REI_MILLING_TIMES = createReiTranslationKey("milling", "times");
+    public static final String REI_NO_INGREDIENTS = createReiTranslationKey("no", "ingredients");
+    public static final String REI_REQUIRED_INGREDIENTS = createReiTranslationKey("required", "ingredients");
+    public static final String REI_ACTION = createReiTranslationKey("action");
+    public static final String REI_REQUIRED_TIME = createReiTranslationKey("time");
+    public static final String REI_STIR_FRYING = createReiTranslationKey("stir", "frying");
+    public static final String REI_HEATING = createReiTranslationKey("heating");
+    public static final String REI_REQUIRES_CONTAINER = createReiTranslationKey("requires", "container");
+    public static final String REI_NO_CONTAINER = createReiTranslationKey("no_container");
+    public static final String REI_TEMPERATURE = createReiTranslationKey("temperature");
+    public static final String REI_STEP = createReiTranslationKey("step");
+    public static final String REI_DURATION_DECREMENT = createReiTranslationKey("duration", "decrement");
+    public static final String REI_STIRRING_TIMES = createReiTranslationKey("stirring", "times");
+    public static final String REI_BREWING_TIMES = createReiTranslationKey("brewing", "times");
 
     public static String createAdvancementTranslationKey(String... items) {
         return createTranslationKey("advancement", items);
@@ -93,6 +114,14 @@ public class PeonyTranslationKeys {
 
     public static String createConfigTranslationKey(String... items) {
         return createTranslationKey("config", items);
+    }
+    
+    public static String createJadeTranslationKey(String... items) {
+        return createTranslationKey("jade", items);
+    }
+
+    public static String createReiTranslationKey(String... items) {
+        return createTranslationKey("rei", items);
     }
 
     public static String createTranslationKey(String type, String... items) {

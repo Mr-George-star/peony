@@ -4,13 +4,15 @@ import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.george.peony.Peony;
+import net.george.peony.util.math.Size;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
+import net.minecraft.util.Util;
 
-@SuppressWarnings("ClassCanBeRecord")
 public final class ActionType<T extends Action> {
     public static final RegistryKey<Registry<ActionType<?>>> REGISTRY_KEY =
             RegistryKey.ofRegistry(Peony.id("action_type"));
@@ -22,11 +24,14 @@ public final class ActionType<T extends Action> {
     private final MapCodec<T> codec;
     private final PacketCodec<RegistryByteBuf, T> packetCodec;
     private final Identifier id;
+    private final Pair<Identifier, Size> guide;
 
-    public ActionType(Identifier id, MapCodec<T> codec, PacketCodec<RegistryByteBuf, T> packetCodec) {
+    public ActionType(Identifier id, MapCodec<T> codec, PacketCodec<RegistryByteBuf, T> packetCodec, Size guideSize) {
         this.id = id;
         this.codec = codec;
         this.packetCodec = packetCodec;
+        this.guide = new Pair<>(Identifier.of(id.getNamespace(), "textures/gui/action/" + id.getPath() + ".png"),
+                guideSize);
     }
 
     public MapCodec<T> getCodec() {
@@ -39,6 +44,14 @@ public final class ActionType<T extends Action> {
 
     public Identifier getId() {
         return this.id;
+    }
+
+    public Pair<Identifier, Size> getGuide() {
+        return this.guide;
+    }
+
+    public String createTranslationKey() {
+        return Util.createTranslationKey("action", this.id);
     }
 
     @Override
@@ -62,9 +75,9 @@ public final class ActionType<T extends Action> {
         return "ActionType[" + this.id + "]";
     }
 
-    public static <T extends Action> ActionType<T> register(String name, MapCodec<T> codec, PacketCodec<RegistryByteBuf, T> packetCodec) {
+    public static <T extends Action> ActionType<T> register(String name, MapCodec<T> codec, PacketCodec<RegistryByteBuf, T> packetCodec, Size guideSize) {
         Identifier id = Peony.id(name);
-        ActionType<T> actionType = new ActionType<>(id, codec, packetCodec);
+        ActionType<T> actionType = new ActionType<>(id, codec, packetCodec, guideSize);
         return Registry.register(REGISTRY, id, actionType);
     }
 }

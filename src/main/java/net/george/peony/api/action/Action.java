@@ -5,10 +5,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.WorldAccess;
 
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
-public interface Action extends Predicate<ItemStack> {
+public interface Action extends BiPredicate<WorldAccess, ItemStack> {
     Codec<Action> CODEC = ActionType.REGISTRY.getCodec()
             .dispatch("type", Action::getType, ActionType::getCodec);
     PacketCodec<RegistryByteBuf, Action> PACKET_CODEC = PacketCodec.of(
@@ -38,7 +39,7 @@ public interface Action extends Predicate<ItemStack> {
     }
 
     @Override
-    boolean test(ItemStack stack);
+    boolean test(WorldAccess world, ItemStack stack);
 
     ActionType<?> getType();
 }

@@ -1,7 +1,6 @@
 package net.george.peony.data.json;
 
 import net.george.peony.api.action.Action;
-import net.george.peony.api.action.ActionType;
 import net.george.peony.block.data.CraftingSteps;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.recipe.SequentialCraftingRecipe;

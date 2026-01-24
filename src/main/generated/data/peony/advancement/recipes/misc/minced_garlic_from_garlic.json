@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_garlic_scape": {
+    "has_garlic": {
       "conditions": {
         "items": [
           {
-            "items": "peony:garlic_scape"
+            "items": "peony:garlic"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "peony:minced_garlic_from_garlic_scape"
+        "recipe": "peony:minced_garlic_from_garlic"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_garlic_scape"
+      "has_garlic"
     ]
   ],
   "rewards": {
     "recipes": [
-      "peony:minced_garlic_from_garlic_scape"
+      "peony:minced_garlic_from_garlic"
     ]
   }
 }

@@ -1,6 +1,6 @@
 package net.george.peony.recipe;
 
-import net.george.peony.util.FluidStack;
+import net.george.peony.api.fluid.FluidStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
 

@@ -350,7 +350,9 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
      */
     protected void updateAddedItems(List<ItemStack> addedIngredients) {
         CustomPayload payload = new SkilletIngredientsSyncS2CPayload(addedIngredients, this.context.allowOilBasedRecipes, this.requiredContainer == null ? ItemStack.EMPTY : this.requiredContainer.asItem().getDefaultStack(), this.pos);
-        GameNetworking.sendToPlayers(PlayerLookup.world((ServerWorld) this.world), payload);
+        if (this.world != null && !this.world.isClient) {
+            GameNetworking.sendToPlayers(PlayerLookup.world((ServerWorld) this.world), payload);
+        }
     }
 
     @Override

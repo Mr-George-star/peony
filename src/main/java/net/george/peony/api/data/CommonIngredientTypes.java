@@ -6,11 +6,13 @@ import net.george.peony.block.data.CookingSteps;
 import net.george.peony.block.data.RecipeStep;
 import net.george.peony.block.data.RecipeStepTypes;
 import net.george.peony.item.PeonyItems;
-import net.george.peony.recipe.SequentialCookingRecipeInput;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.world.World;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.entry.RegistryEntryList;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -47,16 +49,16 @@ public class CommonIngredientTypes {
         private PeeledTomato() {}
 
         @Override
+        public RegistryEntryList<Item> getRequiredEntryList(RegistryWrapper.WrapperLookup registryLookup) {
+            return RegistryEntryList.of(Registries.ITEM.createEntry(PeonyItems.PEELED_TOMATO));
+        }
+
+        @Override
         public @Nullable RecipeStep getStep(RecipeStepTypes type) {
             if (type.equals(RecipeStepTypes.COOKING)) {
                 return new CookingSteps.Step(100, 80, PeonyItems.SPATULA, PeonyItems.PEELED_TOMATO);
             }
             return null;
-        }
-
-        @Override
-        public boolean matchesRecipe(SequentialCookingRecipeInput recipeInput, World world) {
-            return recipeInput.getInputStack().isOf(PeonyItems.PEELED_TOMATO);
         }
 
         @Override
@@ -88,16 +90,16 @@ public class CommonIngredientTypes {
         private MincedGarlic() {}
 
         @Override
+        public RegistryEntryList<Item> getRequiredEntryList(RegistryWrapper.WrapperLookup registryLookup) {
+            return RegistryEntryList.of(Registries.ITEM.createEntry(PeonyItems.MINCED_GARLIC));
+        }
+
+        @Override
         public @Nullable RecipeStep getStep(RecipeStepTypes type) {
             if (type.equals(RecipeStepTypes.COOKING)) {
                 return new CookingSteps.Step(100, 80, PeonyItems.SPATULA, PeonyItems.MINCED_GARLIC);
             }
             return null;
-        }
-
-        @Override
-        public boolean matchesRecipe(SequentialCookingRecipeInput recipeInput, World world) {
-            return recipeInput.getInputStack().isOf(PeonyItems.MINCED_GARLIC);
         }
 
         @Override

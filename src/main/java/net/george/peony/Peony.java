@@ -7,6 +7,7 @@ import net.george.peony.api.data.CommonIngredientTypes;
 import net.george.peony.block.PeonyBlocks;
 import net.george.peony.block.entity.PeonyBlockEntities;
 import net.george.peony.compat.PeonyCompat;
+import net.george.peony.effect.PeonyStatusEffects;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.networking.PeonyNetworking;
 import net.george.peony.recipe.PeonyRecipes;
@@ -33,12 +34,13 @@ public class Peony implements ModInitializer {
 		PeonyItemGroups.register();
 		PeonyRecipes.register();
 		PeonySoundEvents.register();
-		ActionTypes.register();
-		CommonIngredientTypes.register();
+		PeonyStatusEffects.register();
 		PeonyFeatures.register();
 		PeonyCompat.register();
 		PeonyStats.register();
 		PeonyCriteria.register();
+		ActionTypes.register();
+		CommonIngredientTypes.register();
 		PeonyWorldGeneration.generate();
 	}
 

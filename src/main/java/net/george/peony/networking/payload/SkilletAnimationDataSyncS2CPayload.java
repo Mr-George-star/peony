@@ -2,18 +2,14 @@ package net.george.peony.networking.payload;
 
 import net.george.networking.api.GameNetworking;
 import net.george.peony.Peony;
-import net.george.peony.block.SkilletBlock;
 import net.george.peony.block.entity.SkilletBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.List;
 import java.util.Objects;
 
 public record SkilletAnimationDataSyncS2CPayload(BlockPos pos, SkilletBlockEntity.AnimationData data) implements CustomPayload {

@@ -10,15 +10,7 @@
         "type": "peony:cutting"
       },
       "ingredient": {
-        "item": "peony:garlic_scape"
-      }
-    },
-    {
-      "action": {
-        "type": "peony:cutting"
-      },
-      "ingredient": {
-        "item": "peony:garlic_scape"
+        "item": "peony:garlic"
       }
     },
     {
