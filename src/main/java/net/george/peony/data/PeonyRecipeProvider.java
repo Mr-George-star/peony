@@ -227,6 +227,11 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .step(new CookingSteps.Step(240, 80, PeonyItems.PORK_TENDERLOIN))
                 .step(new CookingSteps.Step(100, 80, PeonyItems.SPATULA, PeonyItems.SWEET_SOUR_SAUCE, new StirFryingData(3)))
                 .offerTo(exporter);
+        SequentialCookingRecipeJsonBuilder.create(550, true, PeonyItems.STIR_FRIED_GARLIC_SCAPE_WITH_PORK, PeonyItems.WOODEN_PLATE)
+                .basicIngredient(CommonIngredientTypes.MINCED_GARLIC)
+                .step(new CookingSteps.Step(240, 80, PeonyItems.GARLIC_SCAPE))
+                .step(new CookingSteps.Step(280, 80, PeonyItems.SPATULA, PeonyItems.PORK_TENDERLOIN, new StirFryingData(5)))
+                .offerTo(exporter);
 
         /* PARING */
         ParingRecipeJsonBuilder.create(PeonyItems.TOMATO, PeonyItems.PEELED_TOMATO).category(RecipeCategory.FOOD)

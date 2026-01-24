@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_garlic_scape": {
+      "conditions": {
+        "items": [
+          {
+            "items": "peony:garlic_scape"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "peony:stir_fired_garlic_scape_with_pork"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_garlic_scape"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "peony:stir_fired_garlic_scape_with_pork"
+    ]
+  }
+}

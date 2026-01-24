@@ -231,7 +231,6 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         super.writeNbt(nbt, registryLookup);
         Inventories.writeNbt(nbt, this.inventory, registryLookup);
         ArrayListNbtStorage.writeItemList(nbt, "AddedIngredients", this.addedIngredients, registryLookup);
-        this.updateAddedItems();
 
         // Save cooking context
         NbtCompound contextNbt = new NbtCompound();
@@ -262,7 +261,6 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         Inventories.readNbt(nbt, this.inventory, registryLookup);
         this.addedIngredients = ArrayListNbtStorage.readItemList(nbt, "AddedIngredients", registryLookup);
-        this.updateAddedItems();
 
         // Read cooking context
         if (nbt.contains("CookingContext")) {
@@ -349,8 +347,12 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
      * @param addedIngredients the ingredients to synchronize
      */
     protected void updateAddedItems(List<ItemStack> addedIngredients) {
-        CustomPayload payload = new SkilletIngredientsSyncS2CPayload(addedIngredients, this.context.allowOilBasedRecipes, this.requiredContainer == null ? ItemStack.EMPTY : this.requiredContainer.asItem().getDefaultStack(), this.pos);
         if (this.world != null && !this.world.isClient) {
+            CustomPayload payload = new SkilletIngredientsSyncS2CPayload(
+                    addedIngredients,
+                    this.context.allowOilBasedRecipes,
+                    this.requiredContainer == null ? ItemStack.EMPTY : this.requiredContainer.asItem().getDefaultStack(),
+                    this.pos);
             GameNetworking.sendToPlayers(PlayerLookup.world((ServerWorld) this.world), payload);
         }
     }

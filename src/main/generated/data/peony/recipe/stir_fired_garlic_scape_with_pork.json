@@ -1,0 +1,35 @@
+{
+  "type": "peony:sequential_cooking",
+  "basic_ingredient": "peony:minced_garlic",
+  "need_oil": true,
+  "output": {
+    "container": "peony:wooden_plate",
+    "outputStack": {
+      "count": 1,
+      "id": "peony:stir_fired_garlic_scape_with_pork"
+    }
+  },
+  "steps": [
+    {
+      "ingredient": {
+        "item": "peony:garlic_scape"
+      },
+      "max_time_overflow": 80,
+      "required_time": 240
+    },
+    {
+      "frying_data": {
+        "times": 5
+      },
+      "ingredient": {
+        "item": "peony:pork_tenderloin"
+      },
+      "max_time_overflow": 80,
+      "required_time": 280,
+      "required_tool": {
+        "item": "peony:spatula"
+      }
+    }
+  ],
+  "temperature": 550
+}

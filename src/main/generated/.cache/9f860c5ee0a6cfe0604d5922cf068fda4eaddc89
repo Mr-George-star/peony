@@ -1,11 +1,11 @@
-// 1.21.1	2026-01-24T18:32:44.0827901	Peony/Tags for minecraft:block
+// 1.21.1	2026-01-24T20:22:03.6977178	Peony/Tags for minecraft:block
 4540fd33d1c9131af1c4f67dbddb4d10373c3634 data\minecraft\tags\block\needs_stone_tool.json
 9462d9d036b87909fadd08eb05327284ff0d96e2 data\minecraft\tags\block\needs_iron_tool.json
 d05bbb18ec7419733ec0f1a66f99a32072ccd46f data\peony\tags\block\burnable_blocks.json
 b787dc7f396375c2c9439bb5283176e017896b4c data\peony\tags\block\kitchenware.json
 567d71200777b590c7ec180acc142eff106f5a9b data\minecraft\tags\block\mineable\axe.json
-9a4a8935b1b759e2e1ac6917a10f950919bfd461 data\minecraft\tags\block\campfires.json
-3000229ac03869c2d33e750990d31bc603e0eb7b data\peony\tags\block\vine_crops_attachable.json
 bca769b2898ab1433c3d048264323e5e1fd9065a data\peony\tags\block\cutting_boards.json
+3000229ac03869c2d33e750990d31bc603e0eb7b data\peony\tags\block\vine_crops_attachable.json
+9a4a8935b1b759e2e1ac6917a10f950919bfd461 data\minecraft\tags\block\campfires.json
 5d5a0ba7b1ded12243cd8970274d564158012573 data\minecraft\tags\block\mineable\pickaxe.json
 950a086f855d118e00d3fc9697663c7721c42db1 data\peony\tags\block\incorrect_for_kitchen_knife.json

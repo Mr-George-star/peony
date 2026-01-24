@@ -1,4 +1,4 @@
-// 1.21.1	2026-01-24T18:32:44.0807897	Peony/Recipes
+// 1.21.1	2026-01-24T20:22:03.6956786	Peony/Recipes
 72323c336cff1f58bf2159cc9c09937a70069a36 data\peony\advancement\recipes\misc\cherry_log_stick.json
 47fc6c3a777b2198074650ebf4c2a23fb3227b52 data\peony\advancement\recipes\misc\shredded_potato.json
 1e4ea7dec4f1ae8d8afa99a23d1dd304fc2dcf73 data\peony\advancement\recipes\misc\nature_gas_detector.json
@@ -7,6 +7,7 @@
 2ca6bad8cb9339fd79e21a362854c0e66b8d75ca data\peony\recipe\brewing_barrel.json
 fb34b5ce8b539ebce6b4653cb83ace8dae1e00c5 data\peony\recipe\jungle_pot_stand.json
 9c0bea261fe5a4ba9f261f98b38c6328ccff8937 data\peony\recipe\diamond_shredder.json
+350578457ef682372e1d7d8b19f6f7522750f615 data\peony\advancement\recipes\misc\stir_fired_garlic_scape_with_pork.json
 9c0d0621399e79874eca7038267707b159851d8a data\peony\advancement\recipes\misc\jungle_pot_stand.json
 83af09b5842e2737074ca383d52b39d93eaa6c67 data\peony\recipe\mangrove_pot_stand.json
 16b3a0d25798b440a7afcd9ab9dc06bcaa512f03 data\peony\advancement\recipes\misc\jungle_cutting_board.json
@@ -48,6 +49,7 @@ f5180aff42c13483b5c9c594d1809b1daa823a3c data\peony\recipe\birch_log_stick.json
 1d2d78baaa336f0bb38f029b0c9b0cb862233c3f data\peony\recipe\birch_cutting_board.json
 e2816a97af1c2cb6973c8f0e0c25108f0002656a data\peony\recipe\skillet_right.json
 3e5fc51d6a2b4e0438c68988c43b9ff06a8d27cd data\peony\advancement\recipes\misc\condiment_bottle.json
+b431b2f4461b1138dd1808a6cef0aa112d791be3 data\peony\recipe\stir_fired_garlic_scape_with_pork.json
 5f23c5484c22364d71fc25cdbf0a3aeac75b971d data\minecraft\recipe\cooked_salmon.json
 117fc5b2c5c42370f22c2c95a4589725df33ce49 data\peony\recipe\fried_shredded_potatoes.json
 33caba666b234b8902e7462fa860f18756c1ef87 data\peony\advancement\recipes\misc\oak_log_stick.json
@@ -68,8 +70,8 @@ ca2b4818c9931d76fe734accd4f7b0ae635d8874 data\peony\recipe\iron_shredder.json
 ade3d65b3a0b14d270eaddade9e67887ed351eeb data\peony\advancement\recipes\misc\wheat_from_hay_block.json
 43228cabea5713e49ffb60c7c0c815cbf8c4d9ab data\peony\advancement\recipes\misc\brown_rice_from_rice_panicle.json
 56cb0fbe86f1d598b0ac117e0ddd2e1236166934 data\peony\recipe\birch_pot_stand.json
-5025e854c79fd0cad71a4fc80723fe2e650a03b9 data\peony\advancement\recipes\tools\kitchen_knife_left.json
 c9aab322b5c2849e22ec0064f3f742cb1e22e82a data\peony\recipe\condiment_bottle.json
+5025e854c79fd0cad71a4fc80723fe2e650a03b9 data\peony\advancement\recipes\tools\kitchen_knife_left.json
 c4aacdb375c1ab2412863df9cc4402006f765cde data\peony\recipe\dough_from_flour.json
 7bed249fa29605411e3202d480909b6c4640ec8a data\peony\advancement\recipes\misc\flatbread_from_dough.json
 e2f799c2768ddbac7872fc05e560a22dbc6240c1 data\peony\advancement\recipes\misc\dough_from_flour.json
@@ -109,8 +111,8 @@ e491fe6e596ad26167d8121fee6f6b0008f4cb42 data\peony\advancement\recipes\misc\shr
 a6552cbf6f930682357c2a65d205ac7e1ee094e9 data\peony\advancement\recipes\food\peeled_tomato.json
 f756e89b0469db13b8d907a57c1d332680406a59 data\peony\advancement\recipes\misc\dark_oak_cutting_board.json
 12cbdbf4304c204e195570521009d2c8d18cdef7 data\peony\recipe\fermented_cheese_from_milk.json
-eaa4b4f1836bd2db989aec4e3eb6c8501eb8deeb data\peony\recipe\brown_rice_from_rice_panicle.json
 378e0cd806985c11c84c052e2026c397b68fe8ef data\peony\advancement\recipes\misc\tomato_sauce.json
+eaa4b4f1836bd2db989aec4e3eb6c8501eb8deeb data\peony\recipe\brown_rice_from_rice_panicle.json
 01e38cc6bbf013d79f04cb3af20c834996a12171 data\peony\recipe\jungle_log_stick.json
 556d1e031d618d6923b5b07855aa99dc21180634 data\minecraft\advancement\recipes\misc\cooked_cod.json
 ef535b330fc534977ab682ca6caa8d02c548ed7a data\peony\advancement\recipes\tools\iron_shredder.json

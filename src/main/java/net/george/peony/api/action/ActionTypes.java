@@ -14,9 +14,9 @@ public final class ActionTypes {
     public static final ActionType<Kneading> KNEADING =
             ActionType.register("kneading", Kneading.CODEC, Kneading.PACKET_CODEC, Size.create(9, 19));
     public static final ActionType<Cutting> CUTTING =
-            ActionType.register("cutting", Cutting.CODEC, Cutting.PACKET_CODEC, Size.create());
+            ActionType.register("cutting", Cutting.CODEC, Cutting.PACKET_CODEC, Size.create(18, 25));
     public static final ActionType<Slicing> SLICING =
-            ActionType.register("slicing", Slicing.CODEC, Slicing.PACKET_CODEC, Size.create());
+            ActionType.register("slicing", Slicing.CODEC, Slicing.PACKET_CODEC, Size.create(18, 23));
 
     public static void register() {
         Peony.debug("Action Types");
