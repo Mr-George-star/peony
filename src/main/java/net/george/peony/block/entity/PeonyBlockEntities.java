@@ -34,6 +34,10 @@ public class PeonyBlockEntities {
             BowlBlockEntity::new, PeonyBlocks.BOWL);
     public static final BlockEntityType<FermentationTankBlockEntity> FERMENTATION_TANK = register("fermentation_tank",
             FermentationTankBlockEntity::new, PeonyBlocks.FERMENTATION_TANK);
+    public static final BlockEntityType<GasCylinderBlockEntity> GAS_CYLINDER = register("gas_cylinder",
+            GasCylinderBlockEntity::new, PeonyBlocks.GAS_CYLINDER);
+    public static final BlockEntityType<GasStoveBlockEntity> GAS_STOVE = register("gas_stove",
+            GasStoveBlockEntity::new, PeonyBlocks.GAS_STOVE);
 
     private static <T extends BlockEntity> BlockEntityType<T> register(String name, BlockEntityType.BlockEntityFactory<T> factory, Block... blocks) {
         if (ImmutableList.copyOf(blocks).isEmpty()) {
@@ -47,5 +51,6 @@ public class PeonyBlockEntities {
         Peony.debug("Block Entities");
         FluidStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.fluidStorage, BREWING_BARREL);
         FluidStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.fluidStorage, FERMENTATION_TANK);
+        FluidStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.fluidStorage, GAS_CYLINDER);
     }
 }

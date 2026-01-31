@@ -73,6 +73,7 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
 
         builder.add(PeonyItems.MUSIC_DISC_SURPRISE, "Surprise");
 
+        // blocks
         builder.add(PeonyBlocks.DOUGH, "Dough");
         builder.add(PeonyBlocks.FLOUR, "Flour");
         builder.add(PeonyBlocks.FLATBREAD, "Flatbread");
@@ -95,6 +96,8 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyBlocks.SKILLET, "Skillet");
         builder.add(PeonyBlocks.BREWING_BARREL, "Brewing Barrel");
         builder.add(PeonyBlocks.FERMENTATION_TANK, "Fermentation Tank");
+        builder.add(PeonyBlocks.GAS_CYLINDER, "Gas Cylinder");
+        builder.add(PeonyBlocks.GAS_STOVE, "Gas Stove");
         builder.add(PeonyBlocks.OAK_LOG_STICK, "Oak Log Stick");
         builder.add(PeonyBlocks.SPRUCE_LOG_STICK, "Spruce Log Stick");
         builder.add(PeonyBlocks.BIRCH_LOG_STICK, "Birch Log Stick");
@@ -185,11 +188,15 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         /* CONFIG */
         builder.add(PeonyTranslationKeys.CONFIG_SCREEN_TITLE, "Peony");
         builder.add(PeonyTranslationKeys.CONFIG_CATEGORY_COMMON, "Common");
+        builder.add(PeonyTranslationKeys.CONFIG_CATEGORY_EXPERIMENTAL, "Experimental Options");
         // options
         builder.add(PeonyTranslationKeys.OPTION_LARD_SLOWNESS_DURATION_TICKS, "Duration Ticks of Slowness in Lard");
         builder.add(PeonyTranslationKeys.OPTION_LARD_FIRE_EXTENSION_TICKS, "Fire Extension Ticks in Lard");
+        builder.add(PeonyTranslationKeys.OPTION_DEBUG_COMMANDS, "Enable Commands for Debugging");
         // descriptions
         builder.add(PeonyTranslationKeys.CONFIG_CATEGORY_DESCRIPTION_COMMON, "Common Configuration Options");
+        builder.add(PeonyTranslationKeys.CONFIG_CATEGORY_DESCRIPTION_EXPERIMENTAL, "Experimental and Configuration Options for Debugging");
+
         builder.add(PeonyTranslationKeys.OPTION_DESCRIPTION_LARD_SLOWNESS_DURATION_TICKS, "The duration of the slowness effect in lard. When the player is in lard fluid, the slowness effect will be applied. \nThe following durations are in ticks (1 second = 20 ticks).");
         builder.add(PeonyTranslationKeys.OPTION_DESCRIPTION_LARD_FIRE_EXTENSION_TICKS, "If the player is on fire, entering or jumping into lard fluid will extend the fire duration (including cauldrons containing lard). \nThe following durations are in ticks (1 second = 20 ticks).");
 
@@ -198,14 +205,18 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         /* JADE */
         // config
         builder.add("config.jade.plugin_peony.skillet_component", "Skillet Status Display");
-        builder.add("config.jade.plugin_peony.pot_stand_with_campfire_component", "Oak Pot Stand With Campfire - Temperature Data Display");
+        builder.add("config.jade.plugin_peony.default_heat_source_component", "Default Temperature Data Display");
+        builder.add("config.jade.plugin_peony.default_openable_component", "Default Opening State Display");
 
         // global
         builder.add(PeonyTranslationKeys.JADE_STEP, "Step: %d / %d");
-        builder.add(PeonyTranslationKeys.JADE_TIME_REMAINING, "Time remaining: %d秒");
-        builder.add(PeonyTranslationKeys.JADE_TIME_LIMIT, "Time limit: %d秒");
+        builder.add(PeonyTranslationKeys.JADE_TIME_REMAINING, "Time remaining: %d Seconds");
+        builder.add(PeonyTranslationKeys.JADE_TIME_LIMIT, "Time limit: %d Seconds");
         builder.add(PeonyTranslationKeys.JADE_REQUIRES, "Requires");
         builder.add(PeonyTranslationKeys.JADE_NO_HEAT_SOURCE, "⚠ No heat source");
+        builder.add(PeonyTranslationKeys.JADE_OPENING_STATE, "Opening State: ");
+        builder.add(PeonyTranslationKeys.JADE_OPENED, "Opened");
+        builder.add(PeonyTranslationKeys.JADE_CLOSED, "Closed");
 
         // skillet statements
         builder.add(PeonyTranslationKeys.JADE_STATE_IDLE, "Idle");
@@ -219,7 +230,7 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyTranslationKeys.JADE_STATE_FAILED, "Failed");
 
         // skillet
-        builder.add(PeonyTranslationKeys.JADE_SKILLET_MELTING_OIL, "Melting oil: %d / %d");
+        builder.add(PeonyTranslationKeys.JADE_SKILLET_MELTING_OIL, "Melting oil");
         builder.add(PeonyTranslationKeys.JADE_SKILLET_CONTINUE, "Continue: %d / %d");
         builder.add(PeonyTranslationKeys.JADE_SKILLET_HEATING_TIME, "Heating: %d / %d");
         builder.add(PeonyTranslationKeys.JADE_SKILLET_HEATING, "Heating");

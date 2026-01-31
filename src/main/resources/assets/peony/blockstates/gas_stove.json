@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=east,opened=false":  {
+      "model": "peony:block/gas_stove",
+      "y": 90
+    },
+    "facing=north,opened=false": {
+      "model": "peony:block/gas_stove"
+    },
+    "facing=south,opened=false": {
+      "model": "peony:block/gas_stove",
+      "y": 180
+    },
+    "facing=west,opened=false":  {
+      "model": "peony:block/gas_stove",
+      "y": 270
+    },
+    "facing=east,opened=true":  {
+      "model": "peony:block/gas_stove_opened",
+      "y": 90
+    },
+    "facing=north,opened=true": {
+      "model": "peony:block/gas_stove_opened"
+    },
+    "facing=south,opened=true": {
+      "model": "peony:block/gas_stove_opened",
+      "y": 180
+    },
+    "facing=west,opened=true":  {
+      "model": "peony:block/gas_stove_opened",
+      "y": 270
+    }
+  }
+}

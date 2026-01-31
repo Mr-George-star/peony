@@ -46,18 +46,23 @@ public class PeonyBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
         getOrCreateTagBuilder(BlockTags.NEEDS_STONE_TOOL)
                 .add(PeonyBlocks.MILLSTONE);
         getOrCreateTagBuilder(BlockTags.NEEDS_IRON_TOOL)
-                .add(PeonyBlocks.SKILLET);
+                .add(PeonyBlocks.SKILLET)
+                .add(PeonyBlocks.GAS_CYLINDER)
+                .add(PeonyBlocks.GAS_STOVE);
 
         getOrCreateTagBuilder(PeonyTags.Blocks.INCORRECT_FOR_KITCHEN_KNIFE)
                 .forceAddTag(BlockTags.INCORRECT_FOR_IRON_TOOL);
 
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
                 .add(PeonyBlocks.MILLSTONE)
-                .add(PeonyBlocks.SKILLET);
+                .add(PeonyBlocks.SKILLET)
+                .add(PeonyBlocks.GAS_CYLINDER)
+                .add(PeonyBlocks.GAS_STOVE);
         getOrCreateTagBuilder(BlockTags.AXE_MINEABLE)
                 .add(RegistryDataUtils.BLOCK.filterToArray(block -> block instanceof CuttingBoardBlock))
                 .add(RegistryDataUtils.BLOCK.filterToArray(block -> block instanceof LogStickBlock))
                 .add(RegistryDataUtils.BLOCK.filterToArray(block -> block instanceof PotStandBlock || block instanceof PotStandWithCampfireBlock))
-                .add(PeonyBlocks.BREWING_BARREL);
+                .add(PeonyBlocks.BREWING_BARREL)
+                .add(PeonyBlocks.FERMENTATION_TANK);
     }
 }

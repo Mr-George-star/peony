@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "peony-blocks",
+  "key": {
+    "S": {
+      "tag": "minecraft:slabs"
+    },
+    "W": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "pattern": [
+    "S S",
+    "S S",
+    "WWW"
+  ],
+  "result": {
+    "count": 1,
+    "id": "peony:fermentation_tank"
+  }
+}

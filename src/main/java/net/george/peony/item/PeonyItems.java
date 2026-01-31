@@ -115,8 +115,8 @@ public class PeonyItems {
     public static final Item NATURE_GAS_DETECTOR = register("nature_gas_detector", NatureGasDetectorItem::new, createDefaultSettings().maxCount(1));
 
     /* buckets */
-    public static final Item NATURE_GAS_BUCKET = register("nature_gas_bucket", settings ->
-            new BucketItem(PeonyFluids.STILL_NATURE_GAS, settings), createDefaultSettings().maxCount(1).recipeRemainder(Items.BUCKET));
+    public static final Item NATURE_GAS_BUCKET = register("nature_gas_bucket",
+            NatureGasBucketItem::new, createDefaultSettings().maxCount(1).recipeRemainder(Items.BUCKET));
     public static final Item LARD_BUCKET = register("lard_bucket", settings ->
             new BucketItem(PeonyFluids.STILL_LARD, settings), createDefaultSettings().maxCount(1).recipeRemainder(Items.BUCKET));
 

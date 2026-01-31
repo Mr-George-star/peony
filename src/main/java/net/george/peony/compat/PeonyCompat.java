@@ -1,5 +1,6 @@
 package net.george.peony.compat;
 
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
@@ -7,6 +8,7 @@ import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.george.peony.Peony;
 import net.george.peony.block.*;
 import net.george.peony.block.entity.CarvedRenderingItems;
+import net.george.peony.block.entity.GasStoveBlockEntity;
 import net.george.peony.block.entity.NonBlockRenderingItems;
 import net.george.peony.item.KitchenKnifeItem;
 import net.george.peony.item.PeonyItems;
@@ -24,9 +26,16 @@ import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.List;
+
+import static net.minecraft.server.command.CommandManager.literal;
 
 public class PeonyCompat {
     public static final Identifier SHORT_GRASS_LOOT = Identifier.ofVanilla("blocks/short_grass");
@@ -148,6 +157,37 @@ public class PeonyCompat {
         });
     }
 
+    private static void registerDebugCommands() {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("checkGasConnection")
+                .requires(source -> source.hasPermissionLevel(2))
+                .executes(context -> {
+                    ServerCommandSource source = context.getSource();
+                    ServerWorld world = source.getWorld();
+                    BlockPos pos = BlockPos.ofFloored(source.getPosition().add(0, -1, 0));
+
+                    if (world.getBlockEntity(pos) instanceof GasStoveBlockEntity stove) {
+                        List<BlockPos> possiblePositions = stove.getPossibleConnectionPositions();
+                        source.sendFeedback(() -> Text.literal("Possible connection positions:"), false);
+                        for (BlockPos checkPos : possiblePositions) {
+                            boolean hasCylinder = world.getBlockState(checkPos).getBlock() instanceof GasCylinderBlock;
+                            source.sendFeedback(() -> Text.literal("  " + checkPos.toShortString() +
+                                    " - " + (hasCylinder ? "Gas Cylinder ✓" : "Empty")), false);
+                        }
+
+                        stove.getConnectedCylinderPos().ifPresentOrElse(
+                                connectedPos -> source.sendFeedback(() ->
+                                        Text.literal("Connected to: " + connectedPos.toShortString()), false),
+                                () -> source.sendFeedback(() ->
+                                        Text.literal("Not connected to any gas cylinder"), false)
+                        );
+                    } else {
+                        source.sendFeedback(() -> Text.literal("This is not a gas stove block"), false);
+                    }
+
+                    return 1;
+                })));
+    }
+
     public static void register() {
         Peony.debug("Combats");
         registerCompostingChances();
@@ -156,5 +196,9 @@ public class PeonyCompat {
         registerCarvedRenderingItems();
         modifyLootTables();
         registerEvents();
+
+        if (Peony.getConfig().debugCommands) {
+            registerDebugCommands();
+        }
     }
 }

@@ -31,7 +31,7 @@ public class SequentialCookingDisplay extends BasicDisplay {
                 Collections.singletonList(EntryIngredients.of(recipeEntry.value().getOutput().getOutputStack())));
 
         SequentialCookingRecipe recipe = recipeEntry.value();
-        CookingSteps steps = recipe.getSteps();
+        CookingSteps steps = recipe.getStepsWithCommonIngredient();
         this.temperature = recipe.getTemperature();
         this.steps = Lists.newArrayList();
         this.output = EntryStacks.of(recipe.getOutput().getOutputStack());
@@ -76,7 +76,7 @@ public class SequentialCookingDisplay extends BasicDisplay {
 
     private static List<EntryIngredient> getAllInputIngredients(SequentialCookingRecipe recipe) {
         List<EntryIngredient> inputs = Lists.newArrayList();
-        CookingSteps steps = recipe.getSteps();
+        CookingSteps steps = recipe.getStepsWithCommonIngredient();
         for (int i = 0; i < steps.getSteps().size(); i++) {
             CookingSteps.Step step = steps.getSteps().get(i);
             inputs.add(EntryIngredients.ofIngredient(step.getIngredient()));

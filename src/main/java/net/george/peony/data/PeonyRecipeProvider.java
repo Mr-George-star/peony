@@ -79,6 +79,37 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .group(PEONY_BLOCKS)
                 .criterion(hasItem(Blocks.OAK_PLANKS), conditionsFromTag(ItemTags.PLANKS))
                 .offerTo(exporter);
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.FOOD, PeonyBlocks.CHEESE_BLOCK)
+                .input(PeonyItems.CHEESE, 9)
+                .group(PEONY_BLOCKS)
+                .criterion(hasItem(PeonyItems.CHEESE), conditionsFromItem(PeonyItems.CHEESE))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PeonyBlocks.FERMENTATION_TANK)
+                .input('W', ItemTags.PLANKS)
+                .input('S', ItemTags.SLABS)
+                .pattern("S S")
+                .pattern("S S")
+                .pattern("WWW")
+                .group(PEONY_BLOCKS)
+                .criterion(hasItem(Blocks.OAK_PLANKS), conditionsFromTag(ItemTags.PLANKS))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PeonyBlocks.GAS_CYLINDER)
+                .input('I', ConventionalItemTags.IRON_INGOTS)
+                .input('N', ConventionalItemTags.IRON_NUGGETS)
+                .pattern(" N ")
+                .pattern("I I")
+                .pattern("NIN")
+                .group(PEONY_BLOCKS)
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromTag(ConventionalItemTags.IRON_INGOTS))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PeonyBlocks.GAS_STOVE)
+                .input('I', ConventionalItemTags.IRON_INGOTS)
+                .input('N', ConventionalItemTags.IRON_NUGGETS)
+                .pattern("NIN")
+                .pattern("I I")
+                .pattern("I I").group(PEONY_BLOCKS)
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromTag(ConventionalItemTags.IRON_INGOTS))
+                .offerTo(exporter);
 
         /* ITEMS */
 
@@ -131,11 +162,6 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .group(PEONY_ITEMS)
                 .criterion(hasItem(Blocks.GLASS), conditionsFromTag(ConventionalItemTags.GLASS_BLOCKS))
                 .offerTo(exporter);
-        ShapelessRecipeJsonBuilder.create(RecipeCategory.FOOD, PeonyBlocks.CHEESE_BLOCK)
-                .input(PeonyItems.CHEESE, 9)
-                .group(PEONY_BLOCKS)
-                .criterion(hasItem(PeonyItems.CHEESE), conditionsFromItem(PeonyItems.CHEESE))
-                .offerTo(exporter);
         ShapelessRecipeJsonBuilder.create(RecipeCategory.FOOD, PeonyItems.CHEESE, 9)
                 .input(PeonyBlocks.CHEESE_BLOCK)
                 .group(PEONY_ITEMS)
@@ -160,6 +186,7 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
             }
         });
 
+        createParingKnifeRecipe(Items.IRON_INGOT, ConventionalItemTags.IRON_INGOTS, PeonyItems.IRON_PARING_KNIFE, "iron", exporter);
         createShredderRecipe(Items.IRON_INGOT, ConventionalItemTags.IRON_INGOTS, PeonyItems.IRON_SHREDDER, exporter);
         createShredderRecipe(Items.GOLD_INGOT, ConventionalItemTags.GOLD_INGOTS, PeonyItems.GOLD_SHREDDER, exporter);
         createShredderRecipe(Items.DIAMOND, ConventionalItemTags.DIAMOND_GEMS, PeonyItems.DIAMOND_SHREDDER, exporter);
@@ -311,19 +338,32 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .offerTo(exporter);
     }
 
-    public static void createShredderRecipe(ItemConvertible material, @Nullable TagKey<Item> materialTag, ItemConvertible result, RecipeExporter exporter) {
-        ShapedRecipeJsonBuilder builder = ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, result).input('S', Items.STICK);
+    private static ShapedRecipeJsonBuilder createBasicToolRecipe(ItemConvertible material, @Nullable TagKey<Item> materialTag, ItemConvertible result) {
+        ShapedRecipeJsonBuilder builder = ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, result)
+                .input('S', Items.STICK)
+                .group(PEONY_ITEMS)
+                .criterion(hasItem(material), conditionsFromItem(material));
         if (materialTag == null) {
             builder.input('M', material);
         } else {
             builder.input('M', materialTag);
         }
+        return builder;
+    }
+
+    public static void createParingKnifeRecipe(ItemConvertible material, @Nullable TagKey<Item> materialTag, ItemConvertible result, String materialName, RecipeExporter exporter) {
+        createBasicToolRecipe(material, materialTag, result).pattern(" M").pattern("S ")
+                .offerTo(exporter, Peony.id(materialName + "_paring_knife_right"));
+        createBasicToolRecipe(material, materialTag, result).pattern("M ").pattern(" S")
+                .offerTo(exporter, Peony.id(materialName + "_paring_knife_left"));
+    }
+
+    public static void createShredderRecipe(ItemConvertible material, @Nullable TagKey<Item> materialTag, ItemConvertible result, RecipeExporter exporter) {
+        ShapedRecipeJsonBuilder builder = createBasicToolRecipe(material, materialTag, result);
 
         builder.pattern("M M")
                 .pattern("MMM")
                 .pattern(" S ")
-                .group(PEONY_ITEMS)
-                .criterion(hasItem(material), conditionsFromItem(material))
                 .offerTo(exporter);
     }
 

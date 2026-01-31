@@ -71,15 +71,23 @@ public class CountdownManager implements NbtSerializable {
 
     @Override
     public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        for (CountdownComponent component : this.components.values()) {
-            component.writeNbt(nbt, registryLookup);
+        NbtCompound timersNbt = new NbtCompound();
+        for (Map.Entry<String, CountdownComponent> entry : this.components.entrySet()) {
+            NbtCompound timerNbt = new NbtCompound();
+            entry.getValue().writeNbt(timerNbt, registryLookup);
+            timersNbt.put(entry.getKey(), timerNbt);
         }
+        nbt.put("Countdowns", timersNbt);
     }
 
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        for (CountdownComponent component : this.components.values()) {
-            component.readNbt(nbt, registryLookup);
+        NbtCompound timersNbt = nbt.getCompound("Countdowns");
+        for (String key : timersNbt.getKeys()) {
+            CountdownComponent component = this.components.get(key);
+            if (component != null) {
+                component.readNbt(timersNbt.getCompound(key), registryLookup);
+            }
         }
     }
 

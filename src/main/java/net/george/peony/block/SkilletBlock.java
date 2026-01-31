@@ -2,6 +2,7 @@ package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
 import net.george.peony.api.heat.HeatProvider;
+import net.george.peony.block.data.HeatSource;
 import net.george.peony.block.entity.*;
 import net.george.peony.compat.PeonyDamageTypes;
 import net.minecraft.block.*;
@@ -70,13 +71,15 @@ public class SkilletBlock extends BlockWithEntity {
 
     @Override
     protected BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        return direction == Direction.DOWN ? Blocks.AIR.getDefaultState() : super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        return direction == Direction.DOWN && !(neighborState.getBlock() instanceof HeatSource) ?
+                Blocks.AIR.getDefaultState() :
+                super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
 
     @Override
     protected boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
         BlockState down = world.getBlockState(pos.down());
-        return down.isFullCube(world, pos) || down.getBlock() instanceof HeatProvider;
+        return down.isFullCube(world, pos) || down.getBlock() instanceof HeatSource;
     }
 
     @NotNull
@@ -111,7 +114,7 @@ public class SkilletBlock extends BlockWithEntity {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof SkilletBlockEntity skillet) {
                 AccessibleInventory.InteractionContext context = AccessibleInventory.createContext(world, pos, player, hand);
-                return AccessibleInventory.access(skillet, context, ItemDecrementBehaviour.createSkillet());
+                return AccessibleInventory.access(skillet, context, ItemDecrementBehaviour.createDefault());
             }
         }
         return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

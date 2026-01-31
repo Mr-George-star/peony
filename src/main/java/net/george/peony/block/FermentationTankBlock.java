@@ -69,7 +69,7 @@ public class FermentationTankBlock extends BlockWithEntity {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof FermentationTankBlockEntity barrel) {
                 AccessibleInventory.InteractionContext context = AccessibleInventory.createContext(world, pos, player, hand);
-                return AccessibleInventory.access(barrel, context, ItemDecrementBehaviour.createBrewingBarrel());
+                return AccessibleInventory.access(barrel, context, ItemDecrementBehaviour.createDefault());
             }
         }
         return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

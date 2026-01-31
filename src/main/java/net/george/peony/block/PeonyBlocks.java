@@ -54,6 +54,7 @@ public class PeonyBlocks {
     public static final Block RAW_MARGHERITA_PIZZA = registerPizza("raw_margherita_pizza");
     public static final Block MARGHERITA_PIZZA = registerPizza("margherita_pizza", PeonyFoodComponents.MARGHERITA_PIZZA);
 
+    /* FUNCTIONAL BLOCKS */
     public static final Block MILLSTONE = register("millstone", MillstoneBlock::new,
             AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE).nonOpaque());
     // use log top map color
@@ -74,13 +75,21 @@ public class PeonyBlocks {
     public static final Block MANGROVE_CUTTING_BOARD = register("mangrove_cutting_board", settings ->
             new CuttingBoardBlock(settings, Blocks.MANGROVE_LOG), createDefaultWoodSettings(MapColor.RED));
     public static final Block SKILLET = register("skillet", SkilletBlock::new,
-            createDefaultSettings().nonOpaque().requiresTool().mapColor(MapColor.IRON_GRAY),
+            createDefaultSettings().nonOpaque().strength(5.0F).requiresTool().mapColor(MapColor.IRON_GRAY),
             PeonyItems.createDefaultSettings().maxCount(1));
     public static final Block BREWING_BARREL = register("brewing_barrel", BrewingBarrelBlock::new,
             createDefaultSettings().nonOpaque().strength(2.0F).mapColor(MapColor.SPRUCE_BROWN));
     public static final Block FERMENTATION_TANK = register("fermentation_tank", FermentationTankBlock::new,
             createDefaultSettings().nonOpaque().strength(2.0F).mapColor(MapColor.SPRUCE_BROWN));
+    public static final Block GAS_CYLINDER = register("gas_cylinder", GasCylinderBlock::new,
+            createDefaultSettings().nonOpaque().strength(5.0F).requiresTool().mapColor(MapColor.GRAY),
+            PeonyItems.createDefaultSettings().maxCount(16));
+    public static final Block GAS_STOVE = register("gas_stove", GasStoveBlock::new,
+            createDefaultSettings().nonOpaque().strength(5.0F).requiresTool().mapColor(MapColor.GRAY)
+                    .luminance(GasStoveBlock::getLuminance),
+            PeonyItems.createDefaultSettings().maxCount(16));
 
+    /* MATERIALS */
     // use log top map color
     public static final Block OAK_LOG_STICK = registerLogStick("oak", Blocks.OAK_LOG, MapColor.OAK_TAN);
     public static final Block SPRUCE_LOG_STICK = registerLogStick("spruce", Blocks.SPRUCE_LOG, MapColor.SPRUCE_BROWN);

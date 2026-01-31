@@ -43,6 +43,9 @@ public class PeonyBlockLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(PeonyBlocks.FLATBREAD);
         addDrop(PeonyBlocks.SKILLET);
         addDrop(PeonyBlocks.BREWING_BARREL);
+        addDrop(PeonyBlocks.FERMENTATION_TANK);
+        addDrop(PeonyBlocks.GAS_CYLINDER);
+        addDrop(PeonyBlocks.GAS_STOVE);
         addDrop(PeonyBlocks.BOWL, Items.BOWL);
 
         Registries.BLOCK.stream().forEach(entry -> {

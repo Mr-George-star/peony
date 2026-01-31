@@ -95,7 +95,7 @@ public class FlatbreadBlock extends Block implements BlockEntityProvider {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof FlatbreadBlockEntity flatbread) {
             return AccessibleInventory.access(flatbread,
-                    AccessibleInventory.createContext(world, pos, player, hand), ItemDecrementBehaviour.createFlatbread());
+                    AccessibleInventory.createContext(world, pos, player, hand), ItemDecrementBehaviour.createDefault());
         }
         return super.onUseWithItem(stack, state, world, pos, player, hand, hit);
     }

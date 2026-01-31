@@ -2,12 +2,9 @@ package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.george.peony.api.heat.Heat;
-import net.george.peony.api.heat.HeatLevel;
-import net.george.peony.api.heat.HeatProvider;
+import net.george.peony.block.data.HeatSource;
 import net.george.peony.block.entity.PeonyBlockEntities;
 import net.george.peony.block.entity.PotStandWithCampfireBlockEntity;
-import net.george.peony.util.math.Range;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -33,22 +30,15 @@ import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PotStandWithCampfireBlock extends PotStandBlock implements HeatProvider {
+public class PotStandWithCampfireBlock extends PotStandBlock implements HeatSource {
     public static final MapCodec<PotStandWithCampfireBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
-            instance.group(createSettingsCodec(), createLogStickCodec(), HeatProvider.createHeatCodec()).apply(instance, PotStandWithCampfireBlock::new));
-    public static final Heat HEAT = Heat.create(Range.create(500, 600), HeatLevel.HIGH);
+            instance.group(createSettingsCodec(), createLogStickCodec()).apply(instance, PotStandWithCampfireBlock::new));
     public static final BooleanProperty LIT = Properties.LIT;
     public static final BooleanProperty SIGNAL_FIRE = Properties.SIGNAL_FIRE;
-    protected final Heat heat;
     public final boolean emitsParticles = true;
 
     public PotStandWithCampfireBlock(Settings settings, Block logStick) {
-        this(settings, logStick, HEAT);
-    }
-
-    public PotStandWithCampfireBlock(Settings settings, Block logStick, Heat heat) {
         super(settings, logStick);
-        this.heat = heat;
         this.setDefaultState(this.getDefaultState()
                 .with(LIT, true)
                 .with(SIGNAL_FIRE, false));
@@ -116,13 +106,6 @@ public class PotStandWithCampfireBlock extends PotStandBlock implements HeatProv
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         super.appendProperties(builder);
         builder.add(LIT, SIGNAL_FIRE);
-    }
-
-    /* HEAT SYSTEM */
-
-    @Override
-    public Heat getHeat() {
-        return this.heat;
     }
 
     /* BLOCK ENTITY */

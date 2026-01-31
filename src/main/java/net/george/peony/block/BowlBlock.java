@@ -26,6 +26,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.stream.Stream;
 
@@ -122,6 +123,7 @@ public class BowlBlock extends BlockWithEntity {
         return new BowlBlockEntity(pos, state);
     }
 
+    @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return world.isClient ? null : validateTicker(type, PeonyBlockEntities.BOWL, BlockEntityTickerProvider::tick);

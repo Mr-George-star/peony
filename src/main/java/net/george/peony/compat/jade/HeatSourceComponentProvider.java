@@ -11,7 +11,7 @@ import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
 
 public class HeatSourceComponentProvider implements IBlockComponentProvider {
-    public static final HeatSourceComponentProvider POT_STAND_WITH_CAMPFIRE = of(PeonyJadePlugin.POT_STAND_WITH_CAMPFIRE_ID);
+    public static final HeatSourceComponentProvider DEFAULT = of(PeonyJadePlugin.DEFAULT_HEAT_SOURCE_ID);
 
     private final Identifier id;
 

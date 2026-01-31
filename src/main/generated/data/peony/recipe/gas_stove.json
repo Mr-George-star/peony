@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "peony-blocks",
+  "key": {
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "N": {
+      "tag": "c:nuggets/iron"
+    }
+  },
+  "pattern": [
+    "NIN",
+    "I I",
+    "I I"
+  ],
+  "result": {
+    "count": 1,
+    "id": "peony:gas_stove"
+  }
+}

@@ -29,7 +29,7 @@ public interface AccessibleInventory {
     }
 
     static ItemActionResult access(AccessibleInventory entity, InteractionContext context) {
-        return access(entity, context, ItemDecrementBehaviour.createDefault());
+        return access(entity, context, ItemDecrementBehaviour.createAllConsumed());
     }
 
     static ItemActionResult access(AccessibleInventory entity, InteractionContext context, ItemDecrementBehaviour behaviour) {
@@ -47,17 +47,23 @@ public interface AccessibleInventory {
     }
 
     static InsertResult createResult(boolean result, int decrementCount) {
-        return new InsertResult(result, decrementCount);
+        return createResult(result, decrementCount, true);
+    }
+
+    static InsertResult createResult(boolean result, int decrementCount, boolean consume) {
+        return new InsertResult(result, decrementCount, consume);
     }
 
     private static ItemActionResult handleInsertAction(AccessibleInventory entity, InteractionContext context, ItemStack heldStack, ItemDecrementBehaviour behaviour) {
         InsertResult result = entity.insertItemSpecified(context, heldStack);
         if (result.isSuccess()) {
             playUsageSound(context, SoundEvents.ENTITY_ITEM_PICKUP, 1F, 2F);
-            if (result.decrementCount > -1) {
-                ItemDecrementBehaviour.createDecreaseSpecified(result.decrementCount).effective(context.world, context.user, context.hand);
-            } else {
-                behaviour.effective(context.world, context.user, context.hand);
+            if (result.isConsumeItem()) {
+                if (result.decrementCount > -1) {
+                    ItemDecrementBehaviour.createDecreaseSpecified(result.decrementCount).effective(context.world, context.user, context.hand);
+                } else {
+                    behaviour.effective(context.world, context.user, context.hand);
+                }
             }
             increaseUsageStat(context.user, heldStack);
             return ItemActionResult.SUCCESS;
@@ -118,14 +124,20 @@ public interface AccessibleInventory {
     class InsertResult {
         public boolean result;
         public int decrementCount;
+        public boolean consume;
 
-        private InsertResult(boolean result, int decrementCount) {
+        private InsertResult(boolean result, int decrementCount, boolean consume) {
             this.result = result;
             this.decrementCount = decrementCount;
+            this.consume = consume;
         }
 
         public boolean isSuccess() {
             return this.result;
+        }
+
+        public boolean isConsumeItem() {
+            return this.consume;
         }
     }
 }

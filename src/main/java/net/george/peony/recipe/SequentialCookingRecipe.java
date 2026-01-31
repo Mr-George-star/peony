@@ -1,5 +1,6 @@
 package net.george.peony.recipe;
 
+import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -7,6 +8,7 @@ import net.george.peony.Peony;
 import net.george.peony.api.data.CommonIngredientType;
 import net.george.peony.block.data.CookingSteps;
 import net.george.peony.block.data.Output;
+import net.george.peony.block.data.RecipeStepTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -60,17 +62,18 @@ public class SequentialCookingRecipe implements Recipe<SequentialCookingRecipeIn
     public CookingSteps getSteps() {
         return this.steps;
     }
-//
-//    public CookingSteps getStepsWithCommonIngredient(RecipeStepTypes type) {
-//        if (this.basicIngredient == null) {
-//            return this.steps;
-//        } else {
-//            CookingSteps.Step step = (CookingSteps.Step) this.basicIngredient.createInstance().getStep(type);
-//            List<CookingSteps.Step> steps = Lists.newArrayList(step);
-//            steps.addAll(this.steps.getSteps());
-//            return new CookingSteps(steps);
-//        }
-//    }
+
+    public CookingSteps getStepsWithCommonIngredient() {
+        if (this.basicIngredient == null) {
+            return this.steps;
+        } else {
+            CookingSteps.Step step = (CookingSteps.Step) this.basicIngredient.createInstance()
+                    .getStep(RecipeStepTypes.COOKING);
+            List<CookingSteps.Step> steps = Lists.newArrayList(step);
+            steps.addAll(this.steps.getSteps());
+            return new CookingSteps(steps);
+        }
+    }
 
     public Output getOutput() {
         return this.output;

@@ -4,6 +4,7 @@ import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
+import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
@@ -56,12 +57,31 @@ public class PeonyConfig {
                                         .formatValue(seconds -> Text.translatable(PeonyTranslationKeys.SECOND, seconds))
                                 )
                                 .build())
-                        .build()))
-                .generateScreen(parent);
+                        .build())
+                .category(ConfigCategory.createBuilder()
+                        .name(Text.translatable(PeonyTranslationKeys.CONFIG_CATEGORY_EXPERIMENTAL))
+                        .tooltip(Text.translatable(PeonyTranslationKeys.CONFIG_CATEGORY_DESCRIPTION_EXPERIMENTAL))
+                        .option(Option.<Boolean>createBuilder()
+                                .name(Text.translatable(PeonyTranslationKeys.OPTION_DEBUG_COMMANDS))
+                                .binding(
+                                        defaults.debugCommands,
+                                        () -> config.debugCommands,
+                                        value -> config.debugCommands = value
+                                )
+                                .controller(option -> BooleanControllerBuilder.create(option)
+                                        .onOffFormatter())
+                                .build())
+                        .build())
+        ).generateScreen(parent);
     }
 
+    /* common */
     @SerialEntry(comment = "The duration of the slowness effect in lard. When the player is in lard fluid, the slowness effect will be applied. The following durations are in ticks (1 second = 20 ticks).")
     public int lardSlownessDurationTicks = 100;
     @SerialEntry(comment = "If the player is on fire, entering or jumping into lard fluid will extend the fire duration (including cauldrons containing lard). The following durations are in ticks (1 second = 20 ticks).")
     public int lardFireExtensionTicks = 100;
+
+    /* experimental */
+    @SerialEntry(comment = "Enable commands for debugging")
+    public boolean debugCommands = true;
 }

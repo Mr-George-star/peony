@@ -84,7 +84,6 @@ import java.util.function.Consumer;
  */
 @SuppressWarnings({"unused"})
 public class SkilletBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, AccessibleInventory, BlockEntityTickerProvider {
-
     /** Dummy recipe ID used for oil processing */
     protected static final Identifier DUMMY_RECIPE_ID = Peony.id("dummy_recipe");
 
@@ -643,8 +642,8 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
      * @return true if there is a valid heat source
      */
     protected boolean checkHeatSource(World world, BlockPos pos) {
-        BlockState belowState = world.getBlockState(pos.down());
-        if (belowState.getBlock() instanceof HeatProvider heatProvider) {
+        BlockEntity belowEntity = world.getBlockEntity(pos.down());
+        if (belowEntity instanceof HeatProvider heatProvider) {
             this.context.hasHeat = heatProvider.getLevel().canHeatItems();
             return this.context.hasHeat;
         }
@@ -661,8 +660,8 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
      * @return true if the temperature meets requirements
      */
     protected boolean checkTemperature(World world, BlockPos pos, int requiredTemperature) {
-        BlockState belowState = world.getBlockState(pos.down());
-        if (belowState.getBlock() instanceof HeatProvider heatProvider) {
+        BlockEntity belowEntity = world.getBlockEntity(pos.down());
+        if (belowEntity instanceof HeatProvider heatProvider) {
             Range temperatureRange = heatProvider.getTemperature();
             return temperatureRange.contains(requiredTemperature);
         }
@@ -690,10 +689,17 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
      * @return the required heating time, or -1 if invalid
      */
     public static int calculateRequiredHeatingTime(World world, BlockPos pos, int requiredTime) {
-        BlockState belowState = world.getBlockState(pos.down());
-        if (belowState.getBlock() instanceof HeatProvider heatProvider) {
-            return HeatCalculationUtils.calculateHeatingTime(requiredTime, heatProvider);
+        BlockEntity belowEntity = world.getBlockEntity(pos.down());
+        HeatProvider heatProvider = null;
+
+        if (belowEntity instanceof HeatProvider) {
+            heatProvider = (HeatProvider) belowEntity;
         }
+        if (heatProvider != null) {
+            int calculatedTime = HeatCalculationUtils.calculateHeatingTime(requiredTime, heatProvider);
+            return Math.max(1, calculatedTime);
+        }
+
         return -1;
     }
 

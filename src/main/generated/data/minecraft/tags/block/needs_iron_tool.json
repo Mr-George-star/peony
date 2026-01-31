@@ -1,5 +1,7 @@
 {
   "values": [
-    "peony:skillet"
+    "peony:skillet",
+    "peony:gas_cylinder",
+    "peony:gas_stove"
   ]
 }

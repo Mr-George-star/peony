@@ -19,6 +19,13 @@ public interface ItemDecrementBehaviour extends TriFunction<World, PlayerEntity,
 
     static ItemDecrementBehaviour createDefault() {
         return (world, user, hand) -> {
+            ItemStack heldStack = user.getStackInHand(hand);
+            user.setStackInHand(hand, ItemExchangeBehaviour.get(heldStack.getItem()).exchange(world, user, heldStack));
+        };
+    }
+
+    static ItemDecrementBehaviour createAllConsumed() {
+        return (world, user, hand) -> {
             if (!user.getAbilities().creativeMode) {
                 user.setStackInHand(hand, ItemStack.EMPTY);
             }
@@ -34,27 +41,6 @@ public interface ItemDecrementBehaviour extends TriFunction<World, PlayerEntity,
                 return;
             }
             ItemExchangeBehaviour.DEFAULT.exchange(world, user, heldStack);
-        };
-    }
-
-    static ItemDecrementBehaviour createSkillet() {
-        return (world, user, hand) -> {
-            ItemStack heldStack = user.getStackInHand(hand);
-            user.setStackInHand(hand, ItemExchangeBehaviour.get(heldStack.getItem()).exchange(world, user, heldStack));
-        };
-    }
-
-    static ItemDecrementBehaviour createBrewingBarrel() {
-        return (world, user, hand) -> {
-            ItemStack heldStack = user.getStackInHand(hand);
-            user.setStackInHand(hand, ItemExchangeBehaviour.get(heldStack.getItem()).exchange(world, user, heldStack));
-        };
-    }
-
-    static ItemDecrementBehaviour createFlatbread() {
-        return (world, user, hand) -> {
-            ItemStack heldStack = user.getStackInHand(hand);
-            user.setStackInHand(hand, ItemExchangeBehaviour.get(heldStack.getItem()).exchange(world, user, heldStack));
         };
     }
 

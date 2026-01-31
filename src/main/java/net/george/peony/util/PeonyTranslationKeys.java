@@ -29,11 +29,15 @@ public class PeonyTranslationKeys {
     /* CONFIG */
     public static final String CONFIG_SCREEN_TITLE = createConfigTranslationKey("title");
     public static final String CONFIG_CATEGORY_COMMON = createConfigTranslationKey("category", "common");
+    public static final String CONFIG_CATEGORY_EXPERIMENTAL = createConfigTranslationKey("category", "experimental");
     // options
     public static final String OPTION_LARD_SLOWNESS_DURATION_TICKS = createConfigTranslationKey("option", "lard", "slowness", "duration", "ticks");
     public static final String OPTION_LARD_FIRE_EXTENSION_TICKS = createConfigTranslationKey("option", "lard", "fire", "extension", "ticks");
+    public static final String OPTION_DEBUG_COMMANDS = createConfigTranslationKey("option", "debug", "commands");
     // descriptions
     public static final String CONFIG_CATEGORY_DESCRIPTION_COMMON = createConfigTranslationKey("description", "category", "common");
+    public static final String CONFIG_CATEGORY_DESCRIPTION_EXPERIMENTAL = createConfigTranslationKey("description", "category", "experimental");
+
     public static final String OPTION_DESCRIPTION_LARD_SLOWNESS_DURATION_TICKS = createConfigTranslationKey("description", "option", "lard", "slowness", "duration", "ticks");
     public static final String OPTION_DESCRIPTION_LARD_FIRE_EXTENSION_TICKS = createConfigTranslationKey("description", "option", "lard", "fire", "extension", "ticks");
 
@@ -46,6 +50,9 @@ public class PeonyTranslationKeys {
     public static final String JADE_TIME_LIMIT = createJadeTranslationKey("time", "limit");
     public static final String JADE_REQUIRES = createJadeTranslationKey("requires");
     public static final String JADE_NO_HEAT_SOURCE = createJadeTranslationKey("no", "heat", "source");
+    public static final String JADE_OPENING_STATE = createJadeTranslationKey("opening", "state");
+    public static final String JADE_OPENED = createJadeTranslationKey("opened");
+    public static final String JADE_CLOSED = createJadeTranslationKey("closed");
 
     // skillet statements
     public static final String JADE_STATE_IDLE = createJadeTranslationKey("state", "idle");

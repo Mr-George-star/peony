@@ -57,5 +57,7 @@ public interface ItemExchangeBehaviour {
                 ItemUsage.exchangeStack(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
         register(PeonyItems.SWEET_SOUR_SAUCE, (world, player, stack) ->
                 ItemUsage.exchangeStack(stack, player, new ItemStack(PeonyItems.CONDIMENT_BOTTLE)));
+        register(PeonyItems.NATURE_GAS_BUCKET, (world, player, stack) ->
+                ItemUsage.exchangeStack(stack, player, new ItemStack(Items.BUCKET)));
     }
 }

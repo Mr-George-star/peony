@@ -73,6 +73,7 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
 
         builder.add(PeonyItems.MUSIC_DISC_SURPRISE, "惊喜");
 
+        // blocks
         builder.add(PeonyBlocks.DOUGH, "面团");
         builder.add(PeonyBlocks.FLOUR, "面粉");
         builder.add(PeonyBlocks.FLATBREAD, "面饼");
@@ -95,6 +96,8 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyBlocks.SKILLET, "平底锅");
         builder.add(PeonyBlocks.BREWING_BARREL, "酿造桶");
         builder.add(PeonyBlocks.FERMENTATION_TANK, "发酵桶");
+        builder.add(PeonyBlocks.GAS_CYLINDER, "煤气罐");
+        builder.add(PeonyBlocks.GAS_STOVE, "煤气灶");
         builder.add(PeonyBlocks.OAK_LOG_STICK, "橡木原木棍");
         builder.add(PeonyBlocks.SPRUCE_LOG_STICK, "云杉原木棍");
         builder.add(PeonyBlocks.BIRCH_LOG_STICK, "白桦原木棍");
@@ -185,11 +188,15 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         /* CONFIG */
         builder.add(PeonyTranslationKeys.CONFIG_SCREEN_TITLE, "牡丹");
         builder.add(PeonyTranslationKeys.CONFIG_CATEGORY_COMMON, "基本配置");
+        builder.add(PeonyTranslationKeys.CONFIG_CATEGORY_EXPERIMENTAL, "实验性选项");
         // options
         builder.add(PeonyTranslationKeys.OPTION_LARD_SLOWNESS_DURATION_TICKS, "在猪油中缓慢效果的持续时间");
         builder.add(PeonyTranslationKeys.OPTION_LARD_FIRE_EXTENSION_TICKS, "在猪油中着火时的延长持续时间”");
+        builder.add(PeonyTranslationKeys.OPTION_DEBUG_COMMANDS, "启用调试命令");
         // descriptions
         builder.add(PeonyTranslationKeys.CONFIG_CATEGORY_DESCRIPTION_COMMON, "基本配置选项");
+        builder.add(PeonyTranslationKeys.CONFIG_CATEGORY_DESCRIPTION_EXPERIMENTAL, "实验性与用于调试的选项配置");
+
         builder.add(PeonyTranslationKeys.OPTION_DESCRIPTION_LARD_SLOWNESS_DURATION_TICKS, "当玩家在猪油液体中时，将会被施加缓慢效果，持续时间是以游戏刻为单位的（1秒=20游戏刻）。");
         builder.add(PeonyTranslationKeys.OPTION_DESCRIPTION_LARD_FIRE_EXTENSION_TICKS, "如果玩家着火，进入或跳入猪油液体会延长火焰持续时间（包括装有猪油的炼药锅）。持续时间是以游戏刻为单位的（1秒=20刻）。");
 
@@ -198,7 +205,8 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         /* JADE */
         // config
         builder.add("config.jade.plugin_peony.skillet_component", "平底锅状态显示");
-        builder.add("config.jade.plugin_peony.pot_stand_with_campfire_component", "套营火的橡木锅架 - 温度数据显示");
+        builder.add("config.jade.plugin_peony.default_heat_source_component", "默认温度数据显示");
+        builder.add("config.jade.plugin_peony.default_openable_component", "默认开启状态显示");
 
         // global
         builder.add(PeonyTranslationKeys.JADE_STEP, "步骤: %d / %d");
@@ -206,6 +214,9 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyTranslationKeys.JADE_TIME_LIMIT, "时间限制: %d秒");
         builder.add(PeonyTranslationKeys.JADE_REQUIRES, "需要");
         builder.add(PeonyTranslationKeys.JADE_NO_HEAT_SOURCE, "⚠ 没有热源");
+        builder.add(PeonyTranslationKeys.JADE_OPENING_STATE, "打开状态: ");
+        builder.add(PeonyTranslationKeys.JADE_OPENED, "已开启");
+        builder.add(PeonyTranslationKeys.JADE_CLOSED, "已关闭");
 
         // skillet statements
         builder.add(PeonyTranslationKeys.JADE_STATE_IDLE, "空闲");
@@ -219,7 +230,7 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyTranslationKeys.JADE_STATE_FAILED, "已失败");
 
         // skillet
-        builder.add(PeonyTranslationKeys.JADE_SKILLET_MELTING_OIL, "融化油: %d / %d");
+        builder.add(PeonyTranslationKeys.JADE_SKILLET_MELTING_OIL, "融化油");
         builder.add(PeonyTranslationKeys.JADE_SKILLET_CONTINUE, "继续: %d / %d");
         builder.add(PeonyTranslationKeys.JADE_SKILLET_HEATING_TIME, "加热中: %d / %d");
         builder.add(PeonyTranslationKeys.JADE_SKILLET_HEATING, "加热");

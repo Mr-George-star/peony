@@ -47,7 +47,7 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
     protected int requiredBrewingTime = 0;
     protected int brewingTime = 0;
     protected CountdownManager countdownManager;
-    public final SingleFluidStorage fluidStorage = SingleFluidStorage.withFixedCapacity(FluidConstants.BUCKET, this::markDirty);
+    public final SingleFluidStorage fluidStorage;
     protected @Nullable RecipeEntry<BrewingRecipe> cachedRecipe = null;
     @Nullable
     protected ItemConvertible requiredContainer;
@@ -58,6 +58,7 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
         this.inputs = DefaultedList.ofSize(5, ItemStack.EMPTY);
         this.inputCursor = Cursor.create(0, 5, "InputCursor");
         this.countdownManager = CountdownManager.create();
+        this.fluidStorage = SingleFluidStorage.withFixedCapacity(FluidConstants.BUCKET, this::markDirty);
     }
 
     @Override
