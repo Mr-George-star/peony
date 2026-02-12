@@ -1,6 +1,7 @@
 package net.george.peony.networking;
 
 import net.george.networking.api.GameNetworking;
+import net.george.peony.networking.payload.FermentationTankAnimationS2CPayload;
 import net.george.peony.networking.payload.ItemStackSyncS2CPayload;
 import net.george.peony.networking.payload.SkilletAnimationDataSyncS2CPayload;
 import net.george.peony.networking.payload.SkilletIngredientsSyncS2CPayload;
@@ -28,6 +29,12 @@ public class PeonyNetworking {
                 SkilletAnimationDataSyncS2CPayload.CODEC,
                 List.of(),
                 SkilletAnimationDataSyncS2CPayload.RECEIVER
+        );
+        GameNetworking.registerS2CReceiver(
+                FermentationTankAnimationS2CPayload.ID,
+                FermentationTankAnimationS2CPayload.CODEC,
+                List.of(),
+                FermentationTankAnimationS2CPayload.RECEIVER
         );
     }
 }

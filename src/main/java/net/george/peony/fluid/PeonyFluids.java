@@ -10,6 +10,8 @@ public class PeonyFluids {
     public static final FlowableFluid FLOWING_NATURE_GAS = register("flowing_nature_gas", new NatureGasFluid.Flowing());
     public static final FlowableFluid STILL_LARD = register("still_lard", new LardFluid.Still());
     public static final FlowableFluid FLOWING_LARD = register("flowing_lard", new LardFluid.Flowing());
+    public static final FlowableFluid STILL_SOY_SAUCE = register("still_soy_sauce", new SoySauceFluid.Still());
+    public static final FlowableFluid FLOWING_SOY_SAUCE = register("flowing_soy_sauce", new SoySauceFluid.Flowing());
 
     public static FlowableFluid register(String name, FlowableFluid fluid) {
         return Registry.register(Registries.FLUID, Peony.id(name), fluid);

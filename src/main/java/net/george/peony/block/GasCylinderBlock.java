@@ -43,7 +43,7 @@ public class GasCylinderBlock extends FallingBlock implements BlockEntityProvide
             Block.createCuboidShape(3, 0, 3, 13, 1, 13),
             Block.createCuboidShape(2, 1, 2, 14, 13, 14),
             Block.createCuboidShape(3, 13, 3, 13, 14, 13)
-    ).reduce((v1, v2) -> VoxelShapes.combineAndSimplify(v1, v2, BooleanBiFunction.OR)).get();
+    ).reduce(VoxelShapes::union).get();
 
     public GasCylinderBlock(Settings settings) {
         super(settings);

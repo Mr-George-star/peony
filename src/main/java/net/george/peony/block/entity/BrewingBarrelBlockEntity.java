@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.base.SingleFluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.george.peony.api.fluid.FluidStack;
-import net.george.peony.api.item.FluidContainer;
+import net.george.peony.api.fluid.FluidContainer;
 import net.george.peony.api.util.CountdownManager;
 import net.george.peony.block.SkilletBlock;
 import net.george.peony.block.data.Cursor;
@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+// todo: join into fabric fluid transfer api
 public class BrewingBarrelBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, AccessibleInventory, BlockEntityTickerProvider {
     protected final DefaultedList<ItemStack> inputs;
     protected ItemStack outputStack = ItemStack.EMPTY;

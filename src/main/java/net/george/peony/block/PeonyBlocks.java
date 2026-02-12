@@ -1,12 +1,5 @@
 package net.george.peony.block;
 
-import net.fabricmc.fabric.api.transfer.v1.fluid.CauldronFluidContent;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
-import net.fabricmc.fabric.api.transfer.v1.fluid.base.EmptyItemFluidStorage;
-import net.fabricmc.fabric.api.transfer.v1.fluid.base.FullItemFluidStorage;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.george.peony.Peony;
 import net.george.peony.PeonyItemGroups;
 import net.george.peony.api.block.PizzaBlockState;
@@ -34,9 +27,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-
-import static net.minecraft.item.Items.BUCKET;
-import static net.minecraft.item.Items.GLASS_BOTTLE;
 
 public class PeonyBlocks {
     public static final Map<Block, Block> POT_STAND_FAMILIES;
@@ -150,6 +140,9 @@ public class PeonyBlocks {
     public static final Block LARD_FLUID = register("lard_fluid", LardFluidBlock::new, createDefaultSettings()
             .mapColor(MapColor.TERRACOTTA_YELLOW).replaceable().noCollision().strength(100F)
             .pistonBehavior(PistonBehavior.DESTROY).dropsNothing().liquid().sounds(BlockSoundGroup.INTENTIONALLY_EMPTY), false);
+    public static final Block SOY_SAUCE_FLUID = register("soy_sauce_fluid", settings -> new FluidBlock(PeonyFluids.STILL_SOY_SAUCE, settings), createDefaultSettings()
+            .mapColor(MapColor.TERRACOTTA_BLACK).replaceable().noCollision().strength(100F)
+            .pistonBehavior(PistonBehavior.DESTROY).dropsNothing().liquid().sounds(BlockSoundGroup.INTENTIONALLY_EMPTY), false);
 
     public static final Block LARD_CAULDRON = register("lard_cauldron", LardCauldronBlock::new,
             AbstractBlock.Settings.copy(Blocks.CAULDRON), false);
@@ -259,20 +252,6 @@ public class PeonyBlocks {
     }
 
     public static void register() {
-        ItemExchangeBehaviour.registerBehaviours();
-        CauldronFluidContent.registerCauldron(LARD_CAULDRON, PeonyFluids.STILL_LARD, FluidConstants.BOTTLE, LeveledCauldronBlock.LEVEL);
-        FluidStorage.combinedItemApiProvider(PeonyItems.LARD_BUCKET).register(context ->
-                new FullItemFluidStorage(context, bucket -> ItemVariant.of(BUCKET), FluidVariant.of(PeonyFluids.STILL_LARD), FluidConstants.BUCKET)
-        );
-        FluidStorage.combinedItemApiProvider(BUCKET).register(context ->
-                new EmptyItemFluidStorage(context, bucket -> ItemVariant.of(PeonyItems.LARD_BUCKET), PeonyFluids.STILL_LARD, FluidConstants.BUCKET)
-        );
-        FluidStorage.combinedItemApiProvider(PeonyItems.LARD_BOTTLE).register(context ->
-                new FullItemFluidStorage(context, bottle -> ItemVariant.of(GLASS_BOTTLE), FluidVariant.of(PeonyFluids.STILL_LARD), FluidConstants.BOTTLE)
-        );
-        FluidStorage.combinedItemApiProvider(GLASS_BOTTLE).register(context ->
-                new EmptyItemFluidStorage(context, bucket -> ItemVariant.of(PeonyItems.LARD_BOTTLE), PeonyFluids.STILL_LARD, FluidConstants.BOTTLE)
-        );
         LardCauldronBlock.addBehaviours();
         Peony.debug("Blocks");
     }

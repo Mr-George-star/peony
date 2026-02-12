@@ -39,11 +39,7 @@ public interface Output {
                     Registries.ITEM.getCodec().fieldOf("container").xmap(
                             item -> (ItemConvertible) item,
                             ItemConvertible::asItem
-                    ).forGetter(FluidOutputImpl::getContainer),
-                    Registries.ITEM.getCodec().fieldOf("result").xmap(
-                            item -> (ItemConvertible) item,
-                            ItemConvertible::asItem
-                    ).forGetter(FluidOutputImpl::getOutputItem)
+                    ).forGetter(FluidOutputImpl::getContainer)
             ).apply(instance, FluidOutputImpl::new)
     );
     PacketCodec<RegistryByteBuf, Output> PACKET_CODEC = new OutputContainerPacketCodec();
@@ -55,6 +51,10 @@ public interface Output {
     @Nullable
     FluidStack getOutputFluid();
 
+    default boolean containsFluid() {
+        return false;
+    }
+
     static Output create(ItemStack outputStack, ItemConvertible container) {
         return new ItemOutputImpl(outputStack, container);
     }
@@ -63,8 +63,8 @@ public interface Output {
         return new NoContainerItemOutput(outputStack);
     }
 
-    static Output createFluid(FluidStack outputFluid, ItemConvertible container, ItemConvertible result) {
-        return new FluidOutputImpl(outputFluid, container, result);
+    static Output createFluid(FluidStack outputFluid, ItemConvertible container) {
+        return new FluidOutputImpl(outputFluid, container);
     }
 
     @Nullable
@@ -140,17 +140,15 @@ public interface Output {
     class FluidOutputImpl implements Output {
         protected final FluidStack outputFluid;
         protected final ItemConvertible container;
-        protected final ItemConvertible result;
 
-        protected FluidOutputImpl(FluidStack outputFluid, ItemConvertible container, ItemConvertible result) {
+        protected FluidOutputImpl(FluidStack outputFluid, ItemConvertible container) {
             this.outputFluid = outputFluid;
             this.container = container;
-            this.result = result;
         }
 
         @Override
         public ItemStack getOutputStack() {
-            return new ItemStack(this.result);
+            return new ItemStack(PeonyItems.PLACEHOLDER);
         }
 
         @Override
@@ -163,8 +161,9 @@ public interface Output {
             return this.outputFluid;
         }
 
-        public ItemConvertible getOutputItem() {
-            return this.getOutputStack().getItem();
+        @Override
+        public boolean containsFluid() {
+            return true;
         }
 
         @Override
@@ -172,7 +171,6 @@ public interface Output {
             return "FluidOutputImpl[" +
                     "outputFluid=" + this.outputFluid +
                     ", container=" + this.container +
-                    ", result=" + this.result +
                     ']';
         }
     }
@@ -268,7 +266,6 @@ public interface Output {
             } else if (type == 2) {
                 return new FluidOutputImpl(
                         FluidStack.PACKET_CODEC.decode(buf),
-                        this.itemPacketCodec.decode(buf),
                         this.itemPacketCodec.decode(buf)
                 );
             } else {
@@ -289,7 +286,6 @@ public interface Output {
                 buf.writeByte(2);
                 FluidStack.PACKET_CODEC.encode(buf, fluidOutput.outputFluid);
                 this.itemPacketCodec.encode(buf, fluidOutput.container);
-                this.itemPacketCodec.encode(buf, fluidOutput.result);
             }
         }
     }

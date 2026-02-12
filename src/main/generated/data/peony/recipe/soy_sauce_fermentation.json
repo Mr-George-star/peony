@@ -1,0 +1,30 @@
+{
+  "type": "peony:fermenting",
+  "fermenting_time": 1200,
+  "fluid_input": {
+    "amount": 27000,
+    "fluid": {
+      "fluid": "minecraft:water"
+    }
+  },
+  "ingredients": [
+    {
+      "item": "peony:soybean"
+    },
+    {
+      "item": "peony:soybean"
+    },
+    {
+      "item": "peony:soybean"
+    }
+  ],
+  "output": {
+    "container": "peony:condiment_bottle",
+    "outputFluid": {
+      "amount": 27000,
+      "fluid": {
+        "fluid": "peony:still_soy_sauce"
+      }
+    }
+  }
+}

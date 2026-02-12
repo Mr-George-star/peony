@@ -3,7 +3,6 @@ package net.george.peony.recipe;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.george.peony.api.fluid.FluidStack;
-import net.george.peony.api.fluid.FluidUtils;
 import net.george.peony.block.data.Output;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
@@ -38,18 +37,16 @@ public record FermentingRecipe(List<Ingredient> ingredients, Optional<FluidStack
     public boolean matches(MixedIngredientsRecipeInput input, World world) {
         FluidStack inputFluid = input.getFluid();
 
-        DefaultedList<ItemStack> inputItems = DefaultedList.of();
-        for (int i = 0; i < input.getSize(); i++) {
-            ItemStack stack = input.getStackInSlot(i);
-            if (!stack.isEmpty()) {
-                inputItems.add(stack);
-            }
-        }
+        DefaultedList<ItemStack> inputItems = input.getUsedInputs();
 
         if (this.fluidInput.isPresent()) {
             FluidStack recipeFluid = this.fluidInput.get();
             if (!recipeFluid.isEmpty()) {
                 if (!recipeFluid.equals(inputFluid)) {
+                    return false;
+                }
+            } else {
+                if (!inputFluid.isEmpty()) {
                     return false;
                 }
             }
@@ -64,17 +61,11 @@ public record FermentingRecipe(List<Ingredient> ingredients, Optional<FluidStack
                 return false;
             }
 
-            boolean[] used = new boolean[inputItems.size()];
-            for (Ingredient ingredient : this.ingredients) {
-                boolean found = false;
-                for (int i = 0; i < inputItems.size(); i++) {
-                    if (!used[i] && ingredient.test(inputItems.get(i))) {
-                        used[i] = true;
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
+            for (int i = 0; i < this.ingredients.size(); i++) {
+                Ingredient recipeIngredient = this.ingredients.get(i);
+                ItemStack inputItem = inputItems.get(i);
+
+                if (!recipeIngredient.test(inputItem)) {
                     return false;
                 }
             }
@@ -83,52 +74,6 @@ public record FermentingRecipe(List<Ingredient> ingredients, Optional<FluidStack
         }
 
         return true;
-    }
-
-    // 辅助方法：检查输入是否匹配，考虑物品到流体的转换
-    public boolean matchesWithConversion(MixedIngredientsRecipeInput input, World world) {
-        // 首先尝试直接匹配
-        if (this.matches(input, world)) {
-            return true;
-        }
-
-        // 如果直接匹配失败，检查是否有物品可以转换成流体
-        if (!this.ingredients.isEmpty() && this.fluidInput.isEmpty()) {
-            // 配方只有物品输入，没有流体输入
-            // 检查输入的物品是否可以转换成流体
-            DefaultedList<ItemStack> inputItems = DefaultedList.of();
-            for (int i = 0; i < input.getSize(); i++) {
-                ItemStack stack = input.getStackInSlot(i);
-                if (!stack.isEmpty()) {
-                    inputItems.add(stack);
-                }
-            }
-
-            // 检查物品数量是否匹配
-            if (this.ingredients.size() != inputItems.size()) {
-                return false;
-            }
-
-            // 检查是否所有配方成分都能在输入中找到，并且这些物品可以转换成流体
-            for (Ingredient ingredient : this.ingredients) {
-                boolean found = false;
-                for (ItemStack inputItem : inputItems) {
-                    if (ingredient.test(inputItem)) {
-                        if (FluidUtils.hasFluidInItem(inputItem)) {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-                if (!found) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        return false;
     }
 
     @Override

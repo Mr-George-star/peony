@@ -16,6 +16,19 @@ public class ListedRecipeInput implements RecipeInput {
         return slot >= 0 && slot < this.getSize() ? this.inputs.get(slot) : ItemStack.EMPTY;
     }
 
+    public DefaultedList<ItemStack> getInputs() {
+        return this.inputs;
+    }
+
+    public DefaultedList<ItemStack> getUsedInputs() {
+        DefaultedList<ItemStack> used = DefaultedList.of();
+        for (ItemStack stack : this.inputs) {
+            if (!stack.isEmpty()) {
+                used.add(stack);
+            }
+        }
+        return used;
+    }
     @Override
     public int getSize() {
         return this.inputs.size();

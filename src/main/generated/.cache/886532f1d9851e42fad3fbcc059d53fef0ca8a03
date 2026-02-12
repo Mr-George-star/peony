@@ -1,4 +1,4 @@
-// 1.21.1	2026-01-31T19:42:59.837461	Peony/Model Definitions
+// 1.21.1	2026-02-10T21:39:08.2278681	Peony/Model Definitions
 fbb533a0181da81e4e27c0afc935f5357104a6bd assets\peony\blockstates\rice_crop.json
 978cc109af5e0dcc82028d000d548edb45b3116c assets\peony\models\item\jungle_cutting_board.json
 82b184acf042bd49c264923a6f81626215284793 assets\peony\models\block\dark_oak_pot_stand_with_campfire_off.json
@@ -17,6 +17,7 @@ a34b0a2f46bae9a8a96673307c12b5f589f61f00 assets\peony\models\block\rice_crop_upp
 54e014fe7e9bc2833182205072b2cab1e158131e assets\peony\models\item\peanut.json
 666f39c6d8517cce34961af44efa627988d3230d assets\peony\models\block\margherita_pizza_four_thirds.json
 0a50315590d190151a1c7719054b0273786ad2b1 assets\peony\models\block\cherry_pot_stand_with_campfire.json
+a9ec77e3992f15cd5b575e71a501e31b9eaa245c assets\peony\models\item\soy_sauce.json
 cbb299dcd4649db12c25de289050ce753533ac68 assets\peony\models\block\oak_log_stick.json
 2175d23330a066c97cff426cf044ffbb8feec6f0 assets\peony\models\item\oak_cutting_board.json
 363944b91e44ba1a21cb053701610f319b512cf3 assets\peony\models\item\oak_log_stick.json
@@ -112,6 +113,7 @@ cee28d8916a901f9ac6d523bc76edfbc62e62a3f assets\peony\models\item\jungle_log_sti
 a22e6107f74cbc6d8e582010694c931c3cc9c6ac assets\peony\models\item\roasted_peanut_kernel.json
 e3e9ab508fd714bc66bd9eec61edcf5df5c0ce7e assets\peony\blockstates\oak_cutting_board.json
 a216771847aa12c7a1f8e0c19e243239209e3dbd assets\peony\models\block\barley_crop_stage1.json
+ba177044239c3d3285885558dcef298bf0487fd7 assets\peony\blockstates\soy_sauce_fluid.json
 fbbcea4e057f0a05495e3e8e6e62beb6f13d1e55 assets\peony\models\block\rice_crop_upper_stage2.json
 2ce5ba1db004692fe5b1994a8780e6fd12786b32 assets\peony\blockstates\jungle_pot_stand.json
 f296cb7ddd0dbe6ef9b9d383e2d1030e45e8099e assets\peony\models\block\tomato_vines_stage1.json
@@ -173,6 +175,7 @@ b29bb1ea248d6a7615f3ec39945116a90466c5e2 assets\peony\models\block\garlic_crop_s
 11d21248fdc2a882719726172af1acccac6238ca assets\peony\blockstates\acacia_pot_stand_with_campfire.json
 288b50cfd89629f61d8530ad1d33908290594df7 assets\peony\models\item\lard_bucket.json
 97c40e6b867dccd2f8f63197e20148af705b9613 assets\peony\models\block\tomato_vines_stage0.json
+18f24f0d04593b7dd67f5b8a9ef6eaa5a5138fa2 assets\peony\models\item\soy_sauce_bucket.json
 3c204d55e4d72304ca3c4dfae46bdd3d8c85cc34 assets\peony\models\block\rice_crop_upper_stage1.json
 b27719eafd22a53f5b0defc7f864a6f711a67775 assets\peony\models\block\acacia_pot_stand.json
 606db9fbcd3220e205104a1670be20bdae24242b assets\peony\models\item\shredded_potato.json

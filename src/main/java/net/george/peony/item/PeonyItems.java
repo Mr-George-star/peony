@@ -3,7 +3,7 @@ package net.george.peony.item;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.george.peony.Peony;
 import net.george.peony.PeonyItemGroups;
-import net.george.peony.api.item.FluidContainer;
+import net.george.peony.api.fluid.FluidContainer;
 import net.george.peony.block.PeonyBlocks;
 import net.george.peony.block.PeonyJukeboxSongs;
 import net.george.peony.block.data.Output;
@@ -96,6 +96,8 @@ public class PeonyItems {
             createDefaultSettings().maxCount(16));
     public static final Item SWEET_SOUR_SAUCE = register("sweet_sour_sauce", Item::new,
             createDefaultSettings().maxCount(16));
+    public static final Item SOY_SAUCE = register("soy_sauce", Item::new,
+            createDefaultSettings().maxCount(16));
 
     /* kitchen tools */
     public static final Item KITCHEN_KNIFE = register("kitchen_knife", settings ->
@@ -119,6 +121,8 @@ public class PeonyItems {
             NatureGasBucketItem::new, createDefaultSettings().maxCount(1).recipeRemainder(Items.BUCKET));
     public static final Item LARD_BUCKET = register("lard_bucket", settings ->
             new BucketItem(PeonyFluids.STILL_LARD, settings), createDefaultSettings().maxCount(1).recipeRemainder(Items.BUCKET));
+    public static final Item SOY_SAUCE_BUCKET = register("soy_sauce_bucket", settings ->
+            new BucketItem(PeonyFluids.STILL_SOY_SAUCE, settings), createDefaultSettings().maxCount(1).recipeRemainder(Items.BUCKET));
 
     /* misc */
     public static final Item MUSIC_DISC_SURPRISE = register("music_disc_surprise", Item::new, createDefaultSettings().maxCount(1).jukeboxPlayable(PeonyJukeboxSongs.SURPRISE_KEY));

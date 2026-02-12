@@ -4,7 +4,7 @@ import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.george.peony.Peony;
 import net.george.peony.block.PeonyJukeboxSongs;
-import net.george.peony.compat.PeonyDamageTypes;
+import net.george.peony.misc.PeonyDamageTypes;
 import net.george.peony.data.lang.PeonyChineseTranslationProvider;
 import net.george.peony.data.lang.PeonyEnglishTranslationProvider;
 import net.george.peony.data.tag.PeonyBlockTagsProvider;

@@ -1,21 +1,30 @@
-package net.george.peony.compat;
+package net.george.peony.misc;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
+import net.fabricmc.fabric.api.transfer.v1.fluid.CauldronFluidContent;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.fluid.base.EmptyItemFluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.fluid.base.FullItemFluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.george.peony.Peony;
 import net.george.peony.block.*;
-import net.george.peony.block.entity.CarvedRenderingItems;
-import net.george.peony.block.entity.GasStoveBlockEntity;
-import net.george.peony.block.entity.NonBlockRenderingItems;
+import net.george.peony.block.entity.*;
+import net.george.peony.fluid.PeonyFluids;
 import net.george.peony.item.KitchenKnifeItem;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.util.BlockPlacements;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.LeveledCauldronBlock;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.*;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.condition.RandomChanceLootCondition;
@@ -31,13 +40,17 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
 
+import static net.george.peony.item.PeonyItems.CONDIMENT_BOTTLE;
+import static net.minecraft.item.Items.BUCKET;
+import static net.minecraft.item.Items.GLASS_BOTTLE;
 import static net.minecraft.server.command.CommandManager.literal;
 
-public class PeonyCompat {
+public class PeonyRegistries {
     public static final Identifier SHORT_GRASS_LOOT = Identifier.ofVanilla("blocks/short_grass");
     public static final Identifier PIG_LOOT = Identifier.ofVanilla("entities/pig");
 
@@ -126,19 +139,6 @@ public class PeonyCompat {
             ItemStack stack = player.getStackInHand(hand);
             BlockPos pos = hitResult.getBlockPos();
 
-            if (stack.getItem() instanceof BucketItem) {
-                BlockState state = world.getBlockState(pos);
-                if (state.getBlock() instanceof FermentationTankBlock) {
-                    return ActionResult.FAIL;
-                }
-
-                BlockPos downPos = pos.down();
-                BlockState downState = world.getBlockState(downPos);
-                if (downState.getBlock() instanceof FermentationTankBlock) {
-                    return ActionResult.FAIL;
-                }
-            }
-
             if (stack.isOf(Items.EGG)) {
                 BlockState state = world.getBlockState(pos);
 
@@ -155,6 +155,48 @@ public class PeonyCompat {
             }
             return ActionResult.PASS;
         });
+
+        UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
+            if (!world.isClient) {
+                ItemStack stack = player.getStackInHand(hand);
+                BlockPos pos = hitResult.getBlockPos();
+
+                if (stack.getItem() instanceof BucketItem) {
+                    if (world.getBlockState(pos).getBlock() instanceof FermentationTankBlock) {
+                        BlockEntity blockEntity = world.getBlockEntity(pos);
+                        if (blockEntity instanceof FermentationTankBlockEntity cauldron) {
+                            AccessibleInventory.InteractionContext context = AccessibleInventory.createContext(
+                                    world, pos, player, hand);
+
+                            ItemActionResult result = AccessibleInventory.access(
+                                    cauldron, context, ItemDecrementBehaviour.createDefault());
+
+                            return result.isAccepted() ? ActionResult.SUCCESS : ActionResult.PASS;
+                        }
+                    }
+                }
+            }
+
+            return ActionResult.PASS;
+        });
+    }
+
+    private static void registerFluidApi() {
+        CauldronFluidContent.registerCauldron(PeonyBlocks.LARD_CAULDRON, PeonyFluids.STILL_LARD, FluidConstants.BOTTLE, LeveledCauldronBlock.LEVEL);
+
+        registerFluidItem(PeonyItems.LARD_BUCKET, BUCKET, PeonyFluids.STILL_LARD, FluidConstants.BUCKET);
+        registerFluidItem(PeonyItems.LARD_BOTTLE, GLASS_BOTTLE, PeonyFluids.STILL_LARD, FluidConstants.BOTTLE);
+        registerFluidItem(PeonyItems.SOY_SAUCE_BUCKET, BUCKET, PeonyFluids.STILL_SOY_SAUCE, FluidConstants.BUCKET);
+        registerFluidItem(PeonyItems.SOY_SAUCE, CONDIMENT_BOTTLE, PeonyFluids.STILL_SOY_SAUCE, FluidConstants.BOTTLE);
+    }
+
+    private static void registerFluidItem(Item fluidItem, Item container, Fluid fluid, long amount) {
+        FluidStorage.combinedItemApiProvider(fluidItem).register(context ->
+                new FullItemFluidStorage(context, item -> ItemVariant.of(container), FluidVariant.of(fluid), amount)
+        );
+        FluidStorage.combinedItemApiProvider(container).register(context ->
+                new EmptyItemFluidStorage(context, item -> ItemVariant.of(fluidItem), fluid, amount)
+        );
     }
 
     private static void registerDebugCommands() {
@@ -194,8 +236,10 @@ public class PeonyCompat {
         registerBurning();
         registerNonBlockRenderingItems();
         registerCarvedRenderingItems();
+        registerFluidApi();
         modifyLootTables();
         registerEvents();
+        ItemExchangeBehaviour.registerBehaviours();
 
         if (Peony.getConfig().debugCommands) {
             registerDebugCommands();

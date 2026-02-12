@@ -37,7 +37,7 @@ public class BowlBlock extends BlockWithEntity {
             Block.createCuboidShape(3, 1, 12, 13, 3, 13),
             Block.createCuboidShape(12, 1, 4, 13, 3, 12),
             Block.createCuboidShape(3, 1, 4, 4, 3, 12)
-    ).reduce((v1, v2) -> VoxelShapes.combineAndSimplify(v1, v2, BooleanBiFunction.OR)).get();
+    ).reduce(VoxelShapes::union).get();
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     public static final MapCodec<BowlBlock> CODEC = createCodec(BowlBlock::new);
 

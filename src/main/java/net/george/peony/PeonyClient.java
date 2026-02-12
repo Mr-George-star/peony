@@ -43,6 +43,7 @@ public class PeonyClient implements ClientModInitializer {
 
         BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), PeonyFluids.STILL_NATURE_GAS, PeonyFluids.FLOWING_NATURE_GAS);
         BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), PeonyFluids.STILL_LARD, PeonyFluids.FLOWING_LARD);
+        BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), PeonyFluids.STILL_SOY_SAUCE, PeonyFluids.FLOWING_SOY_SAUCE);
 
         BlockEntityRendererFactories.register(PeonyBlockEntities.MILLSTONE, MillstoneBlockEntityRenderer::new);
         BlockEntityRendererFactories.register(PeonyBlockEntities.CUTTING_BOARD, CuttingBoardBlockEntityRenderer::new);
@@ -50,11 +51,14 @@ public class PeonyClient implements ClientModInitializer {
         BlockEntityRendererFactories.register(PeonyBlockEntities.POT_STAND_WITH_CAMPFIRE, PotStandWithCampfireBlockEntityRenderer::new);
         BlockEntityRendererFactories.register(PeonyBlockEntities.SKILLET, SkilletBlockEntityRenderer::new);
         BlockEntityRendererFactories.register(PeonyBlockEntities.BOWL, BowlBlockEntityRenderer::new);
+        BlockEntityRendererFactories.register(PeonyBlockEntities.FERMENTATION_TANK, FermentationTankBlockEntityRenderer::new);
 
         FluidRenderHandlerRegistry.INSTANCE.register(PeonyFluids.STILL_NATURE_GAS, PeonyFluids.FLOWING_NATURE_GAS,
                 SimpleFluidRenderHandler.coloredWater(10066329));
         FluidRenderHandlerRegistry.INSTANCE.register(PeonyFluids.STILL_LARD, PeonyFluids.FLOWING_LARD,
                 SimpleFluidRenderHandler.coloredWater(0xffffe39e));
+        FluidRenderHandlerRegistry.INSTANCE.register(PeonyFluids.STILL_SOY_SAUCE, PeonyFluids.FLOWING_SOY_SAUCE,
+                SimpleFluidRenderHandler.coloredWater(0xff120802));
 
         PeonyItemRenderers.register();
     }

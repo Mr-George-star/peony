@@ -2,6 +2,7 @@ package net.george.peony.data.json;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.george.peony.api.fluid.FluidStack;
+import net.george.peony.block.PeonyBlocks;
 import net.george.peony.block.data.Output;
 import net.george.peony.recipe.FermentingRecipe;
 import net.minecraft.advancement.Advancement;
@@ -84,7 +85,11 @@ public class FermentingRecipeJsonBuilder implements RecipeJsonBuilder {
     @Override
     public void offerTo(RecipeExporter exporter, Identifier recipeId) {
         if (this.criteria.isEmpty()) {
-            this.criterion(this.ingredients.getFirst().getMatchingStacks()[0].getItem());
+            if (this.ingredients.isEmpty()) {
+                this.criterion(PeonyBlocks.FERMENTATION_TANK);
+            } else {
+                this.criterion(this.ingredients.getFirst().getMatchingStacks()[0].getItem());
+            }
         }
         Advancement.Builder builder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
         Objects.requireNonNull(this.criteria).forEach(builder::criterion);

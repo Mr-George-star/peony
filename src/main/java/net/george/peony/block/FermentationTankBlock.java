@@ -7,12 +7,12 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BucketItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -33,7 +33,7 @@ public class FermentationTankBlock extends BlockWithEntity {
             Block.createCuboidShape(0, 0, 15, 16, 16, 16),
             Block.createCuboidShape(15, 0, 1, 16, 16, 15),
             Block.createCuboidShape(0, 0, 1, 1, 16, 15)
-    ).reduce((v1, v2) -> VoxelShapes.combineAndSimplify(v1, v2, BooleanBiFunction.OR)).get();
+    ).reduce(VoxelShapes::union).get();
     public static final MapCodec<FermentationTankBlock> CODEC = createCodec(FermentationTankBlock::new);
 
     protected FermentationTankBlock(Settings settings) {
@@ -66,13 +66,18 @@ public class FermentationTankBlock extends BlockWithEntity {
     @Override
     protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
+            ItemStack heldStack = player.getStackInHand(hand);
+            if (heldStack.getItem() instanceof BucketItem) {
+                return ItemActionResult.SUCCESS;
+            }
+
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof FermentationTankBlockEntity barrel) {
+            if (blockEntity instanceof FermentationTankBlockEntity tank) {
                 AccessibleInventory.InteractionContext context = AccessibleInventory.createContext(world, pos, player, hand);
-                return AccessibleInventory.access(barrel, context, ItemDecrementBehaviour.createDefault());
+                return AccessibleInventory.access(tank, context, ItemDecrementBehaviour.createDefault());
             }
         }
-        return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return ItemActionResult.SUCCESS;
     }
 
     @Override
@@ -110,7 +115,7 @@ public class FermentationTankBlock extends BlockWithEntity {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return world.isClient ?
-                null :
+                validateTicker(type, PeonyBlockEntities.FERMENTATION_TANK, BlockEntityTickerProvider::clientTick) :
                 validateTicker(type, PeonyBlockEntities.FERMENTATION_TANK, BlockEntityTickerProvider::tick);
     }
 }

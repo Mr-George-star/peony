@@ -4,7 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.george.peony.api.heat.HeatProvider;
 import net.george.peony.block.data.HeatSource;
 import net.george.peony.block.entity.*;
-import net.george.peony.compat.PeonyDamageTypes;
+import net.george.peony.misc.PeonyDamageTypes;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -18,7 +18,6 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.*;
-import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -40,7 +39,7 @@ public class SkilletBlock extends BlockWithEntity {
             Block.createCuboidShape(1, 1, 14, 15, 4, 15),
             Block.createCuboidShape(14, 1, 2, 15, 4, 14),
             Block.createCuboidShape(1, 1, 2, 2, 4, 14)
-    ).reduce((first, second) -> VoxelShapes.combineAndSimplify(first, second, BooleanBiFunction.OR)).get();
+    ).reduce(VoxelShapes::union).get();
     public static final MapCodec<SkilletBlock> CODEC = createCodec(SkilletBlock::new);
 
     public SkilletBlock(Settings settings) {

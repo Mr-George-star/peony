@@ -1,4 +1,4 @@
-package net.george.peony.compat;
+package net.george.peony.misc;
 
 import net.george.peony.Peony;
 import net.minecraft.entity.damage.DamageSource;

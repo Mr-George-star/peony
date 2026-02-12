@@ -1,11 +1,13 @@
 {
   "type": "peony:fermenting",
   "fermenting_time": 1200,
-  "ingredients": [
-    {
-      "item": "minecraft:milk_bucket"
+  "fluid_input": {
+    "amount": 81000,
+    "fluid": {
+      "fluid": "milk-lib:still_milk"
     }
-  ],
+  },
+  "ingredients": [],
   "output": {
     "outputStack": {
       "count": 1,

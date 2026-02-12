@@ -57,6 +57,7 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyItems.CONDIMENT_BOTTLE, "调料瓶");
         builder.add(PeonyItems.BLACK_VINEGAR, "黑醋");
         builder.add(PeonyItems.SWEET_SOUR_SAUCE, "糖醋汁");
+        builder.add(PeonyItems.SOY_SAUCE, "酱油");
 
         builder.add(PeonyItems.KITCHEN_KNIFE, "菜刀");
         builder.add(PeonyItems.SPATULA, "炒菜铲");
@@ -70,6 +71,7 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
 
         builder.add(PeonyItems.NATURE_GAS_BUCKET, "天然气桶");
         builder.add(PeonyItems.LARD_BUCKET, "猪油桶");
+        builder.add(PeonyItems.SOY_SAUCE_BUCKET, "酱油桶");
 
         builder.add(PeonyItems.MUSIC_DISC_SURPRISE, "惊喜");
 
@@ -134,6 +136,7 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
 
         builder.add(PeonyBlocks.NATURE_GAS, "天然气");
         builder.add(PeonyBlocks.LARD_FLUID, "猪油");
+        builder.add(PeonyBlocks.SOY_SAUCE_FLUID, "酱油");
         builder.add(PeonyBlocks.LARD_CAULDRON, "装有猪油的炼药锅");
 
         builder.add(PeonyTranslationKeys.ITEM_GROUP_KEY, "牡丹");
@@ -207,6 +210,7 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         builder.add("config.jade.plugin_peony.skillet_component", "平底锅状态显示");
         builder.add("config.jade.plugin_peony.default_heat_source_component", "默认温度数据显示");
         builder.add("config.jade.plugin_peony.default_openable_component", "默认开启状态显示");
+        builder.add("config.jade.plugin_peony.fermentation_tank_component", "发酵桶数据显示");
 
         // global
         builder.add(PeonyTranslationKeys.JADE_STEP, "步骤: %d / %d");
@@ -217,6 +221,8 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyTranslationKeys.JADE_OPENING_STATE, "打开状态: ");
         builder.add(PeonyTranslationKeys.JADE_OPENED, "已开启");
         builder.add(PeonyTranslationKeys.JADE_CLOSED, "已关闭");
+        builder.add(PeonyTranslationKeys.JADE_FERMENT_REMAINING_TIME, "发酵剩余时间: %d秒");
+        builder.add(PeonyTranslationKeys.JADE_OUTPUT_STACK, "输出: ");
 
         // skillet statements
         builder.add(PeonyTranslationKeys.JADE_STATE_IDLE, "空闲");

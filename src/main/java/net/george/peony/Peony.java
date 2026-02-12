@@ -6,13 +6,14 @@ import net.george.peony.api.action.ActionTypes;
 import net.george.peony.api.data.CommonIngredientTypes;
 import net.george.peony.block.PeonyBlocks;
 import net.george.peony.block.entity.PeonyBlockEntities;
-import net.george.peony.compat.PeonyCompat;
+import net.george.peony.misc.PeonyRegistries;
 import net.george.peony.effect.PeonyStatusEffects;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.networking.PeonyNetworking;
 import net.george.peony.recipe.PeonyRecipes;
 import net.george.peony.sound.PeonySoundEvents;
 import net.george.peony.util.PeonyStats;
+import net.george.peony.util.math.animation.LerpedFloat;
 import net.george.peony.world.PeonyFeatures;
 import net.george.peony.world.gen.PeonyWorldGeneration;
 import net.minecraft.registry.Registry;
@@ -21,6 +22,7 @@ import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// todo: fix bug from |Milk Lib|
 public class Peony implements ModInitializer {
 	public static final String MOD_ID = "peony";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
@@ -36,11 +38,12 @@ public class Peony implements ModInitializer {
 		PeonySoundEvents.register();
 		PeonyStatusEffects.register();
 		PeonyFeatures.register();
-		PeonyCompat.register();
+		PeonyRegistries.register();
 		PeonyStats.register();
 		PeonyCriteria.register();
 		ActionTypes.register();
 		CommonIngredientTypes.register();
+		LerpedFloat.initialize();
 		PeonyWorldGeneration.generate();
 	}
 

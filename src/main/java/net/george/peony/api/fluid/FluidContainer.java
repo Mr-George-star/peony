@@ -1,8 +1,7 @@
-package net.george.peony.api.item;
+package net.george.peony.api.fluid;
 
 import net.fabricmc.fabric.api.lookup.v1.item.ItemApiLookup;
 import net.george.peony.Peony;
-import net.george.peony.api.fluid.FluidStack;
 import net.minecraft.fluid.Fluid;
 
 public interface FluidContainer {

@@ -41,7 +41,7 @@ public class GasStoveBlock extends BlockWithEntity implements HeatSource {
             Block.createCuboidShape(1, 0, 13, 3, 12, 15),
             Block.createCuboidShape(1, 12, 1, 15, 15, 15),
             Block.createCuboidShape(3, 15, 3, 13, 16, 13)
-    ).reduce((first, second) -> VoxelShapes.combineAndSimplify(first, second, BooleanBiFunction.OR)).get();
+    ).reduce(VoxelShapes::union).get();
 
     protected GasStoveBlock(Settings settings) {
         super(settings);

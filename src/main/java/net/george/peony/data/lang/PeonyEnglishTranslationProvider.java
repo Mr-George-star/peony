@@ -57,6 +57,7 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyItems.CONDIMENT_BOTTLE, "Condiment Bottle");
         builder.add(PeonyItems.BLACK_VINEGAR, "Black Vinegar");
         builder.add(PeonyItems.SWEET_SOUR_SAUCE, "Sweet Sour Sauce");
+        builder.add(PeonyItems.SOY_SAUCE, "Soy Sauce");
 
         builder.add(PeonyItems.KITCHEN_KNIFE, "Kitchen Knife");
         builder.add(PeonyItems.SPATULA, "Spatula");
@@ -70,6 +71,7 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
 
         builder.add(PeonyItems.NATURE_GAS_BUCKET, "Nature Gas Bucket");
         builder.add(PeonyItems.LARD_BUCKET, "Lard Bucket");
+        builder.add(PeonyItems.SOY_SAUCE_BUCKET, "Soy Sauce Bucket");
 
         builder.add(PeonyItems.MUSIC_DISC_SURPRISE, "Surprise");
 
@@ -132,6 +134,7 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
 
         builder.add(PeonyBlocks.NATURE_GAS, "Nature Gas");
         builder.add(PeonyBlocks.LARD_FLUID, "Lard");
+        builder.add(PeonyBlocks.SOY_SAUCE_FLUID, "Soy Sauce");
         builder.add(PeonyBlocks.LARD_CAULDRON, "Lard Cauldron");
 
         builder.add(PeonyBlocks.BOWL, "Bowl");
@@ -207,6 +210,7 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         builder.add("config.jade.plugin_peony.skillet_component", "Skillet Status Display");
         builder.add("config.jade.plugin_peony.default_heat_source_component", "Default Temperature Data Display");
         builder.add("config.jade.plugin_peony.default_openable_component", "Default Opening State Display");
+        builder.add("config.jade.plugin_peony.fermentation_tank_component", "Fermenting Data Display");
 
         // global
         builder.add(PeonyTranslationKeys.JADE_STEP, "Step: %d / %d");
@@ -217,6 +221,8 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyTranslationKeys.JADE_OPENING_STATE, "Opening State: ");
         builder.add(PeonyTranslationKeys.JADE_OPENED, "Opened");
         builder.add(PeonyTranslationKeys.JADE_CLOSED, "Closed");
+        builder.add(PeonyTranslationKeys.JADE_FERMENT_REMAINING_TIME, "Ferment Remaining Time: %d Seconds");
+        builder.add(PeonyTranslationKeys.JADE_OUTPUT_STACK, "Output: ");
 
         // skillet statements
         builder.add(PeonyTranslationKeys.JADE_STATE_IDLE, "Idle");

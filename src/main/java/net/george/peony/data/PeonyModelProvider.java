@@ -50,6 +50,7 @@ public class PeonyModelProvider extends FabricModelProvider {
 
         generator.registerSimpleState(PeonyBlocks.NATURE_GAS);
         generator.registerSimpleState(PeonyBlocks.LARD_FLUID);
+        generator.registerSimpleState(PeonyBlocks.SOY_SAUCE_FLUID);
         generator.blockStateCollector.accept(
                 VariantsBlockStateSupplier.create(PeonyBlocks.LARD_CAULDRON)
                         .coordinate(BlockStateVariantMap.create(LeveledCauldronBlock.LEVEL)
@@ -93,6 +94,7 @@ public class PeonyModelProvider extends FabricModelProvider {
         generator.register(PeonyItems.CONDIMENT_BOTTLE, Models.GENERATED);
         generator.register(PeonyItems.BLACK_VINEGAR, Models.GENERATED);
         generator.register(PeonyItems.SWEET_SOUR_SAUCE, Models.GENERATED);
+        generator.register(PeonyItems.SOY_SAUCE, Models.GENERATED);
 
         generator.register(PeonyItems.KITCHEN_KNIFE, Models.HANDHELD);
         generator.register(PeonyItems.SPATULA, Models.GENERATED);
@@ -106,6 +108,7 @@ public class PeonyModelProvider extends FabricModelProvider {
 
         generator.register(PeonyItems.NATURE_GAS_BUCKET, Models.GENERATED);
         generator.register(PeonyItems.LARD_BUCKET, Models.GENERATED);
+        generator.register(PeonyItems.SOY_SAUCE_BUCKET, Models.GENERATED);
 
         generator.register(PeonyItems.MUSIC_DISC_SURPRISE, Models.GENERATED);
     }

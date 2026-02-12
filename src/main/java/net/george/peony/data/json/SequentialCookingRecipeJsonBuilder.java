@@ -39,16 +39,16 @@ public class SequentialCookingRecipeJsonBuilder implements RecipeJsonBuilder {
         this.output = output;
     }
 
-    public static SequentialCookingRecipeJsonBuilder create(int temperature, boolean needOil, Fluid fluid, int amount, ItemConvertible container, ItemConvertible result) {
-        return create(temperature, needOil, FluidVariant.of(fluid), amount, container, result);
+    public static SequentialCookingRecipeJsonBuilder create(int temperature, boolean needOil, Fluid fluid, int amount, ItemConvertible container) {
+        return create(temperature, needOil, FluidVariant.of(fluid), amount, container);
     }
 
-    public static SequentialCookingRecipeJsonBuilder create(int temperature, boolean needOil, FluidVariant fluid, int amount, ItemConvertible container, ItemConvertible result) {
-        return create(temperature, needOil, FluidStack.of(fluid, amount), container, result);
+    public static SequentialCookingRecipeJsonBuilder create(int temperature, boolean needOil, FluidVariant fluid, int amount, ItemConvertible container) {
+        return create(temperature, needOil, FluidStack.of(fluid, amount), container);
     }
 
-    public static SequentialCookingRecipeJsonBuilder create(int temperature, boolean needOil, FluidStack fluid, ItemConvertible container, ItemConvertible result) {
-        return create(temperature, needOil, Output.createFluid(fluid, container, result));
+    public static SequentialCookingRecipeJsonBuilder create(int temperature, boolean needOil, FluidStack fluid, ItemConvertible container) {
+        return create(temperature, needOil, Output.createFluid(fluid, container));
     }
 
     public static SequentialCookingRecipeJsonBuilder create(int temperature, boolean needOil, ItemConvertible outputItem, ItemConvertible container) {

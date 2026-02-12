@@ -53,6 +53,8 @@ public class PeonyTranslationKeys {
     public static final String JADE_OPENING_STATE = createJadeTranslationKey("opening", "state");
     public static final String JADE_OPENED = createJadeTranslationKey("opened");
     public static final String JADE_CLOSED = createJadeTranslationKey("closed");
+    public static final String JADE_FERMENT_REMAINING_TIME = createJadeTranslationKey("ferment", "remaining", "time");
+    public static final String JADE_OUTPUT_STACK = createJadeTranslationKey("output", "stack");
 
     // skillet statements
     public static final String JADE_STATE_IDLE = createJadeTranslationKey("state", "idle");

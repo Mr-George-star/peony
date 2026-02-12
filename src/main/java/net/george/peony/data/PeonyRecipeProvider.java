@@ -3,14 +3,18 @@ package net.george.peony.data;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
+import net.george.milk.MilkLib;
 import net.george.peony.Peony;
 import net.george.peony.api.action.ActionTypes;
 import net.george.peony.api.data.CommonIngredientTypes;
+import net.george.peony.api.fluid.FluidStack;
 import net.george.peony.block.*;
 import net.george.peony.block.data.CookingSteps;
 import net.george.peony.block.data.Output;
 import net.george.peony.block.data.StirFryingData;
 import net.george.peony.data.json.*;
+import net.george.peony.fluid.PeonyFluids;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.util.IngredientCreator;
 import net.george.peony.util.PeonyTags;
@@ -19,6 +23,7 @@ import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
@@ -155,7 +160,7 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
                 .group(PEONY_ITEMS)
                 .criterion(hasItem(Items.IRON_INGOT), conditionsFromTag(ConventionalItemTags.IRON_INGOTS))
                 .offerTo(exporter);
-        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PeonyItems.CONDIMENT_BOTTLE)
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PeonyItems.CONDIMENT_BOTTLE, 4)
                 .input('G', ConventionalItemTags.GLASS_BLOCKS)
                 .pattern("G G")
                 .pattern("GGG")
@@ -287,12 +292,18 @@ public class PeonyRecipeProvider extends FabricRecipeProvider {
 
         /* FERMENTING */
         FermentingRecipeJsonBuilder.create(
-                Output.noContainer(PeonyBlocks.CHEESE_BLOCK.asItem().getDefaultStack()),
-                IngredientCreator.create(Items.MILK_BUCKET))
+                Output.noContainer(PeonyBlocks.CHEESE_BLOCK.asItem().getDefaultStack()))
+                .basicFluid(FluidStack.of(MilkLib.STILL_MILK, FluidConstants.BUCKET))
                 .category(RecipeCategory.FOOD)
                 .fermentingTime(1200)
                 .offerTo(exporter, Peony.id("fermented_cheese_from_milk"));
-
+        FermentingRecipeJsonBuilder.create(
+                Output.createFluid(FluidStack.of(PeonyFluids.STILL_SOY_SAUCE, FluidConstants.BOTTLE), PeonyItems.CONDIMENT_BOTTLE),
+                        IngredientCreator.create(PeonyItems.SOYBEAN), IngredientCreator.create(PeonyItems.SOYBEAN), IngredientCreator.create(PeonyItems.SOYBEAN))
+                .basicFluid(FluidStack.of(Fluids.WATER, FluidConstants.BOTTLE))
+                .category(RecipeCategory.FOOD)
+                .fermentingTime(1200)
+                .offerTo(exporter, Peony.id("soy_sauce_fermentation"));
         // Vanilla Extend
         createCookingRecipe(Items.BEEF, Items.COOKED_BEEF, exporter);
         createCookingRecipe(Items.PORKCHOP, Items.COOKED_PORKCHOP, exporter);

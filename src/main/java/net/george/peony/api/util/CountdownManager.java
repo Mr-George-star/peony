@@ -1,5 +1,6 @@
 package net.george.peony.api.util;
 
+import net.george.peony.api.util.nbt.NbtSerializable;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
 import org.jetbrains.annotations.Nullable;
