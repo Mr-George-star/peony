@@ -4,6 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.ItemActionResult;
 
@@ -11,6 +12,8 @@ public class InventoryInteraction {
     public static ItemActionResult interact(AccessibleInventory inventory, InteractionContext context) {
         ItemStack heldStack = context.user.getStackInHand(context.hand);
         InteractionResult result;
+        boolean inserting = false;
+        boolean extracting = false;
 
         if (!heldStack.isEmpty()) {
             int insertAmount = 1;
@@ -22,11 +25,13 @@ public class InventoryInteraction {
                 insertAmount = heldStack.getCount();
             }
 
+            inserting = true;
             result = inventory.insert(
                     context,
                     heldStack.copyWithCount(insertAmount)
             );
         } else if (context.user.isSneaking()) {
+            extracting = true;
             result = inventory.extract(context);
         } else {
             result = inventory.emptyUse(context);
@@ -35,9 +40,42 @@ public class InventoryInteraction {
         if (result.isSuccess()) {
             result.getConsumption().apply(context.user, context.hand);
             increaseUsageStat(context.user, heldStack);
+            playInteractionSound(inventory, context, inserting, extracting);
             return ItemActionResult.SUCCESS;
         } else {
             return ItemActionResult.FAIL;
+        }
+    }
+
+    private static void playInteractionSound(AccessibleInventory inventory, InteractionContext context, boolean inserting, boolean extracting) {
+        SoundEvent sound;
+
+        if (inventory instanceof InteractionSoundProvider provider) {
+            if (inserting) {
+                sound = provider.getInsertSound();
+            } else if (extracting) {
+                sound = provider.getExtractSound();
+            } else {
+                sound = provider.getInsertSound();
+            }
+
+            context.world.playSound(
+                    null,
+                    context.pos,
+                    sound,
+                    SoundCategory.BLOCKS,
+                    provider.getSoundVolume(),
+                    provider.getSoundPitch());
+
+        } else {
+            context.world.playSound(
+                    null,
+                    context.pos,
+                    SoundEvents.ENTITY_ITEM_PICKUP,
+                    SoundCategory.BLOCKS,
+                    0.4F,
+                    1.0F
+            );
         }
     }
 

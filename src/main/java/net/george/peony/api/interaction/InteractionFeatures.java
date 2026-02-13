@@ -7,11 +7,4 @@ public interface InteractionFeatures {
     default boolean supportsBulkInsert() {
         return false;
     }
-
-    /**
-     * Whether the entire stack should be consumed on insert
-     */
-    default boolean consumeAllOnInsert() {
-        return false;
-    }
 }

@@ -3,6 +3,10 @@ package net.george.peony.block.entity;
 import net.george.peony.api.heat.Heat;
 import net.george.peony.api.heat.HeatLevel;
 import net.george.peony.api.heat.HeatProvider;
+import net.george.peony.api.interaction.ComplexAccessibleInventory;
+import net.george.peony.api.interaction.Consumption;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InteractionResult;
 import net.george.peony.block.GasCylinderBlock;
 import net.george.peony.block.GasStoveBlock;
 import net.george.peony.block.data.Openable;
@@ -26,7 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-public class GasStoveBlockEntity extends BlockEntity implements AccessibleInventory, Openable, HeatProvider, BlockEntityTickerProvider {
+public class GasStoveBlockEntity extends BlockEntity implements ComplexAccessibleInventory, Openable, HeatProvider, BlockEntityTickerProvider {
     @Nullable
     private BlockPos connectedCylinderPos;
     private boolean opened;
@@ -136,7 +140,7 @@ public class GasStoveBlockEntity extends BlockEntity implements AccessibleInvent
     }
 
     @Override
-    public InsertResult insertItemSpecified(InteractionContext context, ItemStack givenStack) {
+    public InteractionResult insert(InteractionContext context, ItemStack givenStack) {
         if (givenStack.isOf(Items.STICK)) {
             if (this.isCountdownOver() && this.connectedCylinderPos != null &&
                     context.world.getBlockEntity(this.connectedCylinderPos) instanceof GasCylinderBlockEntity gasCylinder &&
@@ -149,10 +153,10 @@ public class GasStoveBlockEntity extends BlockEntity implements AccessibleInvent
                 this.markDirty();
                 this.resetCountdown();
                 this.updateOpeningState(context.world);
-                return AccessibleInventory.createResult(true, 0, false);
+                return InteractionResult.success(Consumption.none());
             }
         }
-        return AccessibleInventory.createResult(false, -1);
+        return InteractionResult.fail();
     }
 
     private void checkAndUpdateConnections() {

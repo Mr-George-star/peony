@@ -2,7 +2,11 @@ package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
 import net.george.peony.Peony;
-import net.george.peony.block.entity.*;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InventoryInteraction;
+import net.george.peony.block.entity.BlockEntityTickerProvider;
+import net.george.peony.block.entity.GasCylinderBlockEntity;
+import net.george.peony.block.entity.PeonyBlockEntities;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -23,7 +27,6 @@ import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemActionResult;
-import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -162,8 +165,8 @@ public class GasCylinderBlock extends FallingBlock implements BlockEntityProvide
         if (!world.isClient) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof GasCylinderBlockEntity gasCylinder) {
-                AccessibleInventory.InteractionContext context = AccessibleInventory.createContext(world, pos, player, hand);
-                return AccessibleInventory.access(gasCylinder, context, ItemDecrementBehaviour.createDefault());
+                InteractionContext context = InteractionContext.create(world, pos, player, hand);
+                return InventoryInteraction.interact(gasCylinder, context);
             }
         }
         return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

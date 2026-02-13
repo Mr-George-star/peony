@@ -37,6 +37,10 @@ public class Consumption {
         return new Consumption(Mode.REPLACE, 1, replacement);
     }
 
+    public static Consumption replace() {
+        return replace(ItemReplacement::getReplacement);
+    }
+
     public static Consumption replace(Function<ItemStack, ItemStack> replacementFunction) {
         return new Consumption(Mode.REPLACE, 1, replacementFunction);
     }

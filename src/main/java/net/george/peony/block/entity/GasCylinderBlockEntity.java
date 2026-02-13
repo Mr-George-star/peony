@@ -4,6 +4,10 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.base.SingleFluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.george.peony.api.interaction.ComplexAccessibleInventory;
+import net.george.peony.api.interaction.Consumption;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InteractionResult;
 import net.george.peony.block.data.Openable;
 import net.george.peony.fluid.PeonyFluids;
 import net.george.peony.item.PeonyItems;
@@ -15,14 +19,13 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class GasCylinderBlockEntity extends BlockEntity implements AccessibleInventory, Openable, BlockEntityTickerProvider {
+public class GasCylinderBlockEntity extends BlockEntity implements ComplexAccessibleInventory, Openable, BlockEntityTickerProvider {
     protected final SingleFluidStorage fluidStorage;
     @Nullable
     private BlockPos connectedStovePos;
@@ -113,7 +116,7 @@ public class GasCylinderBlockEntity extends BlockEntity implements AccessibleInv
     }
 
     @Override
-    public InsertResult insertItemSpecified(InteractionContext context, ItemStack givenStack) {
+    public InteractionResult insert(InteractionContext context, ItemStack givenStack) {
         if (givenStack.isOf(Items.STICK)) {
             if (this.isCountdownOver()) {
                 if (this.isOpened()) {
@@ -123,24 +126,16 @@ public class GasCylinderBlockEntity extends BlockEntity implements AccessibleInv
                 }
                 this.markDirty();
                 this.resetCountdown();
-                return AccessibleInventory.createResult(true, 0, false);
+                return InteractionResult.success(Consumption.none());
             }
         }
-        return AccessibleInventory.super.insertItemSpecified(context, givenStack);
-    }
-
-    @Override
-    public boolean insertItem(InteractionContext context, ItemStack givenStack) {
         if (givenStack.isOf(PeonyItems.NATURE_GAS_BUCKET)) {
             if (this.fluidStorage.amount == 0L) {
                 this.transferIntoFluidStorage(FluidConstants.BUCKET);
-                AccessibleInventory.playUsageSound(context, SoundEvents.ENTITY_ITEM_PICKUP, 1F, 2F);
-                ItemDecrementBehaviour.createDefault().effective(context.world, context.user, context.hand);
-                AccessibleInventory.increaseUsageStat(context.user, context.user.getStackInHand(context.hand));
-                return true;
+                return InteractionResult.success(Consumption.replace());
             }
         }
-        return false;
+        return InteractionResult.fail();
     }
 
     public void transferIntoFluidStorage(long amount) {
