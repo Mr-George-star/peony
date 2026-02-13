@@ -1,14 +1,11 @@
 package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
-import net.george.peony.block.entity.AccessibleInventory;
-import net.george.peony.block.entity.BlockEntityTickerProvider;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InventoryInteraction;
 import net.george.peony.block.entity.BowlBlockEntity;
-import net.george.peony.block.entity.PeonyBlockEntities;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
@@ -16,7 +13,6 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.*;
-import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -26,7 +22,6 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.stream.Stream;
 
@@ -84,9 +79,9 @@ public class BowlBlock extends BlockWithEntity {
     protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof AccessibleInventory accessible) {
-                AccessibleInventory.InteractionContext context = AccessibleInventory.createContext(world, pos, player, hand);
-                return AccessibleInventory.access(accessible, context);
+            if (blockEntity instanceof BowlBlockEntity bowl) {
+                InteractionContext context = InteractionContext.create(world, pos, player, hand);
+                return InventoryInteraction.interact(bowl, context);
             }
         }
         return ItemActionResult.SUCCESS;
@@ -121,12 +116,6 @@ public class BowlBlock extends BlockWithEntity {
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new BowlBlockEntity(pos, state);
-    }
-
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return world.isClient ? null : validateTicker(type, PeonyBlockEntities.BOWL, BlockEntityTickerProvider::tick);
     }
 
     @Override

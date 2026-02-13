@@ -3,8 +3,13 @@ package net.george.peony.block.entity;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.george.networking.api.GameNetworking;
 import net.george.peony.Peony;
-import net.george.peony.block.SkilletBlock;
+import net.george.peony.api.interaction.ComplexAccessibleInventory;
+import net.george.peony.api.interaction.Consumption;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InteractionResult;
+import net.george.peony.block.MillstoneBlock;
 import net.george.peony.block.data.Output;
+import net.george.peony.block.data.RecipeStorage;
 import net.george.peony.networking.payload.ItemStackSyncS2CPayload;
 import net.george.peony.recipe.FlavouringPreparingRecipe;
 import net.george.peony.recipe.ListedRecipeInput;
@@ -31,27 +36,27 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 
+// todo: optimize item insertion
 @SuppressWarnings("unused")
-public class BowlBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, BlockEntityTickerProvider, AccessibleInventory {
+public class BowlBlockEntity extends BlockEntity implements ImplementedInventory, ComplexAccessibleInventory, DirectionProvider {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(5, ItemStack.EMPTY);
+    protected ItemStack outputStack = ItemStack.EMPTY;
     private int stirTimes = 0;
     private int requiredStirTimes = 0;
     private boolean isStirring = false;
     private boolean isComplete = false;
-    @Nullable
-    private FlavouringPreparingRecipe currentRecipe = null;
-    protected Direction cachedDirection = Direction.NORTH;
+    protected RecipeStorage<ListedRecipeInput, FlavouringPreparingRecipe> recipeStorage;
     private final RecipeManager.MatchGetter<ListedRecipeInput, FlavouringPreparingRecipe> matchGetter;
 
     public BowlBlockEntity(BlockPos pos, BlockState state) {
         super(PeonyBlockEntities.BOWL, pos, state);
         this.matchGetter = RecipeManager.createCachedMatchGetter(PeonyRecipes.FLAVOURING_PREPARING_TYPE);
+        this.recipeStorage = RecipeStorage.create(FlavouringPreparingRecipe.class);
     }
 
     @Override
@@ -59,9 +64,18 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
         return this.inventory;
     }
 
+    /**
+     * Returns the facing direction of the bowl block from its block state.
+     */
     @Override
     public Direction getDirection() {
-        return this.cachedDirection;
+        if (this.world != null) {
+            BlockState state = this.world.getBlockState(this.pos);
+            if (state.contains(MillstoneBlock.FACING)) {
+                return state.get(MillstoneBlock.FACING);
+            }
+        }
+        return Direction.NORTH;
     }
 
     public int getStirTimes() {
@@ -81,9 +95,15 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        super.writeNbt(nbt, registryLookup);
-        Inventories.writeNbt(nbt, this.inventory, registryLookup);
+    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registries) {
+        super.writeNbt(nbt, registries);
+        Inventories.writeNbt(nbt, this.inventory, registries);
+        nbt.putBoolean("IsOutputStackEmpty", this.outputStack.isEmpty());
+        if (!this.outputStack.isEmpty()) {
+            NbtCompound outputNbt = new NbtCompound();
+            this.outputStack.encode(registries, outputNbt);
+            nbt.put("OutputStack", outputNbt);
+        }
         nbt.putInt("StirTimes", this.stirTimes);
         nbt.putInt("RequiredStirTimes", this.requiredStirTimes);
         nbt.putBoolean("IsStirring", this.isStirring);
@@ -91,9 +111,15 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
     }
 
     @Override
-    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        super.readNbt(nbt, registryLookup);
-        Inventories.readNbt(nbt, this.inventory, registryLookup);
+    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registries) {
+        super.readNbt(nbt, registries);
+        Inventories.readNbt(nbt, this.inventory, registries);
+        if (!nbt.getBoolean("IsOutputStackEmpty")) {
+            NbtCompound outputNbt = nbt.getCompound("OutputStack");
+            this.outputStack = ItemStack.fromNbtOrEmpty(registries, outputNbt);
+        } else {
+            this.outputStack = ItemStack.EMPTY;
+        }
         this.stirTimes = nbt.getInt("StirTimes");
         this.requiredStirTimes = nbt.getInt("RequiredStirTimes");
         this.isStirring = nbt.getBoolean("IsStirring");
@@ -131,36 +157,41 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
     @Override
     public void markDirty() {
         if (!Objects.requireNonNull(this.world).isClient) {
+            // Send a custom packet to sync inventory contents to all tracking players
             CustomPayload payload = new ItemStackSyncS2CPayload(this.inventory.size(), this.inventory, this.pos);
             GameNetworking.sendToPlayers(PlayerLookup.world((ServerWorld) this.world), payload);
         }
         super.markDirty();
     }
 
+    /**
+     * Handles right-click interaction when the player holds an item<br>
+     * - If the bowl has a completed result, the player can take it (possibly requiring a container).<br>
+     * - If the player holds a stick, it triggers stirring (and recipe matching if none exists).<br>
+     * - Otherwise, the player inserts one item from the held stack into an empty slot.
+     */
     @Override
-
-    public InsertResult insertItemSpecified(InteractionContext context, ItemStack givenStack) {
+    public InteractionResult insert(InteractionContext context, ItemStack givenStack) {
         World world = context.world;
         PlayerEntity player = context.user;
 
-        // If mixing is complete, no more items can be added (except for container removal).
+        // When the recipe is complete, only taking the result is allowed.
         if (this.isComplete) {
-            // If the player is holding a container, try to remove it.
-            if (this.currentRecipe != null) {
-                return this.takeOutput(world, player, context.hand);
+            if (!this.outputStack.isEmpty()) {
+                return this.takeResult(world, player, context.hand, this.outputStack);
             }
-            return AccessibleInventory.createResult(false, 0);
+            return InteractionResult.fail();
         }
 
-        // Stirring
+        // Stirring with a stick.
         if (givenStack.isOf(Items.STICK)) {
-            // If there is no recipe, try to match.
-            if (this.currentRecipe == null) {
+            // If no recipe is active, attempt to match one using the current inventory.
+            if (this.recipeStorage.isEmpty()) {
                 this.tryMatchRecipe(world);
             }
 
-            // If there is a recipe, you can start or continue stirring.
-            if (this.currentRecipe != null) {
+            // If a recipe is now present (either just matched or already active), perform stirring.
+            if (!this.recipeStorage.isEmpty()) {
                 if (!this.isStirring) {
                     this.isStirring = true;
                     this.stirTimes = 1;
@@ -170,37 +201,40 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
                     Peony.LOGGER.debug("Continuing mixing, current: {}, needs: {}", this.stirTimes, this.requiredStirTimes);
                 }
 
-                // Check if mixing is complete
+                // Check if the required stir count has been reached.
                 if (this.stirTimes >= this.requiredStirTimes) {
                     this.isStirring = false;
                     this.isComplete = true;
                     Peony.LOGGER.debug("Mixing complete, generating result");
-                     // Generate the result item and place it in the first slot of the inventory
                     this.generateResult();
                 }
 
                 this.markDirty();
                 this.sync();
-                return AccessibleInventory.createResult(true, 0);
+                return InteractionResult.success(Consumption.none()); // Stick is not consumed
             }
 
-            return AccessibleInventory.createResult(false, 0);
+            return InteractionResult.fail(); // No matching recipe
         }
 
-        // Put in other items - raw materials
+        // Insert ingredients into the first empty slot (one item at a time).
         for (int i = 0; i < this.inventory.size(); i++) {
             if (this.inventory.get(i).isEmpty()) {
                 this.inventory.set(i, givenStack.copyWithCount(1));
                 this.markDirty();
                 this.sync();
 
-                return AccessibleInventory.createResult(true, 1);
+                return InteractionResult.success(Consumption.decrement(1));
             }
         }
 
-        return AccessibleInventory.createResult(false, 0);
+        return InteractionResult.fail(); // No empty slot
     }
 
+    /**
+     * Attempts to find a recipe that matches the current inventory.
+     * If found, stores the recipe and its required stir count; otherwise clears any active recipe.
+     */
     private void tryMatchRecipe(World world) {
         if (world.isClient) {
             return;
@@ -210,15 +244,15 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
                 .getFirstMatch(new ListedRecipeInput(this.inventory), world);
 
         if (recipeOptional.isPresent()) {
-            FlavouringPreparingRecipe recipe = recipeOptional.get().value();
-            this.currentRecipe = recipe;
-            this.requiredStirTimes = recipe.stirringTimes();
+            RecipeEntry<FlavouringPreparingRecipe> recipe = recipeOptional.get();
+            this.recipeStorage.setCurrentRecipe(recipe);
+            this.requiredStirTimes = recipe.value().stirringTimes();
             this.stirTimes = 0;
             this.isStirring = false;
             this.isComplete = false;
             Peony.LOGGER.debug("Recipe matched successfully, required stirring times: {}", this.requiredStirTimes);
         } else {
-            this.currentRecipe = null;
+            this.recipeStorage.clear();
             this.requiredStirTimes = 0;
             this.stirTimes = 0;
             this.isStirring = false;
@@ -229,55 +263,63 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
         this.sync();
     }
 
+    /**
+     * Generates the result item from the current recipe, clears the ingredient inventory,
+     * and stores the result in {@code outputStack}.
+     */
     private void generateResult() {
-        if (this.currentRecipe == null) {
-            return;
+        FlavouringPreparingRecipe recipe = this.recipeStorage.getCurrentRecipe();
+        if (recipe != null) {
+            Output output = recipe.output();
+            ItemStack outputStack = output.getOutputStack().copy();
+            // Clear all ingredient slots.
+            Collections.fill(this.inventory, ItemStack.EMPTY);
+            this.outputStack = outputStack;
+            Peony.LOGGER.debug("Generated Result: {}", outputStack.getItem().getName().getString());
+            this.markDirty();
+            this.sync();
         }
-        Output output = this.currentRecipe.output();
-        ItemStack outputStack = output.getOutputStack().copy();
-        // Clear all slots
-        Collections.fill(this.inventory, ItemStack.EMPTY);
-        // Place the result in the first slot
-        this.inventory.set(0, outputStack);
-        Peony.LOGGER.debug("Generated Result: {}", outputStack.getItem().getName().getString());
-        this.markDirty();
-        this.sync();
     }
 
+    /**
+     * Handles shift-right-click (extract) interaction<br>
+     * - If a result is ready, attempts to take it (possibly requiring a container).<br>
+     * - Otherwise, removes one ingredient from the last non-empty slot and resets the recipe state.
+     */
     @Override
-    public boolean extractItem(InteractionContext context) {
+    public InteractionResult extract(InteractionContext context) {
         World world = context.world;
         PlayerEntity player = context.user;
 
-        // If the crafting is complete, the first slot is for the resulting item
         if (this.isComplete) {
-            ItemStack resultStack = this.inventory.getFirst();
-            if (!resultStack.isEmpty()) {
-                return this.takeResult(world, player, context.hand, resultStack);
+            if (!this.outputStack.isEmpty()) {
+                return this.takeResult(world, player, context.hand, this.outputStack);
             }
         }
 
-        // Otherwise, remove the raw materials in sequence (starting from the last non-empty slot)
         return this.takeIngredients(world, player, context.hand);
     }
 
+    /**
+     * Handles empty hand right-click (emptyUse) interaction.
+     * Behaves the same as {@link #extract} when a result is ready, otherwise does nothing.
+     */
     @Override
-    public boolean useEmptyHanded(InteractionContext context) {
-        // If the mixing is complete when using it without a handle, try removing the result.
+    public InteractionResult emptyUse(InteractionContext context) {
         if (this.isComplete) {
-            ItemStack resultStack = this.inventory.getFirst();
-            if (!resultStack.isEmpty()) {
-                return this.takeResult(context.world, context.user, context.hand, resultStack);
+            if (!this.outputStack.isEmpty()) {
+                return this.takeResult(context.world, context.user, context.hand, this.outputStack);
             }
         }
-
-        // Otherwise do nothing
-        return false;
+        return InteractionResult.fail();
     }
 
-    private boolean takeIngredients(World world, PlayerEntity player, Hand hand) {
-        // Take out the raw materials in reverse order (skip the first slot)
-        for (int i = this.inventory.size() - 1; i >= 1; i--) {
+    /**
+     * Removes one ingredient from the inventory, starting from the last slot.
+     * After removal, resets the entire mixing state (clears recipe, stir count, etc.).
+     */
+    private InteractionResult takeIngredients(World world, PlayerEntity player, Hand hand) {
+        for (int i = this.inventory.size() - 1; i >= 0; i--) {
             ItemStack stack = this.inventory.get(i);
             if (!stack.isEmpty()) {
                 if (!world.isClient()) {
@@ -288,100 +330,57 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
                     }
                 }
                 this.inventory.set(i, ItemStack.EMPTY);
-
-                // If the ingredients have been removed, reset the mixing state
                 this.resetStirringState();
                 this.markDirty();
                 this.sync();
-                return true;
+                return InteractionResult.success(Consumption.none());
             }
         }
-        return false;
+        return InteractionResult.fail();
     }
 
-    private boolean takeResult(World world, PlayerEntity player, Hand hand, ItemStack resultStack) {
-        if (this.currentRecipe == null || world.isClient) {
-            return false;
-        }
+    /**
+     * Gives the result item to the player.
+     * If the recipe requires a container, the player must hold it in the active hand (consumes one container).
+     * After successful extraction, the mixing state is reset.
+     */
+    private InteractionResult takeResult(World world, PlayerEntity player, Hand hand, ItemStack resultStack) {
+        FlavouringPreparingRecipe recipe = this.recipeStorage.getCurrentRecipe();
+        if (recipe != null) {
+            ItemConvertible requiredContainer = Output.getRequiredContainer(recipe.output());
 
-        Output output = this.currentRecipe.output();
-        ItemConvertible requiredContainer = Output.getRequiredContainer(output);
-
-        // Cases where containers are not required
-        if (requiredContainer == null) {
-            // Give the resulting item to the player
-            this.giveItemToPlayer(player, hand, resultStack.copy());
-            // Clear the first slot
-            this.inventory.set(0, ItemStack.EMPTY);
-            this.resetStirringState();
-            this.markDirty();
-            this.sync();
-            return true;
-        }
-
-        // Cases requiring containers
-        ItemStack handStack = player.getStackInHand(hand);
-        if (handStack.isOf(requiredContainer.asItem())) {
-            // Consume container
-            if (!player.isCreative()) {
-                handStack.decrement(1);
-            }
-
-            // Give the resulting item to the player
-            this.giveItemToPlayer(player, hand, resultStack.copy());
-            // Clear the first slot
-            this.inventory.set(0, ItemStack.EMPTY);
-            this.resetStirringState();
-            this.markDirty();
-            this.sync();
-            return true;
-        }
-
-        // The player does not have the correct container
-        return false;
-    }
-
-    private InsertResult takeOutput(World world, PlayerEntity player, Hand hand) {
-        if (this.currentRecipe == null || world.isClient) {
-            return AccessibleInventory.createResult(false, -1);
-        }
-
-        Output output = this.currentRecipe.output();
-        ItemConvertible requiredContainer = Output.getRequiredContainer(output);
-
-        ItemStack handStack = player.getStackInHand(hand);
-        if (requiredContainer == null) {
-            // No container needed, retrieve the result directly
-            ItemStack resultStack = this.inventory.getFirst();
-            if (!resultStack.isEmpty()) {
+            // No container needed.
+            if (requiredContainer == null) {
                 this.giveItemToPlayer(player, hand, resultStack.copy());
-                this.inventory.set(0, ItemStack.EMPTY);
+                this.outputStack = ItemStack.EMPTY;
                 this.resetStirringState();
                 this.markDirty();
                 this.sync();
-                return AccessibleInventory.createResult(true, -1);
+                return InteractionResult.success(Consumption.none());
             }
-        } else if (handStack.isOf(requiredContainer.asItem())) {
-            // Have the correct container
-            ItemStack resultStack = this.inventory.getFirst();
-            if (!resultStack.isEmpty()) {
-                // Consume container
+
+            // Container required: check player's hand.
+            ItemStack handStack = player.getStackInHand(hand);
+            if (handStack.isOf(requiredContainer.asItem())) {
                 if (!player.isCreative()) {
                     handStack.decrement(1);
                 }
-
                 this.giveItemToPlayer(player, hand, resultStack.copy());
-                this.inventory.set(0, ItemStack.EMPTY);
+                this.outputStack = ItemStack.EMPTY;
                 this.resetStirringState();
                 this.markDirty();
                 this.sync();
-                return AccessibleInventory.createResult(true, 1);
+                return InteractionResult.success(Consumption.none());
             }
         }
 
-        return AccessibleInventory.createResult(false, -1);
+        return InteractionResult.fail(); // No recipe or missing/incorrect container
     }
 
+    /**
+     * Utility method to give an item stack to the player.
+     * If the hand is empty, the stack is placed there; otherwise it goes into the inventory (or drops).
+     */
     private void giveItemToPlayer(PlayerEntity player, Hand hand, ItemStack stack) {
         if (!player.getWorld().isClient()) {
             if (player.getStackInHand(hand).isEmpty()) {
@@ -392,14 +391,22 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
         }
     }
 
+    /**
+     * Resets all mixing-related state: clears the current recipe, required stirs, current stirs,
+     * and flags indicating stirring or completion.
+     */
     private void resetStirringState() {
-        this.currentRecipe = null;
+        this.recipeStorage.clear();
         this.requiredStirTimes = 0;
         this.stirTimes = 0;
         this.isStirring = false;
         this.isComplete = false;
     }
 
+    /**
+     * Checks whether all inventory slots are occupied.
+     * Currently unused.
+     */
     private boolean hasAllItemsFilled() {
         for (ItemStack stack : this.inventory) {
             if (stack.isEmpty()) {
@@ -407,12 +414,5 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
             }
         }
         return true;
-    }
-
-    @Override
-    public void tick(World world, BlockPos pos, BlockState state) {
-        if (state.contains(SkilletBlock.FACING)) {
-            this.cachedDirection = state.get(SkilletBlock.FACING);
-        }
     }
 }

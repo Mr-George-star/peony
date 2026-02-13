@@ -10,11 +10,9 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
-
 public interface RecipeStorage<I extends RecipeInput, R extends Recipe<I>> {
-    static<I extends RecipeInput, R extends Recipe<I>> RecipeStorage<I, R> create(Function<Recipe<?>, Boolean> isInstanceOfRecipe) {
-        return new Impl<>(isInstanceOfRecipe);
+    static<I extends RecipeInput, R extends Recipe<I>> RecipeStorage<I, R> create(Class<R> recipeClass) {
+        return new Impl<>(recipeClass);
     }
 
     Identifier getRecipeId();
@@ -22,7 +20,7 @@ public interface RecipeStorage<I extends RecipeInput, R extends Recipe<I>> {
     @Nullable
     R getCurrentRecipe();
 
-    void setCurrentRecipe(@NotNull R recipe);
+    void setCurrentRecipe(@NotNull RecipeEntry<R> recipe);
 
     boolean isEmpty();
 
@@ -33,15 +31,17 @@ public interface RecipeStorage<I extends RecipeInput, R extends Recipe<I>> {
     void readNbt(World world, NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup);
 
     class Impl<I extends RecipeInput, R extends Recipe<I>> implements RecipeStorage<I, R> {
+        private static final Identifier DUMMY_ID = Identifier.of("dummy", "dummy");
+
         @Nullable
         protected R currentRecipe;
         protected Identifier currentRecipeId;
-        protected final Function<Recipe<?>, Boolean> isInstanceOfRecipe;
+        private final Class<R> recipeClass;
 
-        Impl(Function<Recipe<?>, Boolean> isInstanceOfRecipe) {
+        Impl(Class<R> recipeClass) {
             this.currentRecipe = null;
-            this.currentRecipeId = Identifier.of("dummy", "dummy");
-            this.isInstanceOfRecipe = isInstanceOfRecipe;
+            this.currentRecipeId = DUMMY_ID;
+            this.recipeClass = recipeClass;
         }
 
         @Override
@@ -56,8 +56,9 @@ public interface RecipeStorage<I extends RecipeInput, R extends Recipe<I>> {
         }
 
         @Override
-        public void setCurrentRecipe(@NotNull R currentRecipe) {
-            this.currentRecipe = currentRecipe;
+        public void setCurrentRecipe(@NotNull RecipeEntry<R> currentRecipe) {
+            this.currentRecipe = currentRecipe.value();
+            this.currentRecipeId = currentRecipe.id();
         }
 
         @Override
@@ -68,10 +69,6 @@ public interface RecipeStorage<I extends RecipeInput, R extends Recipe<I>> {
         @Override
         public void clear() {
             this.currentRecipe = null;
-        }
-
-        public boolean isInstanceOfRecipe(Recipe<?> recipe) {
-            return this.isInstanceOfRecipe.apply(recipe);
         }
 
         @Override
@@ -86,12 +83,18 @@ public interface RecipeStorage<I extends RecipeInput, R extends Recipe<I>> {
         public void readNbt(World world, NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
             if (nbt.contains("CurrentRecipeId")) {
                 Identifier recipeId = Identifier.tryParse(nbt.getString("CurrentRecipeId"));
-                this.currentRecipeId = recipeId;
-                if (world != null) {
-                    this.currentRecipe = (R) world.getRecipeManager()
-                            .get(recipeId)
-                            .map(RecipeEntry::value)
-                            .filter(this::isInstanceOfRecipe).orElse(null);
+                if (recipeId != null) {
+                    this.currentRecipeId = recipeId;
+                    if (world != null && !recipeId.equals(DUMMY_ID)) {
+                        this.currentRecipe = (R) world.getRecipeManager()
+                                .get(recipeId)
+                                .map(RecipeEntry::value)
+                                .filter(this.recipeClass::isInstance)
+                                .orElse(null);
+                    }
+                } else {
+                    this.currentRecipeId = DUMMY_ID;
+                    this.currentRecipe = null;
                 }
             }
         }

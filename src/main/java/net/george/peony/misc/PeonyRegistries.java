@@ -13,6 +13,8 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.base.EmptyItemFluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.base.FullItemFluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.george.peony.Peony;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InventoryInteraction;
 import net.george.peony.block.*;
 import net.george.peony.block.entity.*;
 import net.george.peony.fluid.PeonyFluids;
@@ -150,8 +152,8 @@ public class PeonyRegistries {
                 if (state.isOf(PeonyBlocks.SKILLET)) {
                     return ActionResult.PASS;
                 }
-                ItemPlacementContext ctx = new ItemPlacementContext(world, player, hand, stack, hitResult);
-                return BlockPlacements.placeBlock(ctx, PeonyBlocks.BOWL);
+                ItemPlacementContext context = new ItemPlacementContext(world, player, hand, stack, hitResult);
+                return BlockPlacements.placeBlock(context, PeonyBlocks.BOWL);
             }
             return ActionResult.PASS;
         });
@@ -164,12 +166,9 @@ public class PeonyRegistries {
                 if (stack.getItem() instanceof BucketItem) {
                     if (world.getBlockState(pos).getBlock() instanceof FermentationTankBlock) {
                         BlockEntity blockEntity = world.getBlockEntity(pos);
-                        if (blockEntity instanceof FermentationTankBlockEntity cauldron) {
-                            AccessibleInventory.InteractionContext context = AccessibleInventory.createContext(
-                                    world, pos, player, hand);
-
-                            ItemActionResult result = AccessibleInventory.access(
-                                    cauldron, context, ItemDecrementBehaviour.createDefault());
+                        if (blockEntity instanceof FermentationTankBlockEntity tank) {
+                            InteractionContext context = InteractionContext.create(world, pos, player, hand);
+                            ItemActionResult result = InventoryInteraction.interact(tank, context);
 
                             return result.isAccepted() ? ActionResult.SUCCESS : ActionResult.PASS;
                         }

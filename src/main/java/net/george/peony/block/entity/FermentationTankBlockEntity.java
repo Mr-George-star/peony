@@ -12,6 +12,10 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.george.peony.Peony;
 import net.george.peony.api.fluid.FluidStack;
+import net.george.peony.api.interaction.ComplexAccessibleInventory;
+import net.george.peony.api.interaction.Consumption;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InteractionResult;
 import net.george.peony.block.data.Cursor;
 import net.george.peony.block.data.Output;
 import net.george.peony.block.data.RecipeStorage;
@@ -47,7 +51,7 @@ import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings({"unused"})
-public class FermentationTankBlockEntity extends BlockEntity implements ImplementedInventory, AccessibleInventory, BlockEntityTickerProvider {
+public class FermentationTankBlockEntity extends BlockEntity implements ImplementedInventory, ComplexAccessibleInventory, BlockEntityTickerProvider {
     public static final List<Block> MUSHROOMS = Collections.unmodifiableList(Lists.newArrayList(
             Blocks.MUSHROOM_STEM, Blocks.BROWN_MUSHROOM_BLOCK, Blocks.RED_MUSHROOM_BLOCK
     ));
@@ -74,7 +78,7 @@ public class FermentationTankBlockEntity extends BlockEntity implements Implemen
         this.inventory = DefaultedList.ofSize(6, ItemStack.EMPTY);
         this.fluidStorage = SingleFluidStorage.withFixedCapacity(FluidConstants.BUCKET, this::markDirty);
         this.matchGetter = RecipeManager.createCachedMatchGetter(PeonyRecipes.FERMENTING_TYPE);
-        this.recipeStorage = RecipeStorage.create(recipe -> recipe instanceof FermentingRecipe);
+        this.recipeStorage = RecipeStorage.create(FermentingRecipe.class);
         this.inputCursor = Cursor.create(0, 6, "InputCursor");
     }
 
@@ -233,25 +237,24 @@ public class FermentationTankBlockEntity extends BlockEntity implements Implemen
     }
 
     @Override
-    public InsertResult insertItemSpecified(InteractionContext context, ItemStack givenStack) {
-        InsertResult result = this.handleFluid(context, givenStack);
+    public InteractionResult insert(InteractionContext context, ItemStack givenStack) {
+        InteractionResult result = this.handleFluid(context, givenStack);
         if (result.isSuccess()) {
             return result;
         }
-
         return this.insertItem(context.world, givenStack);
     }
 
-    private InsertResult handleFluid(InteractionContext context, ItemStack givenStack) {
+    private InteractionResult handleFluid(InteractionContext context, ItemStack givenStack) {
         if (this.isFermenting || !this.outputStack.isEmpty()) {
-            return AccessibleInventory.createResult(false, -1);
+            return InteractionResult.fail();
         }
 
         ContainerItemContext handContext = ContainerItemContext.ofPlayerHand(context.user, context.hand);
         Storage<FluidVariant> handFluidStorage = handContext.find(FluidStorage.ITEM);
 
         if (handFluidStorage == null) {
-            return AccessibleInventory.createResult(false, -1);
+            return InteractionResult.fail();
         }
 
         ItemStack heldStack = context.user.getStackInHand(context.hand);
@@ -270,7 +273,7 @@ public class FermentationTankBlockEntity extends BlockEntity implements Implemen
             Peony.LOGGER.debug("[DEBUG] Attempting to insert from full container to fermentation tank");
             return this.insertFluidFromContainer(context, handContext, handFluidStorage);
         }
-        return AccessibleInventory.createResult(false, -1);
+        return InteractionResult.fail();
     }
 
     private boolean isContainerEmpty(Storage<FluidVariant> storage) {
@@ -284,7 +287,7 @@ public class FermentationTankBlockEntity extends BlockEntity implements Implemen
         return true;
     }
 
-    private InsertResult insertFluidFromContainer(InteractionContext context, ContainerItemContext handContext, Storage<FluidVariant> handFluidStorage) {
+    private InteractionResult insertFluidFromContainer(InteractionContext context, ContainerItemContext handContext, Storage<FluidVariant> handFluidStorage) {
         try (Transaction transaction = Transaction.openOuter()) {
             FluidVariant extractedResource = null;
             long extractedAmount = 0;
@@ -315,21 +318,21 @@ public class FermentationTankBlockEntity extends BlockEntity implements Implemen
                     context.world.playSound(null, context.pos,
                             SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
                     this.updateFluidHeightAnimation();
-                    return AccessibleInventory.createResult(true, 0);
+                    return InteractionResult.success(Consumption.none());
                 }
             }
         }
 
-        return AccessibleInventory.createResult(false, -1);
+        return InteractionResult.fail();
     }
 
-    private InsertResult extractFluidToContainer(InteractionContext context, ContainerItemContext handContext, Storage<FluidVariant> handFluidStorage) {
+    private InteractionResult extractFluidToContainer(InteractionContext context, ContainerItemContext handContext, Storage<FluidVariant> handFluidStorage) {
         try (Transaction transaction = Transaction.openOuter()) {
             FluidVariant fluidVariant = this.fluidStorage.getResource();
             long availableAmount = this.fluidStorage.amount;
 
             if (availableAmount <= 0) {
-                return AccessibleInventory.createResult(false, -1);
+                return InteractionResult.fail();
             }
 
             long insertedIntoContainer = handFluidStorage.insert(
@@ -355,29 +358,32 @@ public class FermentationTankBlockEntity extends BlockEntity implements Implemen
                     context.world.playSound(null, context.pos,
                             SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
                     this.updateFluidHeightAnimation();
-                    return AccessibleInventory.createResult(true, 0);
+                    return InteractionResult.success(Consumption.none());
                 }
             }
         }
 
-        return AccessibleInventory.createResult(false, -1);
+        return InteractionResult.fail();
     }
 
-    protected InsertResult insertItem(World world, ItemStack givenStack) {
+    protected InteractionResult insertItem(World world, ItemStack givenStack) {
         if (this.inputCursor.overflowing() || !this.outputStack.isEmpty() || this.isFermenting) {
-            return AccessibleInventory.createResult(false, -1);
+            return InteractionResult.fail();
         } else {
             this.inventory.set(this.inputCursor.getCursoringIndex(), givenStack.copyWithCount(1));
             this.inputCursor.next();
 
             this.markDirty();
-            return AccessibleInventory.createResult(true, -1);
+            return InteractionResult.success(Consumption.decrement(1));
         }
     }
 
     @Override
-    public boolean extractItem(InteractionContext context) {
-        return this.extractItem(context.user);
+    public InteractionResult extract(InteractionContext context) {
+        if (this.extractItem(context.user)) {
+            return InteractionResult.success(Consumption.none());
+        }
+        return InteractionResult.fail();
     }
 
     protected boolean extractItem(PlayerEntity user) {
@@ -404,24 +410,20 @@ public class FermentationTankBlockEntity extends BlockEntity implements Implemen
     }
 
     @Override
-    public boolean useEmptyHanded(InteractionContext context) {
+    public InteractionResult emptyUse(InteractionContext context) {
         if (!this.outputStack.isEmpty()) {
-            return this.handleOutputExtraction(context);
+            PlayerEntity player = context.user;
+            ItemStack heldStack = player.getStackInHand(context.hand);
+            player.giveItemStack(this.outputStack.copy());
+            this.outputStack = ItemStack.EMPTY;
+            this.outputTimeout = 0;
+            this.markDirty();
+
+            context.world.playSound(null, this.pos, SoundEvents.ENTITY_ITEM_PICKUP,
+                    SoundCategory.BLOCKS, 0.2F, 1.0F);
+            return InteractionResult.success(Consumption.none());
         }
-        return this.extractItem(context);
-    }
-
-    private boolean handleOutputExtraction(InteractionContext context) {
-        PlayerEntity player = context.user;
-        ItemStack heldStack = player.getStackInHand(context.hand);
-        player.giveItemStack(this.outputStack.copy());
-        this.outputStack = ItemStack.EMPTY;
-        this.outputTimeout = 0;
-        this.markDirty();
-
-        context.world.playSound(null, this.pos, SoundEvents.ENTITY_ITEM_PICKUP,
-                SoundCategory.BLOCKS, 0.2F, 1.0F);
-        return true;
+        return this.extract(context);
     }
 
     @Override
@@ -514,15 +516,15 @@ public class FermentationTankBlockEntity extends BlockEntity implements Implemen
 
         if (matchedRecipe != null) {
             Peony.LOGGER.debug("[FERMENTATION] Found matching recipe: " + matchedRecipe.id());
-            startFermenting(matchedRecipe.value());
+            startFermenting(matchedRecipe);
         } else {
             Peony.LOGGER.debug("[FERMENTATION] No matching recipe found");
         }
     }
 
-    private void startFermenting(FermentingRecipe recipe) {
+    private void startFermenting(RecipeEntry<FermentingRecipe> recipe) {
         this.isFermenting = true;
-        this.fermentTime = recipe.fermentingTime();
+        this.fermentTime = recipe.value().fermentingTime();
         this.recipeStorage.setCurrentRecipe(recipe);
 
         if (this.world != null) {

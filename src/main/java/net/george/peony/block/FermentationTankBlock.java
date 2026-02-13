@@ -1,6 +1,8 @@
 package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InventoryInteraction;
 import net.george.peony.block.entity.*;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -73,8 +75,8 @@ public class FermentationTankBlock extends BlockWithEntity {
 
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof FermentationTankBlockEntity tank) {
-                AccessibleInventory.InteractionContext context = AccessibleInventory.createContext(world, pos, player, hand);
-                return AccessibleInventory.access(tank, context, ItemDecrementBehaviour.createDefault());
+                InteractionContext context = InteractionContext.create(world, pos, player, hand);
+                return InventoryInteraction.interact(tank, context);
             }
         }
         return ItemActionResult.SUCCESS;
