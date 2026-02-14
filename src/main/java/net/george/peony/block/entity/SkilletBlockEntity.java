@@ -13,6 +13,10 @@ import net.george.peony.api.heat.HeatCalculationUtils;
 import net.george.peony.api.heat.HeatLevel;
 import net.george.peony.api.heat.HeatParticleHelper;
 import net.george.peony.api.heat.HeatProvider;
+import net.george.peony.api.interaction.ComplexAccessibleInventory;
+import net.george.peony.api.interaction.Consumption;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InteractionResult;
 import net.george.peony.api.util.CountdownManager;
 import net.george.peony.api.util.nbt.NbtSerializable;
 import net.george.peony.block.SkilletBlock;
@@ -83,7 +87,7 @@ import java.util.function.Consumer;
  * - NBT persistence for game saves<br>
  */
 @SuppressWarnings({"unused"})
-public class SkilletBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, AccessibleInventory, BlockEntityTickerProvider {
+public class SkilletBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, ComplexAccessibleInventory, BlockEntityTickerProvider {
     /** Dummy recipe ID used for oil processing */
     protected static final Identifier DUMMY_RECIPE_ID = Peony.id("dummy_recipe");
 
@@ -318,7 +322,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     }
 
     @Override
-    public InsertResult insertItemSpecified(InteractionContext context, ItemStack givenStack) {
+    public InteractionResult insert(InteractionContext context, ItemStack givenStack) {
         this.lastInteractedPlayer = context.user.getUuid();
         this.lastInteractionTime = context.world.getTime();
 
@@ -357,40 +361,38 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     }
 
     @Override
-    public boolean extractItem(InteractionContext context) {
+    public InteractionResult extract(InteractionContext context) {
         PlayerEntity user = context.user;
         this.lastInteractedPlayer = user.getUuid();
         this.lastInteractionTime = context.world.getTime();
 
-        ItemStack outputStack = this.getOutputStack();
-        if (!outputStack.isEmpty()) {
-            // If output exists and requires container, extract with container
-            if (this.requiredContainer != null) {
-                ItemStack heldStack = user.getStackInHand(context.hand);
-                if (heldStack.getItem() == this.requiredContainer.asItem()) {
-                    return this.extractOutputWithContainer(context, heldStack).isSuccess();
-                }
-                return false;
-            }
-
-            // Direct extraction without container
-            user.setStackInHand(context.hand, outputStack);
-            user.damage(PeonyDamageTypes.of(context.world, PeonyDamageTypes.SCALD), context.world.random.nextBetween(1, 2));
-            this.setOutputStack(ItemStack.EMPTY);
-            this.resetCookingState();
-            return true;
-        }
+//        ItemStack outputStack = this.getOutputStack();
+//        if (!outputStack.isEmpty()) {
+//            // If output exists and requires container, extract with container
+//            if (this.requiredContainer != null) {
+//                ItemStack heldStack = user.getStackInHand(context.hand);
+//                if (heldStack.getItem() == this.requiredContainer.asItem()) {
+//                    return this.extractOutputWithContainer(context, heldStack);
+//                }
+//                return InteractionResult.fail();
+//            }
+//
+//            // Direct extraction without container
+//            user.damage(PeonyDamageTypes.of(context.world, PeonyDamageTypes.SCALD), context.world.random.nextBetween(1, 2));
+//            this.setOutputStack(ItemStack.EMPTY);
+//            this.resetCookingState();
+//            return InteractionResult.success(Consumption.replace(outputStack));
+//        }
 
         ItemStack inputStack = this.getInputStack();
         if (!inputStack.isEmpty()) {
-            user.setStackInHand(context.hand, inputStack);
             user.damage(PeonyDamageTypes.of(context.world, PeonyDamageTypes.SCALD), context.world.random.nextBetween(1, 2));
             this.setInputStack(ItemStack.EMPTY);
             this.resetCookingState();
-            return true;
+            return InteractionResult.success(Consumption.replace(inputStack));
         }
 
-        return false;
+        return InteractionResult.fail();
     }
 
     /**
@@ -400,7 +402,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
      * @param containerStack the container stack to use
      * @return the insertion result
      */
-    protected InsertResult extractOutputWithContainer(InteractionContext context, ItemStack containerStack) {
+    protected InteractionResult extractOutputWithContainer(InteractionContext context, ItemStack containerStack) {
         ItemStack outputStack = this.getOutputStack();
 
         int outputCount = outputStack.getCount();
@@ -428,10 +430,10 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                 }
 
                 this.markDirty();
-                return AccessibleInventory.createResult(true, 1); // Consume 1 container
+                return InteractionResult.success(Consumption.decrement(1)); // Consume 1 container
             }
         }
-        return AccessibleInventory.createResult(false, -1);
+        return InteractionResult.fail();
     }
 
     /**
@@ -873,7 +875,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
      * @param givenStack the ingredient stack
      * @return the insertion result
      */
-    public InsertResult startRecipe(RecipeEntry<SequentialCookingRecipe> recipe, ItemStack givenStack) {
+    public InteractionResult startRecipe(RecipeEntry<SequentialCookingRecipe> recipe, ItemStack givenStack) {
         Peony.LOGGER.debug("Starting new recipe: {}", recipe.id());
         boolean allowed = context.allowOilBasedRecipes;
 
@@ -890,7 +892,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         this.context.transitionTo(heatingMode);
 
         Peony.LOGGER.debug("New recipe started successfully with mode: {}", heatingMode);
-        return AccessibleInventory.createResult(true, -1);
+        return InteractionResult.success(Consumption.decrementAndReplace(1));
     }
 
     /**
@@ -899,7 +901,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
      * @param oilStack the oil stack to process
      * @return the insertion result
      */
-    public InsertResult startOilProcessing(ItemStack oilStack) {
+    public InteractionResult startOilProcessing(ItemStack oilStack) {
         this.resetCookingVariables();
         this.updateRecipeData(new RecipeEntry<>(DUMMY_RECIPE_ID, this.dummyRecipe));
         this.addedIngredients.add(oilStack.copyWithCount(1));
@@ -908,10 +910,10 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         this.markDirty();
 
         this.context.transitionTo(CookingStates.OIL_PROCESSING);
-        return AccessibleInventory.createResult(true, -1);
+        return InteractionResult.success(Consumption.decrementAndReplace(1));
     }
 
-    public InsertResult startCommonIngredientProcessing(ItemStack ingredientStack, CommonIngredient commonIngredient) {
+    public InteractionResult startCommonIngredientProcessing(ItemStack ingredientStack, CommonIngredient commonIngredient) {
         Peony.LOGGER.debug("Starting common ingredient processing: {}", commonIngredient.getType().getId());
 
         this.resetCookingVariables();
@@ -923,7 +925,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         this.markDirty();
 
         this.context.transitionTo(CookingStates.COMMON_INGREDIENT_PROCESSING);
-        return AccessibleInventory.createResult(true, -1);
+        return InteractionResult.success(Consumption.decrementAndReplace(1));
     }
 
     /**
@@ -1279,7 +1281,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         }
 
         @Override
-        public InsertResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
+        public InteractionResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
             SkilletBlockEntity skillet = context.skillet;
             World world = interactionContext.world;
 
@@ -1309,7 +1311,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                 return skillet.startRecipe(recipe.get(), givenStack);
             }
 
-            return AccessibleInventory.createResult(false, -1);
+            return InteractionResult.fail();
         }
 
         @Override
@@ -1367,7 +1369,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         }
 
         @Override
-        public InsertResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
+        public InteractionResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
             World world = interactionContext.world;
 
             if (context.oilProcessingStage == 0 && context.inOverflow) {
@@ -1376,7 +1378,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                 if (commonIngredientType != null && !context.hasCommonIngredient()) {
                     // If it's CommonIngredient, start CommonIngredient preprocessing
                     CommonIngredient commonIngredient = commonIngredientType.createInstance();
-                    return startCommonIngredientProcessing(context, givenStack, commonIngredient);
+                    return this.startCommonIngredientProcessing(context, givenStack, commonIngredient);
                 }
 
                 CookingSteps.Step currentStep = context.getCurrentStep(world);
@@ -1392,10 +1394,10 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                     context.canMatchOilBasedRecipe = true;
                     context.skillet.updateRecipeData(new RecipeEntry<>(SkilletBlockEntity.DUMMY_RECIPE_ID, context.skillet.dummyRecipe));
                     context.skillet.markDirty();
-                    return AccessibleInventory.createResult(true, 0);
+                    return InteractionResult.success(Consumption.none());
                 } else {
                     Peony.LOGGER.debug("In overflow stage, only tools are accepted");
-                    return AccessibleInventory.createResult(false, -1);
+                    return InteractionResult.fail();
                 }
             } else if (context.oilProcessingStage == 1) {
                 Peony.LOGGER.debug("Oil stage 1 - ingredient required");
@@ -1410,7 +1412,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                         context.oilProcessingStage = 0;
                         context.inOverflow = false;
                         context.commonIngredientProcessed = true;
-                        return startNewRecipeWithOilAndCommonIngredient(context, newRecipe.get(), givenStack);
+                        return this.startNewRecipeWithOilAndCommonIngredient(context, newRecipe.get(), givenStack);
                     }
                 }
 
@@ -1418,7 +1420,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                 CommonIngredientType<?> commonIngredientType = CommonIngredientType.LOOKUP.find(givenStack, null);
                 if (commonIngredientType != null && !context.hasCommonIngredient()) {
                     CommonIngredient commonIngredient = commonIngredientType.createInstance();
-                    return startCommonIngredientProcessing(context, givenStack, commonIngredient);
+                    return this.startCommonIngredientProcessing(context, givenStack, commonIngredient);
                 }
 
                 // Existing logic: Check oil output and match recipe
@@ -1436,7 +1438,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                         context.skillet.markDirty();
 
                         Peony.LOGGER.debug("Oil output created: {}", outputStack.getItem());
-                        return AccessibleInventory.createResult(true, 1);
+                        return InteractionResult.success(Consumption.decrement(1));
                     }
                 }
                 Optional<RecipeEntry<SequentialCookingRecipe>> newRecipe = context.skillet.getCurrentRecipe(world, givenStack);
@@ -1447,14 +1449,14 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                     context.oilProcessingStage = 0;
                     context.inOverflow = false;
 
-                    return startNewRecipeWithOil(context, newRecipe.get(), givenStack);
+                    return this.startNewRecipeWithOil(context, newRecipe.get(), givenStack);
                 } else {
                     Peony.LOGGER.debug("No matching recipe found for item: {}", givenStack.getItem());
-                    return AccessibleInventory.createResult(false, -1);
+                    return InteractionResult.fail();
                 }
             }
 
-            return AccessibleInventory.createResult(false, -1);
+            return InteractionResult.fail();
         }
 
         @Override
@@ -1473,7 +1475,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             return CookingStates.OIL_PROCESSING;
         }
 
-        private InsertResult startNewRecipeWithOil(CookingContext context, RecipeEntry<SequentialCookingRecipe> recipe, ItemStack givenStack) {
+        private InteractionResult startNewRecipeWithOil(CookingContext context, RecipeEntry<SequentialCookingRecipe> recipe, ItemStack givenStack) {
             Peony.LOGGER.debug("Starting new recipe with oil: {}", recipe.id());
             boolean allowed = context.allowOilBasedRecipes;
 
@@ -1490,10 +1492,10 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             context.transitionTo(heatingMode);
 
             Peony.LOGGER.debug("New recipe with oil started successfully with mode: {}", heatingMode);
-            return AccessibleInventory.createResult(true, -1);
+            return InteractionResult.success(Consumption.decrementAndReplace(1));
         }
 
-        private InsertResult startNewRecipeWithOilAndCommonIngredient(CookingContext context, RecipeEntry<SequentialCookingRecipe> recipe, ItemStack givenStack) {
+        private InteractionResult startNewRecipeWithOilAndCommonIngredient(CookingContext context, RecipeEntry<SequentialCookingRecipe> recipe, ItemStack givenStack) {
             Peony.LOGGER.debug("Starting new recipe with oil and common ingredient: {}", recipe.id());
 
             context.commonIngredientProcessed = true;
@@ -1508,10 +1510,10 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             context.transitionTo(heatingMode);
 
             Peony.LOGGER.debug("New recipe with oil and common ingredient started successfully with mode: {}", heatingMode);
-            return AccessibleInventory.createResult(true, -1);
+            return InteractionResult.success(Consumption.decrementAndReplace(1));
         }
 
-        private InsertResult startCommonIngredientProcessing(CookingContext context, ItemStack givenStack, CommonIngredient commonIngredient) {
+        private InteractionResult startCommonIngredientProcessing(CookingContext context, ItemStack givenStack, CommonIngredient commonIngredient) {
             Peony.LOGGER.debug("Starting common ingredient processing in oil stage: {}", commonIngredient.getType().getId());
 
             context.currentCommonIngredient = commonIngredient;
@@ -1523,7 +1525,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             context.skillet.markDirty();
 
             context.transitionTo(CookingStates.COMMON_INGREDIENT_PROCESSING);
-            return AccessibleInventory.createResult(true, -1);
+            return InteractionResult.success(Consumption.decrementAndReplace(1));
         }
     }
 
@@ -1572,7 +1574,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         }
 
         @Override
-        public InsertResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
+        public InteractionResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
             World world = interactionContext.world;
 
             if (context.commonIngredientStage == 0 && context.inOverflow) {
@@ -1590,10 +1592,10 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                         context.inOverflow = false;
                         context.commonIngredientProcessed = true;
                         context.skillet.markDirty();
-                        return AccessibleInventory.createResult(true, 0);
+                        return InteractionResult.success(Consumption.none());
                     } else {
                         Peony.LOGGER.debug("In common ingredient overflow stage, only tools are accepted");
-                        return AccessibleInventory.createResult(false, -1);
+                        return InteractionResult.fail();
                     }
                 }
             } else if (context.commonIngredientStage == 1) {
@@ -1606,11 +1608,11 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                     return this.startNewRecipeWithCommonIngredient(context, newRecipe.get(), givenStack);
                 } else {
                     Peony.LOGGER.debug("No matching recipe found for common ingredient with item: {}", givenStack.getItem());
-                    return AccessibleInventory.createResult(false, -1);
+                    return InteractionResult.fail();
                 }
             }
 
-            return AccessibleInventory.createResult(false, -1);
+            return InteractionResult.fail();
         }
 
         @Override
@@ -1631,7 +1633,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             return CookingStates.COMMON_INGREDIENT_PROCESSING;
         }
 
-        private InsertResult startNewRecipeWithCommonIngredient(CookingContext context, RecipeEntry<SequentialCookingRecipe> recipe, ItemStack givenStack) {
+        private InteractionResult startNewRecipeWithCommonIngredient(CookingContext context, RecipeEntry<SequentialCookingRecipe> recipe, ItemStack givenStack) {
             Peony.LOGGER.debug("Starting new recipe with common ingredient: {}", recipe.id());
 
             // Retain common ingredient data, but reset other states.
@@ -1656,7 +1658,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             context.transitionTo(heatingMode);
 
             Peony.LOGGER.debug("New recipe with common ingredient started successfully with mode: {}", heatingMode);
-            return AccessibleInventory.createResult(true, -1);
+            return InteractionResult.success(Consumption.decrementAndReplace(1));
         }
     }
 
@@ -1707,9 +1709,9 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         }
 
         @Override
-        public InsertResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
+        public InteractionResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
             // Do not accept items during heating
-            return AccessibleInventory.createResult(false, -1);
+            return InteractionResult.fail();
         }
 
         @Override
@@ -1773,7 +1775,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         }
 
         @Override
-        public InsertResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
+        public InteractionResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
             World world = interactionContext.world;
             CookingSteps.Step currentStep = context.getCurrentStep(world);
 
@@ -1795,10 +1797,10 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                     advanceToNextStep(context, world, interactionContext.pos);
                 }
 
-                return AccessibleInventory.createResult(true, 0);
+                return InteractionResult.success(Consumption.none());
             } else {
                 Peony.LOGGER.debug("In stir-frying stage, only tools are accepted");
-                return AccessibleInventory.createResult(false, -1);
+                return InteractionResult.fail();
             }
         }
 
@@ -1890,7 +1892,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         }
 
         @Override
-        public InsertResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
+        public InteractionResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
             World world = interactionContext.world;
             CookingSteps.Step currentStep = context.getCurrentStep(world);
 
@@ -1898,10 +1900,10 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                     !context.skillet.isToolRequirementEmpty(currentStep)) {
                 // Use tool to advance to next step
                 this.advanceToNextStep(context, world, interactionContext.pos);
-                return AccessibleInventory.createResult(true, 0);
+                return InteractionResult.success(Consumption.none());
             } else {
                 Peony.LOGGER.debug("In overflow stage, only tools are accepted");
-                return AccessibleInventory.createResult(false, -1);
+                return InteractionResult.fail();
             }
         }
 
@@ -1972,7 +1974,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         }
 
         @Override
-        public InsertResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
+        public InteractionResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
             World world = interactionContext.world;
             CookingSteps.Step currentStep = context.getCurrentStep(world);
 
@@ -1987,7 +1989,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
 
                 // Store first ingredient
                 if (context.currentStepIndex == 0 && context.getInputStack().isEmpty()) {
-                    context.setInputStack(new ItemStack(givenStack.getItem(), 1));
+                    context.setInputStack(givenStack.copyWithCount(1));
                 }
 
                 // Determine which heating mode to use based on current step requirements
@@ -1995,10 +1997,10 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                 context.transitionTo(heatingMode);
 
                 Peony.LOGGER.debug("Ingredient placed successfully, moving to {} state", heatingMode);
-                return AccessibleInventory.createResult(true, -1);
+                return InteractionResult.success(Consumption.decrementAndReplace(1));
             } else {
                 Peony.LOGGER.debug("Item does not match recipe ingredient requirement: {}", givenStack.getItem());
-                return AccessibleInventory.createResult(false, -1);
+                return InteractionResult.fail();
             }
         }
 
@@ -2035,8 +2037,8 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         }
 
         @Override
-        public InsertResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
-            return AccessibleInventory.createResult(false, -1);
+        public InteractionResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
+            return InteractionResult.fail();
         }
 
         @Override
@@ -2068,8 +2070,8 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         }
 
         @Override
-        public InsertResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
-            return AccessibleInventory.createResult(false, -1);
+        public InteractionResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack) {
+            return InteractionResult.fail();
         }
 
         @Override
@@ -2111,7 +2113,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
          * @param givenStack the item stack being inserted
          * @return the insertion result
          */
-        InsertResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack);
+        InteractionResult onItemInserted(CookingContext context, InteractionContext interactionContext, ItemStack givenStack);
 
         /**
          * Called when the state is entered.

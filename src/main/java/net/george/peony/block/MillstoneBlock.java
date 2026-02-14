@@ -3,7 +3,6 @@ package net.george.peony.block;
 import com.mojang.serialization.MapCodec;
 import net.george.peony.api.interaction.InteractionContext;
 import net.george.peony.api.interaction.InventoryInteraction;
-import net.george.peony.block.entity.AccessibleInventory;
 import net.george.peony.block.entity.BlockEntityTickerProvider;
 import net.george.peony.block.entity.MillstoneBlockEntity;
 import net.george.peony.block.entity.PeonyBlockEntities;

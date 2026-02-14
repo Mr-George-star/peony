@@ -200,7 +200,11 @@ public class PeonyRegistries {
     }
 
     private static void registerReplacements() {
+        /* VANILLA */
         ItemReplacement.registerReplacement(Items.POTION, GLASS_BOTTLE);
+
+        /* PEONY */
+        ItemReplacement.registerReplacement(PeonyItems.LARD_BOTTLE, GLASS_BOTTLE);
         ItemReplacement.registerReplacement(PeonyItems.BLACK_VINEGAR, CONDIMENT_BOTTLE);
         ItemReplacement.registerReplacement(PeonyItems.SWEET_SOUR_SAUCE, CONDIMENT_BOTTLE);
         ItemReplacement.registerReplacement(PeonyItems.SOY_SAUCE, CONDIMENT_BOTTLE);

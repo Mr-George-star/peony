@@ -2,6 +2,8 @@ package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
 import net.george.peony.api.heat.HeatProvider;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InventoryInteraction;
 import net.george.peony.block.data.HeatSource;
 import net.george.peony.block.entity.*;
 import net.george.peony.misc.PeonyDamageTypes;
@@ -112,8 +114,8 @@ public class SkilletBlock extends BlockWithEntity {
         if (!world.isClient) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof SkilletBlockEntity skillet) {
-                AccessibleInventory.InteractionContext context = AccessibleInventory.createContext(world, pos, player, hand);
-                return AccessibleInventory.access(skillet, context, ItemDecrementBehaviour.createDefault());
+                InteractionContext context = InteractionContext.create(world, pos, player, hand);
+                return InventoryInteraction.interact(skillet, context);
             }
         }
         return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

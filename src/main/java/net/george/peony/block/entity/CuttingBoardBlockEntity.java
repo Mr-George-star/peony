@@ -4,6 +4,10 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.george.networking.api.GameNetworking;
 import net.george.peony.Peony;
 import net.george.peony.api.action.Action;
+import net.george.peony.api.interaction.ComplexAccessibleInventory;
+import net.george.peony.api.interaction.Consumption;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InteractionResult;
 import net.george.peony.block.CuttingBoardBlock;
 import net.george.peony.block.data.CraftingSteps;
 import net.george.peony.block.data.RecipeStepsCursor;
@@ -43,13 +47,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, AccessibleInventory, BlockEntityTickerProvider {
+public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, ComplexAccessibleInventory, BlockEntityTickerProvider {
     protected final DefaultedList<ItemStack> inventory;
     protected final RecipeManager.MatchGetter<SingleStackRecipeInput, SequentialCraftingRecipe> matchGetter;
 
     // Crafting state management
     protected int currentStepIndex = 0;
-    protected boolean placedIngredient = false;     // Whether the ingredient for current step is placed
+    protected boolean placedIngredient = false;     // Whether the ingredient for the current step is placed
     protected boolean processed = false;            // Whether the current step action is completed
     protected boolean placedInitial = false;        // Whether the initial ingredient is placed
     protected int usageCountdown = 0;               // Cooldown between interactions
@@ -146,7 +150,7 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
     }
 
     @Override
-    public boolean insertItem(InteractionContext context, ItemStack givenStack) {
+    public InteractionResult insert(InteractionContext context, ItemStack givenStack) {
         World world = context.world;
         PlayerEntity user = context.user;
 
@@ -158,15 +162,15 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         if (inputStack.isEmpty()) {
             this.setInputStack(stackToBeInserted);
             this.updateListeners(world);
-            return true;
+            return InteractionResult.success(Consumption.decrementAndReplace(1));
         }
 
         // Stack items if they are the same type
-        if (canItemStacksBeStacked(inputStack, stackToBeInserted)) {
+        if (this.canItemStacksBeStacked(inputStack, stackToBeInserted)) {
             this.setInputStack(new ItemStack(inputStack.getItem(), inputStack.getCount() + stackToBeInserted.getCount()));
             world.emitGameEvent(GameEvent.BLOCK_CHANGE, this.pos, GameEvent.Emitter.of(user, this.getCachedState()));
             this.updateListeners(world);
-            return true;
+            return InteractionResult.success(Consumption.decrementAndReplace(1));
         }
 
         // Handle recipe step logic when cooldown is over
@@ -176,17 +180,16 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
                 Action action = currentStep.getAction();
                 Ingredient ingredient = currentStep.getIngredient();
 
-                Peony.LOGGER.info("Current Step - Action: {}, Ingredient: {}", action, ingredient);
+                Peony.LOGGER.debug("Current Step - Action: {}, Ingredient: {}", action, ingredient);
 
                 // Check for tool action
                 if (action != null && action.test(context.world, givenStack)) {
                     if (this.placedIngredient && !this.processed) {
-                        givenStack.damage(1, user, EquipmentSlot.MAINHAND);
                         this.processed = true;
                         this.markDirty();
                         this.resetCountdown();
-                        Peony.LOGGER.info("Tool operation completed, marked as processed");
-                        return true;
+                        Peony.LOGGER.debug("Tool operation completed, marked as processed");
+                        return InteractionResult.success(Consumption.damage(1));
                     }
                 }
 
@@ -197,48 +200,47 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
                         this.placedIngredient = true;
                         this.updateListeners(world);
                         this.resetCountdown();
-                        Peony.LOGGER.info("Raw materials are placed");
-                        return true;
+                        Peony.LOGGER.debug("Raw materials are placed");
+                        return InteractionResult.success(Consumption.decrementAndReplace(1));
                     }
                 }
             }
         }
 
-        return false;
+        return InteractionResult.fail();
     }
 
     @Override
-    public boolean extractItem(InteractionContext context) {
+    public InteractionResult extract(InteractionContext context) {
         World world = context.world;
         PlayerEntity user = context.user;
 
         ItemStack inputStack = this.getInputStack();
         if (inputStack.isEmpty()) {
-            return false;
+            return InteractionResult.fail();
         } else {
             // Return item to player and reset crafting state
-            user.setStackInHand(context.hand, inputStack);
             this.setInputStack(ItemStack.EMPTY);
             this.resetCraftingState();
             world.emitGameEvent(GameEvent.BLOCK_CHANGE, this.pos, GameEvent.Emitter.of(user, this.getCachedState()));
             world.updateListeners(this.pos, this.getCachedState(), this.getCachedState(), 3);
-            return true;
+            return InteractionResult.success(Consumption.replace(inputStack));
         }
     }
 
     @Override
-    public boolean useEmptyHanded(InteractionContext context) {
+    public InteractionResult emptyUse(InteractionContext context) {
         World world = context.world;
         BlockPos pos = context.pos;
 
         RecipeStepsCursor<CraftingSteps.Step> cursor = this.getCurrentCursor(world);
         if (!this.isCountdownOver() || cursor == null) {
-            return true;
+            return InteractionResult.success(Consumption.none());
         }
 
         CraftingSteps.Step currentStep = cursor.getCurrentStep();
         if (currentStep == null) {
-            return true;
+            return InteractionResult.success(Consumption.none());
         }
 
         Action action = currentStep.getAction();
@@ -258,21 +260,21 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
                     this.markDirty();
                     this.resetCountdown();
                     Peony.LOGGER.debug("Skipped placeholder ingredient placement and marked as processed");
-                    return true;
+                    return InteractionResult.success(Consumption.none());
                 } else if (this.placedIngredient && !this.processed) {
-                    // If already auto-placed in tick, just mark as processed
+                    // If already auto-placed in tick, mark as processed
                     this.processed = true;
                     this.markDirty();
                     this.resetCountdown();
                     Peony.LOGGER.debug("Processed placeholder ingredient that was auto-placed");
-                    return true;
+                    return InteractionResult.success(Consumption.none());
                 }
             } else {
                 // For non-placeholder ingredients, use normal flow
                 if (!this.placedIngredient && !this.processed) {
                     // Wait for ingredient to be placed first
                     Peony.LOGGER.debug("Waiting for ingredient to be placed");
-                    return true;
+                    return InteractionResult.success(Consumption.none());
                 }
 
                 // Execute processing action for non-placeholder ingredients
@@ -283,12 +285,12 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
                     this.markDirty();
                     this.resetCountdown();
                     Peony.LOGGER.debug("Empty-handed processing completed");
-                    return true;
+                    return InteractionResult.success(Consumption.none());
                 }
             }
         }
 
-        return true;
+        return InteractionResult.success(Consumption.none());
     }
 
     /**
@@ -335,7 +337,7 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
      * Gets the current recipe matching the input item
      */
     protected Optional<RecipeEntry<SequentialCraftingRecipe>> getCurrentRecipe(World world, ItemStack input) {
-        // Return cached recipe if available
+        // Return the cached recipe if available
         if (this.cachedRecipe != null) {
             return Optional.of(this.cachedRecipe);
         }
@@ -383,12 +385,12 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         this.placedInitial = false;
         this.cachedRecipe = null;
         this.usageCountdown = 0;
-        Peony.LOGGER.info("Reset Crafting State");
+        Peony.LOGGER.debug("Reset Crafting State");
     }
 
     @Override
     public void tick(World world, BlockPos pos, BlockState state) {
-        // Update direction from block state
+        // Update a direction from block state
         if (state.contains(CuttingBoardBlock.FACING)) {
             this.cachedDirection = state.get(CuttingBoardBlock.FACING);
         }
@@ -402,7 +404,7 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         RecipeStepsCursor<CraftingSteps.Step> cursor = this.getCurrentCursor(world);
 
         if (recipe.isPresent() && cursor != null) {
-            // Initialize first step
+            // Initialize the first step
             if (!this.placedInitial) {
                 this.placedIngredient = true; // First step ingredient is the input item
                 this.processed = false;
@@ -432,7 +434,7 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
                 return;
             }
 
-            // Advance to next step when current step is completed
+            // Advance to the next step when the current step is completed
             if (this.placedIngredient && this.processed) {
                 Peony.LOGGER.debug("Step {} completed, advancing to next step", this.currentStepIndex);
                 this.currentStepIndex++;

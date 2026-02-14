@@ -42,7 +42,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-// todo: join into fabric fluid transfer api
+// todo: join into fabric fluid transfer api, improve CachedRecipe
 public class BrewingBarrelBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, ComplexAccessibleInventory, BlockEntityTickerProvider {
     protected final DefaultedList<ItemStack> inputs;
     protected ItemStack outputStack = ItemStack.EMPTY;

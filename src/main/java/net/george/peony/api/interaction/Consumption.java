@@ -70,9 +70,24 @@ public class Consumption {
         });
     }
 
+    public static Consumption damage(int amount) {
+        return new Consumption(context -> {
+            if (!context.player.getAbilities().creativeMode) {
+                context.heldStack.damage(amount, context.player, PlayerEntity.getSlotForHand(context.hand));
+            }
+        });
+    }
+
     public void apply(PlayerEntity player, Hand hand) {
         ItemStack heldStack = player.getStackInHand(hand);
         this.applier.accept(new ApplyContext(player, hand, heldStack));
+    }
+
+    public Consumption andThen(Consumption other) {
+        return new Consumption(context -> {
+            this.applier.accept(context);
+            other.applier.accept(context);
+        });
     }
 
     private record ApplyContext(PlayerEntity player, Hand hand, ItemStack heldStack) {}
