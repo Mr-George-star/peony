@@ -2,9 +2,9 @@ package net.george.peony.api.interaction;
 
 public interface InteractionFeatures {
     /**
-     * Whether shift bulk insertion is enabled
+     * Override to customize sound.
      */
-    default boolean supportsBulkInsert() {
-        return false;
+    default InteractionSound getInteractionSound() {
+        return InteractionSound.DEFAULT;
     }
 }

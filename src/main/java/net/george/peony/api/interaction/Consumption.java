@@ -4,37 +4,34 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Consumption {
-    private final Mode mode;
-    private final int amount;
-    private final Function<ItemStack, ItemStack> replacementFunction;
+    private final Consumer<ApplyContext> applier;
 
-    private Consumption(Mode mode, int amount, ItemStack replacement) {
-        this(mode, amount, stack -> replacement);
-    }
-
-    private Consumption(Mode mode, int amount, Function<ItemStack, ItemStack> replacementFunction) {
-        this.mode = mode;
-        this.amount = amount;
-        this.replacementFunction = replacementFunction;
+    private Consumption(Consumer<ApplyContext> applier) {
+        this.applier = applier;
     }
 
     public static Consumption none() {
-        return new Consumption(Mode.NONE, 0, ItemStack.EMPTY);
+        return new Consumption(context -> {});
     }
 
     public static Consumption decrement(int amount) {
-        return new Consumption(Mode.DECREMENT, amount, ItemStack.EMPTY);
+        return new Consumption(context -> context.heldStack.decrementUnlessCreative(amount, context.player));
     }
 
     public static Consumption all() {
-        return new Consumption(Mode.ALL, 0, ItemStack.EMPTY);
+        return new Consumption(context -> {
+            if (!context.player.getAbilities().creativeMode) {
+                context.player.setStackInHand(context.hand, ItemStack.EMPTY);
+            }
+        });
     }
 
     public static Consumption replace(ItemStack replacement) {
-        return new Consumption(Mode.REPLACE, 1, replacement);
+        return replace(stack -> replacement);
     }
 
     public static Consumption replace() {
@@ -42,29 +39,41 @@ public class Consumption {
     }
 
     public static Consumption replace(Function<ItemStack, ItemStack> replacementFunction) {
-        return new Consumption(Mode.REPLACE, 1, replacementFunction);
+        return new Consumption(context -> {
+            if (!context.player.getAbilities().creativeMode) {
+                ItemStack replacement = replacementFunction.apply(context.player.getStackInHand(context.hand));
+                context.player.setStackInHand(context.hand, replacement.copy());
+            }
+        });
+    }
+
+    public static Consumption decrementAndReplace(int amount) {
+        return decrementAndReplace(amount, ItemReplacement::getReplacement);
+    }
+
+    public static Consumption decrementAndReplace(int amount, Function<ItemStack, ItemStack> replacementFunction) {
+        return new Consumption(context -> {
+            if (!context.player.getAbilities().creativeMode) {
+                int actual = Math.min(amount, context.heldStack.getCount());
+                ItemStack replacement = replacementFunction.apply(context.heldStack);
+                context.heldStack.decrement(actual);
+
+                if (!replacement.isEmpty()) {
+                    ItemStack copy = replacement.copy();
+                    copy.setCount(actual);
+
+                    if (!context.player.getInventory().insertStack(copy)) {
+                        context.player.dropItem(copy, false);
+                    }
+                }
+            }
+        });
     }
 
     public void apply(PlayerEntity player, Hand hand) {
-        if (player.getAbilities().creativeMode) {
-            return;
-        }
-
-        ItemStack held = player.getStackInHand(hand);
-
-        switch (this.mode) {
-            case NONE -> {}
-            case DECREMENT -> held.decrement(this.amount);
-            case ALL -> player.setStackInHand(hand, ItemStack.EMPTY);
-            case REPLACE -> player.setStackInHand(hand, this.replacementFunction.apply(held));
-        }
+        ItemStack heldStack = player.getStackInHand(hand);
+        this.applier.accept(new ApplyContext(player, hand, heldStack));
     }
 
-    public enum Mode {
-        NONE,
-        DECREMENT,
-        ALL,
-        REPLACE,
-        DYNAMIC_REPLACE
-    }
+    private record ApplyContext(PlayerEntity player, Hand hand, ItemStack heldStack) {}
 }

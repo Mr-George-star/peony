@@ -1,5 +1,9 @@
 package net.george.peony.block.entity;
 
+import net.george.peony.api.interaction.ComplexAccessibleInventory;
+import net.george.peony.api.interaction.Consumption;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InteractionResult;
 import net.george.peony.block.MillstoneBlock;
 import net.george.peony.block.data.Output;
 import net.george.peony.recipe.MillingRecipe;
@@ -37,7 +41,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-public class MillstoneBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, AccessibleInventory, BlockEntityTickerProvider {
+public class MillstoneBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, ComplexAccessibleInventory, BlockEntityTickerProvider {
     protected final DefaultedList<ItemStack> itemBeingMilled;
     protected final DefaultedList<ItemStack> outputStacks;
     protected final RecipeManager.MatchGetter<SingleStackRecipeInput, MillingRecipe> matchGetter;
@@ -146,60 +150,61 @@ public class MillstoneBlockEntity extends BlockEntity implements ImplementedInve
         builder.add(DataComponentTypes.CONTAINER, ContainerComponent.fromStacks(this.getItems()));
     }
 
+    // todo: fix cannot insert full stack
     @Override
-    public InsertResult insertItemSpecified(InteractionContext context, ItemStack givenStack) {
+    public InteractionResult insert(InteractionContext context, ItemStack givenStack) {
         if (!this.outputStacks.isEmpty() && !this.getOutputStack().isEmpty() &&
                 this.requiredContainer != null && givenStack.getItem() == this.requiredContainer.asItem()) {
-            return extractOutputWithContainer(context, givenStack);
+            return this.extractOutputWithContainer(context, givenStack);
         }
 
-        ItemStack inputStack = getInputStack();
-        Optional<RecipeEntry<MillingRecipe>> recipe = getRecipe(context.world, givenStack);
+        ItemStack inputStack = this.getInputStack();
+        Optional<RecipeEntry<MillingRecipe>> recipe = this.getRecipe(context.world, givenStack);
         if (recipe.isPresent()) {
             if (inputStack.isEmpty()) {
                 this.requiredMillingTimes = recipe.get().value().millingTimes();
                 this.millingTimes = 0;
                 this.setInputStack(givenStack);
                 this.markDirty();
-                return AccessibleInventory.createResult(true, -1);
-            } else if (canItemStacksBeStacked(inputStack, givenStack)) {
+                return InteractionResult.success(Consumption.all());
+            } else if (this.canItemStacksBeStacked(inputStack, givenStack)) {
                 this.requiredMillingTimes = recipe.get().value().millingTimes();
                 this.millingTimes = 0;
                 this.setInputStack(new ItemStack(inputStack.getItem(), inputStack.getCount() + givenStack.getCount()));
                 this.markDirty();
-                return AccessibleInventory.createResult(true, -1);
+                return InteractionResult.success(Consumption.all());
             }
         }
-        return AccessibleInventory.createResult(false, -1);
+        return InteractionResult.fail();
     }
 
     @Override
-    public boolean extractItem(InteractionContext context) {
-        ItemStack itemStack = getInputStack();
+    public InteractionResult extract(InteractionContext context) {
+        ItemStack itemStack = this.getInputStack();
         if (itemStack.isEmpty()) {
-            return false;
+            return InteractionResult.fail();
         } else {
             context.user.setStackInHand(context.hand, itemStack);
             this.requiredMillingTimes = 0;
             this.millingTimes = 0;
             this.setInputStack(ItemStack.EMPTY);
             this.markDirty();
-            return true;
+            return InteractionResult.success(Consumption.none());
         }
     }
 
     @Override
-    public boolean useEmptyHanded(InteractionContext context) {
+    public InteractionResult emptyUse(InteractionContext context) {
         if (this.isCountdownOver()) {
             context.world.setBlockState(context.pos, context.world.getBlockState(context.pos).cycle(MillstoneBlock.ROTATION_TIMES));
             this.resetCountdown();
-            return true;
+            return InteractionResult.success(Consumption.none());
         } else {
-            return false;
+            return InteractionResult.fail();
         }
     }
 
-    protected InsertResult extractOutputWithContainer(InteractionContext context, ItemStack containerStack) {
+    protected InteractionResult extractOutputWithContainer(InteractionContext context, ItemStack containerStack) {
         ItemStack outputStack = getOutputStack();
 
         int outputCount = outputStack.getCount();
@@ -218,10 +223,10 @@ public class MillstoneBlockEntity extends BlockEntity implements ImplementedInve
                 }
 
                 this.markDirty();
-                return AccessibleInventory.createResult(true, containersToUse);
+                return InteractionResult.success(Consumption.decrement(containersToUse));
             }
         }
-        return AccessibleInventory.createResult(false, -1);
+        return InteractionResult.fail();
     }
 
     protected Direction getRotatedDirection(Direction side, Direction localDirection) {

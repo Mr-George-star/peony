@@ -62,6 +62,7 @@ public class PeonyBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
                 .add(RegistryDataUtils.BLOCK.filterToArray(block -> block instanceof CuttingBoardBlock))
                 .add(RegistryDataUtils.BLOCK.filterToArray(block -> block instanceof LogStickBlock))
                 .add(RegistryDataUtils.BLOCK.filterToArray(block -> block instanceof PotStandBlock || block instanceof PotStandWithCampfireBlock))
+                .add(PeonyBlocks.BOWL)
                 .add(PeonyBlocks.BREWING_BARREL)
                 .add(PeonyBlocks.FERMENTATION_TANK);
     }

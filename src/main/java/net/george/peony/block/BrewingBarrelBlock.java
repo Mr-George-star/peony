@@ -1,6 +1,8 @@
 package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InventoryInteraction;
 import net.george.peony.block.entity.*;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -89,8 +91,8 @@ public class BrewingBarrelBlock extends BlockWithEntity {
         if (!world.isClient) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof BrewingBarrelBlockEntity barrel) {
-                AccessibleInventory.InteractionContext context = AccessibleInventory.createContext(world, pos, player, hand);
-                return AccessibleInventory.access(barrel, context, ItemDecrementBehaviour.createDefault());
+                InteractionContext context = InteractionContext.create(world, pos, player, hand);
+                return InventoryInteraction.interact(barrel, context);
             }
         }
         return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

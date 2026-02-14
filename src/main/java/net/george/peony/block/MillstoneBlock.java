@@ -1,6 +1,8 @@
 package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InventoryInteraction;
 import net.george.peony.block.entity.AccessibleInventory;
 import net.george.peony.block.entity.BlockEntityTickerProvider;
 import net.george.peony.block.entity.MillstoneBlockEntity;
@@ -112,8 +114,8 @@ public class MillstoneBlock extends BlockWithEntity {
         if (!world.isClient) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof MillstoneBlockEntity millstone) {
-                AccessibleInventory.InteractionContext context = AccessibleInventory.createContext(world, pos, player, hand);
-                return AccessibleInventory.access(millstone, context);
+                InteractionContext context = InteractionContext.create(world, pos, player, hand);
+                return InventoryInteraction.interact(millstone, context);
             }
         }
         return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

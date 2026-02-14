@@ -1,28 +1,55 @@
 package net.george.peony.api.interaction;
 
-@SuppressWarnings("ClassCanBeRecord")
-public class InteractionResult {
-    private final boolean success;
-    private final Consumption consumption;
+import org.jetbrains.annotations.Nullable;
 
-    public InteractionResult(boolean success, Consumption consumption) {
-        this.success = success;
-        this.consumption = consumption;
+public sealed interface InteractionResult permits InteractionResult.Success, InteractionResult.Fail {
+    static Success success(Consumption consumption) {
+        return new Success(consumption);
     }
 
-    public static InteractionResult fail() {
-        return new InteractionResult(false, Consumption.none());
+    static InteractionResult fail() {
+        return Fail.INSTANCE;
     }
 
-    public static InteractionResult success(Consumption consumption) {
-        return new InteractionResult(true, consumption);
+    boolean isSuccess();
+
+    final class Success implements InteractionResult {
+        private final Consumption consumption;
+        @Nullable
+        private InteractionSound sound = null;
+
+        private Success(Consumption consumption) {
+            this.consumption = consumption;
+        }
+
+        public Success sound(InteractionSound sound) {
+            this.sound = sound;
+            return this;
+        }
+
+        @Override
+        public boolean isSuccess() {
+            return true;
+        }
+
+        public Consumption getConsumption() {
+            return this.consumption;
+        }
+
+        @Nullable
+        public InteractionSound getSound() {
+            return this.sound;
+        }
     }
 
-    public boolean isSuccess() {
-        return this.success;
-    }
+    final class Fail implements InteractionResult {
+        private static final Fail INSTANCE = new Fail();
 
-    public Consumption getConsumption() {
-        return this.consumption;
+        private Fail() {}
+
+        @Override
+        public boolean isSuccess() {
+            return false;
+        }
     }
 }

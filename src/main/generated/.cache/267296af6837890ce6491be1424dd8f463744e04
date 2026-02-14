@@ -1,4 +1,4 @@
-// 1.21.1	2026-02-10T21:39:08.2347607	Peony/Block Loot Tables
+// 1.21.1	2026-02-14T12:46:30.4202435	Peony/Block Loot Tables
 c115e1b90c5f8269ff62c76d4ebd43dab038b0e3 data\peony\loot_table\blocks\spruce_pot_stand.json
 2b2a4bde1a1c86393b28fa3ff9b81ef1ddeed22d data\peony\loot_table\blocks\mangrove_pot_stand_with_campfire.json
 2b2a4bde1a1c86393b28fa3ff9b81ef1ddeed22d data\peony\loot_table\blocks\dark_oak_pot_stand_with_campfire.json
@@ -29,8 +29,10 @@ d99ba0ad126cf4221d7e11ce3b0792f5a3a44ac7 data\peony\loot_table\blocks\birch_pot_
 43b90cd92baae0929fff43ed22f3b2df7bfafa4c data\peony\loot_table\blocks\dark_oak_log_stick.json
 f2016ffc0420516d5523063a82959253fbec0f5d data\peony\loot_table\blocks\oak_log_stick.json
 5d6403e74853f4af5fc25a4902cdeee0f6a5b8d0 data\peony\loot_table\blocks\gas_cylinder.json
+514c32e58d3511d347fda1dda714f0205f1701ff data\peony\loot_table\blocks\margherita_pizza.json
 2b2a4bde1a1c86393b28fa3ff9b81ef1ddeed22d data\peony\loot_table\blocks\birch_pot_stand_with_campfire.json
 2b2a4bde1a1c86393b28fa3ff9b81ef1ddeed22d data\peony\loot_table\blocks\oak_pot_stand_with_campfire.json
+44fac5cbad925ace28f0c59685cb5be52ccf1ada data\peony\loot_table\blocks\raw_margherita_pizza.json
 217f685d6d604dbaf667b831b301b39f41f99905 data\peony\loot_table\blocks\bowl.json
 b973dcfc05d9f202f411daf02e67463a4c6f5993 data\peony\loot_table\blocks\dark_oak_cutting_board.json
 fb1aa26c3678fa13f2492df540e5769bec2e0612 data\peony\loot_table\blocks\tomato_vines.json
@@ -45,5 +47,6 @@ f91a0d21da12f87fc65cef68304bf276e74d0db5 data\peony\loot_table\blocks\mangrove_l
 88f4ac5526201036af2d1d6f1fd31ff42a3245b2 data\peony\loot_table\blocks\brewing_barrel.json
 4b32049cbeec1fff3c7e8bb6f5e784563fd96232 data\peony\loot_table\blocks\spruce_cutting_board.json
 08af08797986ba2b31fb01852d04a723221192dc data\peony\loot_table\blocks\jungle_pot_stand.json
+c17908eea510b6c8c30219325e3ad188b36464ce data\peony\loot_table\blocks\cheese_block.json
 a3f5b29f42a66430822d24c56a9a3ba7f6642288 data\peony\loot_table\blocks\acacia_cutting_board.json
 af46410cf126df33294e49e3cfcbfa83776e973c data\peony\loot_table\blocks\gas_stove.json

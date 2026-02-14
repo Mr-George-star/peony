@@ -1,9 +1,9 @@
 package net.george.peony.block;
 
 import com.mojang.serialization.MapCodec;
-import net.george.peony.block.entity.AccessibleInventory;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InventoryInteraction;
 import net.george.peony.block.entity.FlatbreadBlockEntity;
-import net.george.peony.block.entity.ItemDecrementBehaviour;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -94,8 +94,8 @@ public class FlatbreadBlock extends Block implements BlockEntityProvider {
     protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof FlatbreadBlockEntity flatbread) {
-            return AccessibleInventory.access(flatbread,
-                    AccessibleInventory.createContext(world, pos, player, hand), ItemDecrementBehaviour.createDefault());
+            InteractionContext context = InteractionContext.create(world, pos, player, hand);
+            return InventoryInteraction.interact(flatbread, context);
         }
         return super.onUseWithItem(stack, state, world, pos, player, hand, hit);
     }

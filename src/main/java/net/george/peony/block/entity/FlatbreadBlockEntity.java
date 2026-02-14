@@ -1,6 +1,7 @@
 package net.george.peony.block.entity;
 
 import net.george.peony.api.block.PizzaBlockState;
+import net.george.peony.api.interaction.*;
 import net.george.peony.block.FlatbreadBlock;
 import net.george.peony.recipe.PeonyRecipes;
 import net.george.peony.recipe.PizzaCraftingRecipe;
@@ -28,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-public class FlatbreadBlockEntity extends BlockEntity implements AccessibleInventory {
+public class FlatbreadBlockEntity extends BlockEntity implements ComplexAccessibleInventory {
     public static final int MAX_INGREDIENTS = 8;
     private final DefaultedList<ItemStack> ingredients = DefaultedList.ofSize(MAX_INGREDIENTS, ItemStack.EMPTY);
 
@@ -72,9 +73,9 @@ public class FlatbreadBlockEntity extends BlockEntity implements AccessibleInven
     }
 
     @Override
-    public boolean insertItem(InteractionContext context, ItemStack givenStack) {
+    public InteractionResult insert(InteractionContext context, ItemStack givenStack) {
         if (this.world == null || this.world.isClient) {
-            return false;
+            return InteractionResult.fail();
         }
 
         ItemStack heldStack = context.user.getStackInHand(context.hand);
@@ -89,16 +90,16 @@ public class FlatbreadBlockEntity extends BlockEntity implements AccessibleInven
                 this.world.updateListeners(this.pos, getCachedState(), getCachedState(), 3);
 
                 this.world.playSound(null, this.pos, SoundEvents.BLOCK_WOOL_PLACE, SoundCategory.BLOCKS, 0.8F, 1.0F);
-                return true;
+                return InteractionResult.success(Consumption.decrement(1));
             }
         }
-        return false;
+        return InteractionResult.fail();
     }
 
     @Override
-    public boolean extractItem(InteractionContext context) {
+    public InteractionResult extract(InteractionContext context) {
         if (this.world == null || this.world.isClient) {
-            return false;
+            return InteractionResult.fail();
         }
 
         for (int i = this.ingredients.size() - 1; i >= 0; i--) {
@@ -113,15 +114,15 @@ public class FlatbreadBlockEntity extends BlockEntity implements AccessibleInven
                 this.markDirty();
                 this.world.updateListeners(this.pos, getCachedState(), getCachedState(), 3);
                 this.world.playSound(null, this.pos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS, 0.8F, 1.0F);
-                return true;
+                return InteractionResult.success(Consumption.none());
             }
         }
-        return false;
+        return InteractionResult.fail();
     }
 
-    private boolean attemptCraftPizza(PlayerEntity player) {
+    private InteractionResult attemptCraftPizza(PlayerEntity player) {
         if (this.world == null) {
-            return false;
+            return InteractionResult.fail();
         }
 
         List<ItemStack> nonEmptyIngredients = new ArrayList<>();
@@ -133,7 +134,7 @@ public class FlatbreadBlockEntity extends BlockEntity implements AccessibleInven
 
         if (nonEmptyIngredients.isEmpty()) {
             player.sendMessage(Text.translatable(PeonyTranslationKeys.MESSAGE_FLATBREAD_NO_INGREDIENTS), true);
-            return false;
+            return InteractionResult.fail();
         }
 
         PizzaCraftingRecipeInput input = new PizzaCraftingRecipeInput(nonEmptyIngredients);
@@ -154,13 +155,13 @@ public class FlatbreadBlockEntity extends BlockEntity implements AccessibleInven
                 this.ingredients.clear();
                 this.world.playSound(null, this.pos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS, 1.0F, 1.2F);
                 player.sendMessage(Text.translatable(PeonyTranslationKeys.MESSAGE_FLATBREAD_CREATE_SUCCESS), true);
-                return true;
+                return InteractionResult.success(Consumption.none());
             }
         } else {
             player.sendMessage(Text.translatable(PeonyTranslationKeys.MESSAGE_FLATBREAD_NO_RECIPE), true);
             this.world.playSound(null, this.pos, SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), SoundCategory.BLOCKS, 1.0F, 0.8F);
         }
 
-        return false;
+        return InteractionResult.fail();
     }
 }

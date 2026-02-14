@@ -15,6 +15,7 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.george.peony.Peony;
 import net.george.peony.api.interaction.InteractionContext;
 import net.george.peony.api.interaction.InventoryInteraction;
+import net.george.peony.api.interaction.ItemReplacement;
 import net.george.peony.block.*;
 import net.george.peony.block.entity.*;
 import net.george.peony.fluid.PeonyFluids;
@@ -198,6 +199,13 @@ public class PeonyRegistries {
         );
     }
 
+    private static void registerReplacements() {
+        ItemReplacement.registerReplacement(Items.POTION, GLASS_BOTTLE);
+        ItemReplacement.registerReplacement(PeonyItems.BLACK_VINEGAR, CONDIMENT_BOTTLE);
+        ItemReplacement.registerReplacement(PeonyItems.SWEET_SOUR_SAUCE, CONDIMENT_BOTTLE);
+        ItemReplacement.registerReplacement(PeonyItems.SOY_SAUCE, CONDIMENT_BOTTLE);
+    }
+
     private static void registerDebugCommands() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("checkGasConnection")
                 .requires(source -> source.hasPermissionLevel(2))
@@ -236,6 +244,7 @@ public class PeonyRegistries {
         registerNonBlockRenderingItems();
         registerCarvedRenderingItems();
         registerFluidApi();
+        registerReplacements();
         modifyLootTables();
         registerEvents();
         ItemExchangeBehaviour.registerBehaviours();

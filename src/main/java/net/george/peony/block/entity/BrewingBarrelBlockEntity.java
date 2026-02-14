@@ -4,8 +4,12 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.base.SingleFluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.george.peony.api.fluid.FluidStack;
 import net.george.peony.api.fluid.FluidContainer;
+import net.george.peony.api.fluid.FluidStack;
+import net.george.peony.api.interaction.ComplexAccessibleInventory;
+import net.george.peony.api.interaction.Consumption;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InteractionResult;
 import net.george.peony.api.util.CountdownManager;
 import net.george.peony.block.SkilletBlock;
 import net.george.peony.block.data.Cursor;
@@ -18,7 +22,6 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
@@ -40,7 +43,7 @@ import java.util.List;
 import java.util.Optional;
 
 // todo: join into fabric fluid transfer api
-public class BrewingBarrelBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, AccessibleInventory, BlockEntityTickerProvider {
+public class BrewingBarrelBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, ComplexAccessibleInventory, BlockEntityTickerProvider {
     protected final DefaultedList<ItemStack> inputs;
     protected ItemStack outputStack = ItemStack.EMPTY;
     protected Cursor inputCursor;
@@ -147,10 +150,10 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
     }
 
     @Override
-    public InsertResult insertItemSpecified(InteractionContext context, ItemStack givenStack) {
+    public InteractionResult insert(InteractionContext context, ItemStack givenStack) {
         if (!this.outputStack.isEmpty() &&
                 this.requiredContainer != null && givenStack.getItem() == this.requiredContainer.asItem()) {
-            return extractOutputWithContainer(context, givenStack);
+            return this.extractOutputWithContainer(context, givenStack);
         }
         FluidContainer container = FluidContainer.FLUID_CONTAINERS.find(givenStack, null);
         if (container != null) {
@@ -160,60 +163,12 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
             if (matchedRecipe.isPresent() && this.fluidStorage.amount >= matchedRecipe.get().value().basicFluid().getAmount()) {
                 this.startedBrewing = true;
             }
-            return AccessibleInventory.createResult(true, -1);
+            return InteractionResult.success(Consumption.decrementAndReplace(1));
         }
         return this.insertItem(context.world, givenStack);
     }
 
-    @Override
-    public boolean extractItem(InteractionContext context) {
-        return this.extractItem(context.user);
-    }
-
-    protected InsertResult insertItem(World world, ItemStack givenStack) {
-        if (this.inputCursor.overflowing() || !this.outputStack.isEmpty() || this.startedBrewing) {
-            return AccessibleInventory.createResult(false, -1);
-        } else {
-            this.inputs.set(this.inputCursor.getCursoringIndex(), givenStack.copyWithCount(1));
-            this.inputCursor.next();
-            this.tryStartBrewing(world);
-
-            this.markDirty();
-            return AccessibleInventory.createResult(true, -1);
-        }
-    }
-
-    protected void tryStartBrewing(World world) {
-        Optional<RecipeEntry<BrewingRecipe>> recipe = this.findMatchingRecipe(world);
-        if (recipe.isPresent() && this.fluidStorage.amount >= recipe.get().value().basicFluid().getAmount()) {
-            this.startedBrewing = true;
-        }
-    }
-
-    protected boolean extractItem(PlayerEntity user) {
-        if (this.inputCursor.getCursoringIndex() <= this.inputCursor.getRange().getMin()) {
-            return false;
-        } else {
-            this.inputCursor.previous();
-            int extractIndex = this.inputCursor.getCursoringIndex();
-            ItemStack stack = this.inputs.get(extractIndex);
-
-            if (!stack.isEmpty()) {
-                user.giveItemStack(stack.copy());
-                this.inputs.set(extractIndex, ItemStack.EMPTY);
-                if (this.startedBrewing) {
-                    this.startedBrewing = false;
-                }
-                this.markDirty();
-                return true;
-            } else {
-                this.inputCursor.next();
-                return false;
-            }
-        }
-    }
-
-    protected InsertResult extractOutputWithContainer(InteractionContext context, ItemStack containerStack) {
+    protected InteractionResult extractOutputWithContainer(InteractionContext context, ItemStack containerStack) {
         ItemStack outputStack = this.outputStack;
 
         int outputCount = outputStack.getCount();
@@ -232,10 +187,54 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
                 }
 
                 this.markDirty();
-                return AccessibleInventory.createResult(true, containersToUse);
+                return InteractionResult.success(Consumption.decrement(containersToUse));
             }
         }
-        return AccessibleInventory.createResult(false, -1);
+        return InteractionResult.fail();
+    }
+
+    protected InteractionResult insertItem(World world, ItemStack givenStack) {
+        if (this.inputCursor.overflowing() || !this.outputStack.isEmpty() || this.startedBrewing) {
+            return InteractionResult.fail();
+        } else {
+            this.inputs.set(this.inputCursor.getCursoringIndex(), givenStack.copyWithCount(1));
+            this.inputCursor.next();
+            this.tryStartBrewing(world);
+
+            this.markDirty();
+            return InteractionResult.success(Consumption.decrement(1));
+        }
+    }
+
+    protected void tryStartBrewing(World world) {
+        Optional<RecipeEntry<BrewingRecipe>> recipe = this.findMatchingRecipe(world);
+        if (recipe.isPresent() && this.fluidStorage.amount >= recipe.get().value().basicFluid().getAmount()) {
+            this.startedBrewing = true;
+        }
+    }
+
+    @Override
+    public InteractionResult extract(InteractionContext context) {
+        if (this.inputCursor.getCursoringIndex() <= this.inputCursor.getRange().getMin()) {
+            return InteractionResult.fail();
+        } else {
+            this.inputCursor.previous();
+            int extractIndex = this.inputCursor.getCursoringIndex();
+            ItemStack stack = this.inputs.get(extractIndex);
+
+            if (!stack.isEmpty()) {
+                context.user.giveItemStack(stack.copy());
+                this.inputs.set(extractIndex, ItemStack.EMPTY);
+                if (this.startedBrewing) {
+                    this.startedBrewing = false;
+                }
+                this.markDirty();
+                return InteractionResult.success(Consumption.none());
+            } else {
+                this.inputCursor.next();
+                return InteractionResult.fail();
+            }
+        }
     }
 
     protected void clearInputs() {

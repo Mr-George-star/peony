@@ -2,7 +2,7 @@ package net.george.peony.api.interaction;
 
 import net.minecraft.item.ItemStack;
 
-public interface ComplexAccessibleInventory extends AccessibleInventory, InteractionFeatures, InteractionSoundProvider {
+public interface ComplexAccessibleInventory extends AccessibleInventory, InteractionFeatures {
     @Override
     default InteractionResult insert(InteractionContext context, ItemStack givenStack) {
         return InteractionResult.success(Consumption.none());

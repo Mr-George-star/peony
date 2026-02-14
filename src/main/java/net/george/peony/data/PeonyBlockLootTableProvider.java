@@ -41,6 +41,10 @@ public class PeonyBlockLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(PeonyBlocks.DOUGH);
         addDrop(PeonyBlocks.FLOUR);
         addDrop(PeonyBlocks.FLATBREAD);
+        addDrop(PeonyBlocks.CHEESE_BLOCK);
+        addDrop(PeonyBlocks.RAW_MARGHERITA_PIZZA);
+        addDrop(PeonyBlocks.MARGHERITA_PIZZA);
+
         addDrop(PeonyBlocks.SKILLET);
         addDrop(PeonyBlocks.BREWING_BARREL);
         addDrop(PeonyBlocks.FERMENTATION_TANK);
