@@ -25,6 +25,11 @@ repositories {
 	maven {
 		url = "https://api.modrinth.com/maven"
 	}
+	maven {
+		name = "RedlanceMinecraft"
+		url = "https://repo.redlance.org/public"
+	}
+	mavenCentral()
 	mavenLocal()
 }
 
@@ -52,6 +57,7 @@ dependencies {
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 	modImplementation "maven.modrinth:jade:${project.jade_version}"
 	modImplementation include("maven.modrinth:milk-lib:${project.milk_lib_version}")
+	modImplementation "com.zigythebird.playeranim:PlayerAnimationLibFabric:${project.pal_version}"
 }
 
 loom {

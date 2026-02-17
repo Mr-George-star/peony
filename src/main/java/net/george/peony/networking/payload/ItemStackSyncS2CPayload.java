@@ -4,6 +4,7 @@ import net.george.networking.api.GameNetworking;
 import net.george.peony.Peony;
 import net.george.peony.block.entity.BowlBlockEntity;
 import net.george.peony.block.entity.CuttingBoardBlockEntity;
+import net.george.peony.block.entity.FermentationTankBlockEntity;
 import net.george.peony.block.entity.SkilletBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
@@ -46,6 +47,10 @@ public record ItemStackSyncS2CPayload(int inventorySize, List<ItemStack> stacks,
             } else if (blockEntity instanceof BowlBlockEntity bowl) {
                 for (int slot = 0; slot < inventorySize; slot++) {
                     bowl.setStack(slot, stacks.get(slot));
+                }
+            } else if (blockEntity instanceof FermentationTankBlockEntity tank) {
+                for (int slot = 0; slot < inventorySize; slot++) {
+                    tank.setStack(slot, stacks.get(slot));
                 }
             }
         });

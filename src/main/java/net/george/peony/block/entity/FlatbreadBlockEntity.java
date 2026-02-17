@@ -1,7 +1,10 @@
 package net.george.peony.block.entity;
 
 import net.george.peony.api.block.PizzaBlockState;
-import net.george.peony.api.interaction.*;
+import net.george.peony.api.interaction.ComplexAccessibleInventory;
+import net.george.peony.api.interaction.Consumption;
+import net.george.peony.api.interaction.InteractionContext;
+import net.george.peony.api.interaction.InteractionResult;
 import net.george.peony.block.FlatbreadBlock;
 import net.george.peony.recipe.PeonyRecipes;
 import net.george.peony.recipe.PizzaCraftingRecipe;
@@ -9,6 +12,9 @@ import net.george.peony.recipe.PizzaCraftingRecipeInput;
 import net.george.peony.util.PeonyTranslationKeys;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
@@ -29,12 +35,17 @@ import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-public class FlatbreadBlockEntity extends BlockEntity implements ComplexAccessibleInventory {
+public class FlatbreadBlockEntity extends BlockEntity implements ImplementedInventory, ComplexAccessibleInventory {
     public static final int MAX_INGREDIENTS = 8;
     private final DefaultedList<ItemStack> ingredients = DefaultedList.ofSize(MAX_INGREDIENTS, ItemStack.EMPTY);
 
     public FlatbreadBlockEntity(BlockPos pos, BlockState state) {
         super(PeonyBlockEntities.FLATBREAD, pos, state);
+    }
+
+    @Override
+    public DefaultedList<ItemStack> getItems() {
+        return this.ingredients;
     }
 
     public DefaultedList<ItemStack> getIngredients() {
@@ -70,6 +81,18 @@ public class FlatbreadBlockEntity extends BlockEntity implements ComplexAccessib
     @Override
     public BlockEntityUpdateS2CPacket toUpdatePacket() {
         return BlockEntityUpdateS2CPacket.create(this);
+    }
+
+    @Override
+    protected void readComponents(BlockEntity.ComponentsAccess components) {
+        super.readComponents(components);
+        components.getOrDefault(DataComponentTypes.CONTAINER, ContainerComponent.DEFAULT).copyTo(this.getItems());
+    }
+
+    @Override
+    protected void addComponents(ComponentMap.Builder builder) {
+        super.addComponents(builder);
+        builder.add(DataComponentTypes.CONTAINER, ContainerComponent.fromStacks(this.getItems()));
     }
 
     @Override

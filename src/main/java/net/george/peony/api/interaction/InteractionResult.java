@@ -1,6 +1,10 @@
 package net.george.peony.api.interaction;
 
+import com.google.common.collect.Lists;
+import net.george.peony.api.interaction.effect.InteractionEffect;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public sealed interface InteractionResult permits InteractionResult.Success, InteractionResult.Fail {
     static Success success(Consumption consumption) {
@@ -15,15 +19,14 @@ public sealed interface InteractionResult permits InteractionResult.Success, Int
 
     final class Success implements InteractionResult {
         private final Consumption consumption;
-        @Nullable
-        private InteractionSound sound = null;
+        private InteractionEffect effects = null;
 
         private Success(Consumption consumption) {
             this.consumption = consumption;
         }
 
-        public Success sound(InteractionSound sound) {
-            this.sound = sound;
+        public Success effect(InteractionEffect effect) {
+            this.effects = effect;
             return this;
         }
 
@@ -37,8 +40,8 @@ public sealed interface InteractionResult permits InteractionResult.Success, Int
         }
 
         @Nullable
-        public InteractionSound getSound() {
-            return this.sound;
+        public InteractionEffect getEffects() {
+            return this.effects;
         }
     }
 

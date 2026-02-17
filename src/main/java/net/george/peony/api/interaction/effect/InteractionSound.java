@@ -1,4 +1,4 @@
-package net.george.peony.api.interaction;
+package net.george.peony.api.interaction.effect;
 
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -6,7 +6,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public record InteractionSound(SoundEvent sound, float volume, float pitch) {
+public record InteractionSound(SoundEvent sound, float volume, float pitch) implements EffectAction {
     public static final InteractionSound DEFAULT =
             new InteractionSound(
                     SoundEvents.ENTITY_ITEM_PICKUP,

@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 import net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler;
+import net.george.peony.api.animation.PeonyAnimation;
 import net.george.peony.block.PeonyBlocks;
 import net.george.peony.block.entity.PeonyBlockEntities;
 import net.george.peony.block.entity.client.*;
@@ -51,6 +52,7 @@ public class PeonyClient implements ClientModInitializer {
         BlockEntityRendererFactories.register(PeonyBlockEntities.POT_STAND_WITH_CAMPFIRE, PotStandWithCampfireBlockEntityRenderer::new);
         BlockEntityRendererFactories.register(PeonyBlockEntities.SKILLET, SkilletBlockEntityRenderer::new);
         BlockEntityRendererFactories.register(PeonyBlockEntities.BOWL, BowlBlockEntityRenderer::new);
+        BlockEntityRendererFactories.register(PeonyBlockEntities.FLATBREAD, FlatbreadBlockEntityRenderer::new);
         BlockEntityRendererFactories.register(PeonyBlockEntities.FERMENTATION_TANK, FermentationTankBlockEntityRenderer::new);
 
         FluidRenderHandlerRegistry.INSTANCE.register(PeonyFluids.STILL_NATURE_GAS, PeonyFluids.FLOWING_NATURE_GAS,
@@ -61,5 +63,6 @@ public class PeonyClient implements ClientModInitializer {
                 SimpleFluidRenderHandler.coloredWater(0xff120802));
 
         PeonyItemRenderers.register();
+        PeonyAnimation.register();
     }
 }

@@ -40,10 +40,11 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.18.1",
-		"minecraft": "~1.21.1",
+		"minecraft": "=1.21.1",
 		"java": ">=21",
-		"fabric-api": "*",
-		"yet_another_config_lib_v3": ">=3.6.1"
+		"fabric-api": "~0.116.7",
+		"yet_another_config_lib_v3": ">=3.6.1",
+		"player_animation_library": ">=1.1.4"
 	},
 	"suggests": {
 		"another-mod": "*"

@@ -7,10 +7,11 @@ import net.george.peony.api.interaction.ComplexAccessibleInventory;
 import net.george.peony.api.interaction.Consumption;
 import net.george.peony.api.interaction.InteractionContext;
 import net.george.peony.api.interaction.InteractionResult;
-import net.george.peony.block.MillstoneBlock;
+import net.george.peony.block.BowlBlock;
 import net.george.peony.block.data.Output;
 import net.george.peony.block.data.RecipeStorage;
 import net.george.peony.networking.payload.ItemStackSyncS2CPayload;
+import net.george.peony.networking.payload.SingleStackSyncS2CPayload;
 import net.george.peony.recipe.FlavouringPreparingRecipe;
 import net.george.peony.recipe.ListedRecipeInput;
 import net.george.peony.recipe.PeonyRecipes;
@@ -41,7 +42,6 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 
-// todo: optimize item insertion
 @SuppressWarnings("unused")
 public class BowlBlockEntity extends BlockEntity implements ImplementedInventory, ComplexAccessibleInventory, DirectionProvider {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(5, ItemStack.EMPTY);
@@ -71,8 +71,8 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
     public Direction getDirection() {
         if (this.world != null) {
             BlockState state = this.world.getBlockState(this.pos);
-            if (state.contains(MillstoneBlock.FACING)) {
-                return state.get(MillstoneBlock.FACING);
+            if (state.contains(BowlBlock.FACING)) {
+                return state.get(BowlBlock.FACING);
             }
         }
         return Direction.NORTH;
@@ -94,15 +94,25 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
         return this.isComplete;
     }
 
+    public ItemStack getOutputStack() {
+        return this.outputStack;
+    }
+
+    public void setOutputStack(ItemStack outputStack) {
+        this.outputStack = outputStack;
+    }
+
     @Override
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registries) {
         super.writeNbt(nbt, registries);
         Inventories.writeNbt(nbt, this.inventory, registries);
-        nbt.putBoolean("IsOutputStackEmpty", this.outputStack.isEmpty());
-        if (!this.outputStack.isEmpty()) {
-            NbtCompound outputNbt = new NbtCompound();
-            this.outputStack.encode(registries, outputNbt);
-            nbt.put("OutputStack", outputNbt);
+        if (!(this.world == null) && !this.world.isClient) {
+            nbt.putBoolean("IsOutputStackEmpty", this.outputStack.isEmpty());
+            if (!this.outputStack.isEmpty()) {
+                NbtCompound outputNbt = new NbtCompound();
+                this.outputStack.encode(registries, outputNbt);
+                nbt.put("OutputStack", outputNbt);
+            }
         }
         nbt.putInt("StirTimes", this.stirTimes);
         nbt.putInt("RequiredStirTimes", this.requiredStirTimes);
@@ -114,11 +124,13 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registries) {
         super.readNbt(nbt, registries);
         Inventories.readNbt(nbt, this.inventory, registries);
-        if (!nbt.getBoolean("IsOutputStackEmpty")) {
-            NbtCompound outputNbt = nbt.getCompound("OutputStack");
-            this.outputStack = ItemStack.fromNbtOrEmpty(registries, outputNbt);
-        } else {
-            this.outputStack = ItemStack.EMPTY;
+        if (!(this.world == null) && !this.world.isClient) {
+            if (!nbt.getBoolean("IsOutputStackEmpty")) {
+                NbtCompound outputNbt = nbt.getCompound("OutputStack");
+                this.outputStack = ItemStack.fromNbtOrEmpty(registries, outputNbt);
+            } else {
+                this.outputStack = ItemStack.EMPTY;
+            }
         }
         this.stirTimes = nbt.getInt("StirTimes");
         this.requiredStirTimes = nbt.getInt("RequiredStirTimes");
@@ -151,6 +163,13 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
     private void sync() {
         if (this.world != null && !this.world.isClient()) {
             this.world.updateListeners(this.pos, getCachedState(), getCachedState(), 3);
+        }
+    }
+
+    private void updateOutput() {
+        if (!Objects.requireNonNull(this.world).isClient) {
+            CustomPayload payload = new SingleStackSyncS2CPayload(this.outputStack, this.pos);
+            GameNetworking.sendToPlayers(PlayerLookup.world((ServerWorld) this.world), payload);
         }
     }
 
@@ -278,6 +297,7 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
             Peony.LOGGER.debug("Generated Result: {}", outputStack.getItem().getName().getString());
             this.markDirty();
             this.sync();
+            this.updateOutput();
         }
     }
 
@@ -353,9 +373,11 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
             if (requiredContainer == null) {
                 this.giveItemToPlayer(player, hand, resultStack.copy());
                 this.outputStack = ItemStack.EMPTY;
+                this.isComplete = false;
                 this.resetStirringState();
                 this.markDirty();
                 this.sync();
+                this.updateOutput();
                 return InteractionResult.success(Consumption.none());
             }
 
@@ -367,9 +389,11 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
                 }
                 this.giveItemToPlayer(player, hand, resultStack.copy());
                 this.outputStack = ItemStack.EMPTY;
+                this.isComplete = false;
                 this.resetStirringState();
                 this.markDirty();
                 this.sync();
+                this.updateOutput();
                 return InteractionResult.success(Consumption.none());
             }
         }

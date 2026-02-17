@@ -1,8 +1,10 @@
 package net.george.peony.block.entity.client;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
 import net.george.peony.block.entity.FermentationTankBlockEntity;
 import net.george.peony.util.FluidRenderHelper;
+import net.george.peony.util.RenderUtils;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
@@ -19,12 +21,25 @@ public class FermentationTankBlockEntityRenderer implements BlockEntityRenderer<
     @Override
     public void render(FermentationTankBlockEntity entity, float tickDelta, MatrixStack matrices,
                        VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        FluidVariant fluidVariant = entity.getFluidStorage().getResource();
-        long amount = entity.getFluidStorage().getAmount();
-        long capacity = entity.getFluidStorage().getCapacity();
+        float finalOffset = this.renderFluid(entity, entity.getFluidStorage(), tickDelta, matrices, vertexConsumers, light);
+
+        if (entity.getOutputStack().isEmpty()) {
+            RenderUtils.renderItemList(entity, entity.getItems(), matrices, vertexConsumers,
+                    finalOffset, light, overlay, entity.getDirection());
+        } else {
+            RenderUtils.renderSingleItem(entity, entity.getOutputStack(), matrices, vertexConsumers,
+                    light, overlay, finalOffset, entity.getDirection());
+        }
+    }
+    
+    private float renderFluid(FermentationTankBlockEntity entity, SingleVariantStorage<FluidVariant> fluidStorage,
+                             float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+        FluidVariant fluidVariant = fluidStorage.getResource();
+        long amount = fluidStorage.getAmount();
+        long capacity = fluidStorage.getCapacity();
 
         if (fluidVariant.isBlank() || amount <= 0) {
-            return;
+            return (float) 1 / 16;
         }
 
         float xMin = REND.floatValue();
@@ -44,10 +59,6 @@ public class FermentationTankBlockEntityRenderer implements BlockEntityRenderer<
                 matrices,
                 light
         );
-    }
-
-    @Override
-    public boolean rendersOutsideBoundingBox(FermentationTankBlockEntity blockEntity) {
-        return false;
+        return yMax;
     }
 }

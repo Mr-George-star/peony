@@ -1,6 +1,15 @@
 {
   "variants": {
-    "":  {
+    "facing=east":  {
+      "model": "peony:block/fermentation_tank"
+    },
+    "facing=north": {
+      "model": "peony:block/fermentation_tank"
+    },
+    "facing=south": {
+      "model": "peony:block/fermentation_tank"
+    },
+    "facing=west":  {
       "model": "peony:block/fermentation_tank"
     }
   }

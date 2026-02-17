@@ -1,6 +1,7 @@
 package net.george.peony.block.entity;
 
 import com.google.common.collect.Lists;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -10,15 +11,19 @@ import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.george.networking.api.GameNetworking;
 import net.george.peony.Peony;
 import net.george.peony.api.fluid.FluidStack;
 import net.george.peony.api.interaction.ComplexAccessibleInventory;
 import net.george.peony.api.interaction.Consumption;
 import net.george.peony.api.interaction.InteractionContext;
 import net.george.peony.api.interaction.InteractionResult;
+import net.george.peony.block.FermentationTankBlock;
 import net.george.peony.block.data.Cursor;
 import net.george.peony.block.data.Output;
 import net.george.peony.block.data.RecipeStorage;
+import net.george.peony.networking.payload.ItemStackSyncS2CPayload;
+import net.george.peony.networking.payload.SingleStackSyncS2CPayload;
 import net.george.peony.recipe.FermentingRecipe;
 import net.george.peony.recipe.MixedIngredientsRecipeInput;
 import net.george.peony.recipe.PeonyRecipes;
@@ -36,22 +41,26 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings({"unused"})
-public class FermentationTankBlockEntity extends BlockEntity implements ImplementedInventory, ComplexAccessibleInventory, BlockEntityTickerProvider {
+public class FermentationTankBlockEntity extends BlockEntity implements ImplementedInventory, ComplexAccessibleInventory, DirectionProvider, BlockEntityTickerProvider {
     public static final List<Block> MUSHROOMS = Collections.unmodifiableList(Lists.newArrayList(
             Blocks.MUSHROOM_STEM, Blocks.BROWN_MUSHROOM_BLOCK, Blocks.RED_MUSHROOM_BLOCK
     ));
@@ -124,8 +133,27 @@ public class FermentationTankBlockEntity extends BlockEntity implements Implemen
         return this.inventory;
     }
 
+    @Override
+    public Direction getDirection() {
+        if (this.world != null) {
+            BlockState state = this.world.getBlockState(this.pos);
+            if (state.contains(FermentationTankBlock.FACING)) {
+                return state.get(FermentationTankBlock.FACING);
+            }
+        }
+        return Direction.NORTH;
+    }
+
     public SingleVariantStorage<FluidVariant> getFluidStorage() {
         return this.fluidStorage;
+    }
+
+    public ItemStack getOutputStack() {
+        return this.outputStack;
+    }
+
+    public void setOutputStack(ItemStack outputStack) {
+        this.outputStack = outputStack;
     }
 
     @Override
@@ -150,10 +178,12 @@ public class FermentationTankBlockEntity extends BlockEntity implements Implemen
 
     public void writeFermentingData(NbtCompound nbt, RegistryWrapper.WrapperLookup registries) {
         nbt.putBoolean("IsOutputStackEmpty", this.outputStack.isEmpty());
-        if (!this.outputStack.isEmpty()) {
-            NbtCompound outputNbt = new NbtCompound();
-            this.outputStack.encode(registries, outputNbt);
-            nbt.put("OutputStack", outputNbt);
+        if (!(this.world == null) && !this.world.isClient) {
+            if (!this.outputStack.isEmpty()) {
+                NbtCompound outputNbt = new NbtCompound();
+                this.outputStack.encode(registries, outputNbt);
+                nbt.put("OutputStack", outputNbt);
+            }
         }
         nbt.putBoolean("HasSlab", this.hasSlab);
         nbt.putBoolean("IsFermenting", this.isFermenting);
@@ -194,11 +224,13 @@ public class FermentationTankBlockEntity extends BlockEntity implements Implemen
     }
 
     protected void readFermentingData(NbtCompound nbt, RegistryWrapper.WrapperLookup registries) {
-        if (!nbt.getBoolean("IsOutputStackEmpty")) {
-            NbtCompound outputNbt = nbt.getCompound("OutputStack");
-            this.outputStack = ItemStack.fromNbtOrEmpty(registries, outputNbt);
-        } else {
-            this.outputStack = ItemStack.EMPTY;
+        if (!(this.world == null) && !this.world.isClient) {
+            if (!nbt.getBoolean("IsOutputStackEmpty")) {
+                NbtCompound outputNbt = nbt.getCompound("OutputStack");
+                this.outputStack = ItemStack.fromNbtOrEmpty(registries, outputNbt);
+            } else {
+                this.outputStack = ItemStack.EMPTY;
+            }
         }
         this.hasSlab = nbt.getBoolean("HasSlab");
         this.isFermenting = nbt.getBoolean("IsFermenting");
@@ -233,6 +265,18 @@ public class FermentationTankBlockEntity extends BlockEntity implements Implemen
         super.markDirty();
         if (this.world != null) {
             this.world.updateListeners(this.pos, getCachedState(), getCachedState(), 3);
+
+            if (!this.world.isClient) {
+                CustomPayload payload = new ItemStackSyncS2CPayload(this.inventory.size(), this.inventory, this.pos);
+                GameNetworking.sendToPlayers(PlayerLookup.world((ServerWorld) this.world), payload);
+            }
+        }
+    }
+
+    private void updateOutput() {
+        if (!Objects.requireNonNull(this.world).isClient) {
+            CustomPayload payload = new SingleStackSyncS2CPayload(this.outputStack, this.pos);
+            GameNetworking.sendToPlayers(PlayerLookup.world((ServerWorld) this.world), payload);
         }
     }
 
@@ -418,6 +462,7 @@ public class FermentationTankBlockEntity extends BlockEntity implements Implemen
             this.outputStack = ItemStack.EMPTY;
             this.outputTimeout = 0;
             this.markDirty();
+            this.updateOutput();
 
             context.world.playSound(null, this.pos, SoundEvents.ENTITY_ITEM_PICKUP,
                     SoundCategory.BLOCKS, 0.2F, 1.0F);

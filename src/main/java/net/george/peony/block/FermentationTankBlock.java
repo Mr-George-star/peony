@@ -12,9 +12,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ItemActionResult;
-import net.minecraft.util.ItemScatterer;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.Properties;
+import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -36,6 +37,7 @@ public class FermentationTankBlock extends BlockWithEntity {
             Block.createCuboidShape(15, 0, 1, 16, 16, 15),
             Block.createCuboidShape(0, 0, 1, 1, 16, 15)
     ).reduce(VoxelShapes::union).get();
+    public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     public static final MapCodec<FermentationTankBlock> CODEC = createCodec(FermentationTankBlock::new);
 
     protected FermentationTankBlock(Settings settings) {
@@ -53,6 +55,16 @@ public class FermentationTankBlock extends BlockWithEntity {
     }
 
     @Override
+    protected BlockState rotate(BlockState state, BlockRotation rotation) {
+        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    }
+
+    @Override
+    protected BlockState mirror(BlockState state, BlockMirror mirror) {
+        return state.rotate(mirror.getRotation(state.get(FACING)));
+    }
+
+    @Override
     protected BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         return direction == Direction.DOWN ? Blocks.AIR.getDefaultState() : super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
@@ -61,6 +73,11 @@ public class FermentationTankBlock extends BlockWithEntity {
     protected boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
         BlockState down = world.getBlockState(pos.down());
         return down.isFullCube(world, pos);
+    }
+
+    @Override
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
     }
 
     /* BLOCK ENTITY */

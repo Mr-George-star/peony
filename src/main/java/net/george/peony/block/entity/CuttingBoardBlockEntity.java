@@ -8,6 +8,9 @@ import net.george.peony.api.interaction.ComplexAccessibleInventory;
 import net.george.peony.api.interaction.Consumption;
 import net.george.peony.api.interaction.InteractionContext;
 import net.george.peony.api.interaction.InteractionResult;
+import net.george.peony.api.interaction.effect.InteractionAnimation;
+import net.george.peony.api.interaction.effect.InteractionEffect;
+import net.george.peony.api.interaction.effect.animation.DefaultAnimations;
 import net.george.peony.block.CuttingBoardBlock;
 import net.george.peony.block.data.CraftingSteps;
 import net.george.peony.block.data.RecipeStepsCursor;
@@ -20,7 +23,6 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
@@ -189,7 +191,8 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
                         this.markDirty();
                         this.resetCountdown();
                         Peony.LOGGER.debug("Tool operation completed, marked as processed");
-                        return InteractionResult.success(Consumption.damage(1));
+                        return InteractionResult.success(Consumption.damage(1))
+                                .effect(InteractionEffect.of().and(new InteractionAnimation(DefaultAnimations.fromAction(action.getType()))));
                     }
                 }
 
@@ -260,14 +263,16 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
                     this.markDirty();
                     this.resetCountdown();
                     Peony.LOGGER.debug("Skipped placeholder ingredient placement and marked as processed");
-                    return InteractionResult.success(Consumption.none());
+                    return InteractionResult.success(Consumption.none())
+                            .effect(InteractionEffect.of().and(new InteractionAnimation(DefaultAnimations.fromAction(action.getType()))));
                 } else if (this.placedIngredient && !this.processed) {
                     // If already auto-placed in tick, mark as processed
                     this.processed = true;
                     this.markDirty();
                     this.resetCountdown();
                     Peony.LOGGER.debug("Processed placeholder ingredient that was auto-placed");
-                    return InteractionResult.success(Consumption.none());
+                    return InteractionResult.success(Consumption.none())
+                            .effect(InteractionEffect.of().and(new InteractionAnimation(DefaultAnimations.fromAction(action.getType()))));
                 }
             } else {
                 // For non-placeholder ingredients, use normal flow
