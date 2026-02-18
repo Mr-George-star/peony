@@ -43,7 +43,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-public class BowlBlockEntity extends BlockEntity implements ImplementedInventory, ComplexAccessibleInventory, DirectionProvider {
+public class BowlBlockEntity extends BlockEntity implements ImplementedInventory, ComplexAccessibleInventory {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(5, ItemStack.EMPTY);
     protected ItemStack outputStack = ItemStack.EMPTY;
     private int stirTimes = 0;
@@ -67,7 +67,6 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
     /**
      * Returns the facing direction of the bowl block from its block state.
      */
-    @Override
     public Direction getDirection() {
         if (this.world != null) {
             BlockState state = this.world.getBlockState(this.pos);
@@ -264,7 +263,7 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
 
         if (recipeOptional.isPresent()) {
             RecipeEntry<FlavouringPreparingRecipe> recipe = recipeOptional.get();
-            this.recipeStorage.setCurrentRecipe(recipe);
+            this.recipeStorage.setRecipeEntry(recipe);
             this.requiredStirTimes = recipe.value().stirringTimes();
             this.stirTimes = 0;
             this.isStirring = false;
@@ -287,7 +286,7 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
      * and stores the result in {@code outputStack}.
      */
     private void generateResult() {
-        FlavouringPreparingRecipe recipe = this.recipeStorage.getCurrentRecipe();
+        FlavouringPreparingRecipe recipe = this.recipeStorage.getRecipe();
         if (recipe != null) {
             Output output = recipe.output();
             ItemStack outputStack = output.getOutputStack().copy();
@@ -365,7 +364,7 @@ public class BowlBlockEntity extends BlockEntity implements ImplementedInventory
      * After successful extraction, the mixing state is reset.
      */
     private InteractionResult takeResult(World world, PlayerEntity player, Hand hand, ItemStack resultStack) {
-        FlavouringPreparingRecipe recipe = this.recipeStorage.getCurrentRecipe();
+        FlavouringPreparingRecipe recipe = this.recipeStorage.getRecipe();
         if (recipe != null) {
             ItemConvertible requiredContainer = Output.getRequiredContainer(recipe.output());
 

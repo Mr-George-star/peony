@@ -14,6 +14,7 @@ import net.george.peony.api.interaction.effect.animation.DefaultAnimations;
 import net.george.peony.block.CuttingBoardBlock;
 import net.george.peony.block.data.CraftingSteps;
 import net.george.peony.block.data.RecipeStepsCursor;
+import net.george.peony.block.data.RecipeStorage;
 import net.george.peony.item.PeonyItems;
 import net.george.peony.networking.payload.ItemStackSyncS2CPayload;
 import net.george.peony.recipe.PeonyRecipes;
@@ -49,7 +50,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, ComplexAccessibleInventory, BlockEntityTickerProvider {
+public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedInventory, ComplexAccessibleInventory, BlockEntityTickerProvider {
     protected final DefaultedList<ItemStack> inventory;
     protected final RecipeManager.MatchGetter<SingleStackRecipeInput, SequentialCraftingRecipe> matchGetter;
 
@@ -59,15 +60,14 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
     protected boolean processed = false;            // Whether the current step action is completed
     protected boolean placedInitial = false;        // Whether the initial ingredient is placed
     protected int usageCountdown = 0;               // Cooldown between interactions
-    @Nullable
-    protected RecipeEntry<SequentialCraftingRecipe> cachedRecipe = null; // Cached recipe for performance
-    protected Direction cachedDirection = Direction.NORTH;
+    protected RecipeStorage<SingleStackRecipeInput, SequentialCraftingRecipe> cachedRecipe; // Cached recipe for performance
 
     public CuttingBoardBlockEntity(BlockPos pos, BlockState state) {
         super(PeonyBlockEntities.CUTTING_BOARD, pos, state);
         this.inventory = DefaultedList.ofSize(1, ItemStack.EMPTY);
         // Create cached recipe matcher for better performance
         this.matchGetter = RecipeManager.createCachedMatchGetter(PeonyRecipes.SEQUENTIAL_CRAFTING_TYPE);
+        this.cachedRecipe = RecipeStorage.create(SequentialCraftingRecipe.class);
     }
 
     @Override
@@ -90,13 +90,14 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         this.markDirty();
     }
 
-    @Override
     public Direction getDirection() {
-        return this.cachedDirection;
-    }
-
-    public boolean hasPlacedIngredient() {
-        return this.placedIngredient;
+        if (this.world != null) {
+            BlockState state = this.world.getBlockState(this.pos);
+            if (state.contains(CuttingBoardBlock.FACING)) {
+                return state.get(CuttingBoardBlock.FACING);
+            }
+        }
+        return Direction.NORTH;
     }
 
     @Override
@@ -108,7 +109,6 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         nbt.putBoolean("Processed", this.processed);
         nbt.putBoolean("PlacedInitial", this.placedInitial);
         nbt.putInt("UsageCountdown", this.usageCountdown);
-        nbt.putString("CachedDirection", this.getDirection().getName());
     }
 
     @Override
@@ -119,9 +119,6 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         this.processed = nbt.getBoolean("Processed");
         this.placedInitial = nbt.getBoolean("PlacedInitial");
         this.usageCountdown = nbt.getInt("UsageCountdown");
-        @Nullable
-        Direction direction = Direction.byName(nbt.getString("CachedDirection"));
-        this.cachedDirection = direction != null ? direction : Direction.NORTH;
         super.readNbt(nbt, registryLookup);
     }
 
@@ -343,12 +340,12 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
      */
     protected Optional<RecipeEntry<SequentialCraftingRecipe>> getCurrentRecipe(World world, ItemStack input) {
         // Return the cached recipe if available
-        if (this.cachedRecipe != null) {
-            return Optional.of(this.cachedRecipe);
+        if (!this.cachedRecipe.isEmpty()) {
+            return this.cachedRecipe.getOptionalRecipeEntry();
         }
         Optional<RecipeEntry<SequentialCraftingRecipe>> recipe =
                 this.matchGetter.getFirstMatch(new SingleStackRecipeInput(input), world);
-        recipe.ifPresent(entry -> this.cachedRecipe = entry);
+        recipe.ifPresent(this.cachedRecipe::setRecipeEntry);
         return recipe;
     }
 
@@ -388,18 +385,13 @@ public class CuttingBoardBlockEntity extends BlockEntity implements ImplementedI
         this.placedIngredient = false;
         this.processed = false;
         this.placedInitial = false;
-        this.cachedRecipe = null;
+        this.cachedRecipe.clear();
         this.usageCountdown = 0;
         Peony.LOGGER.debug("Reset Crafting State");
     }
 
     @Override
     public void tick(World world, BlockPos pos, BlockState state) {
-        // Update a direction from block state
-        if (state.contains(CuttingBoardBlock.FACING)) {
-            this.cachedDirection = state.get(CuttingBoardBlock.FACING);
-        }
-
         // Decrement cooldown
         if (this.usageCountdown > 0) {
             this.usageCountdown--;

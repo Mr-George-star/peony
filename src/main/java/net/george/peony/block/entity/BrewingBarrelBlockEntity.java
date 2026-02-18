@@ -11,9 +11,10 @@ import net.george.peony.api.interaction.Consumption;
 import net.george.peony.api.interaction.InteractionContext;
 import net.george.peony.api.interaction.InteractionResult;
 import net.george.peony.api.util.CountdownManager;
-import net.george.peony.block.SkilletBlock;
+import net.george.peony.block.BrewingBarrelBlock;
 import net.george.peony.block.data.Cursor;
 import net.george.peony.block.data.Output;
+import net.george.peony.block.data.RecipeStorage;
 import net.george.peony.recipe.BrewingRecipe;
 import net.george.peony.recipe.MixedIngredientsRecipeInput;
 import net.george.peony.recipe.PeonyRecipes;
@@ -42,8 +43,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-// todo: join into fabric fluid transfer api, improve CachedRecipe
-public class BrewingBarrelBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, ComplexAccessibleInventory, BlockEntityTickerProvider {
+public class BrewingBarrelBlockEntity extends BlockEntity implements ImplementedInventory, ComplexAccessibleInventory, BlockEntityTickerProvider {
     protected final DefaultedList<ItemStack> inputs;
     protected ItemStack outputStack = ItemStack.EMPTY;
     protected Cursor inputCursor;
@@ -52,10 +52,9 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
     protected int brewingTime = 0;
     protected CountdownManager countdownManager;
     public final SingleFluidStorage fluidStorage;
-    protected @Nullable RecipeEntry<BrewingRecipe> cachedRecipe = null;
+    protected RecipeStorage<MixedIngredientsRecipeInput, BrewingRecipe> cachedRecipe;
     @Nullable
     protected ItemConvertible requiredContainer;
-    protected Direction cachedDirection = Direction.NORTH;
 
     public BrewingBarrelBlockEntity(BlockPos pos, BlockState state) {
         super(PeonyBlockEntities.BREWING_BARREL, pos, state);
@@ -63,6 +62,7 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
         this.inputCursor = Cursor.create(0, 5, "InputCursor");
         this.countdownManager = CountdownManager.create();
         this.fluidStorage = SingleFluidStorage.withFixedCapacity(FluidConstants.BUCKET, this::markDirty);
+        this.cachedRecipe = RecipeStorage.create(BrewingRecipe.class);
     }
 
     @Override
@@ -70,9 +70,14 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
         return this.inputs;
     }
 
-    @Override
     public Direction getDirection() {
-        return this.cachedDirection;
+        if (this.world != null) {
+            BlockState state = this.world.getBlockState(this.pos);
+            if (state.contains(BrewingBarrelBlock.FACING)) {
+                return state.get(BrewingBarrelBlock.FACING);
+            }
+        }
+        return Direction.NORTH;
     }
 
     @Override
@@ -93,7 +98,6 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
             Item item = this.requiredContainer.asItem();
             nbt.putString("RequiredContainer", Registries.ITEM.getId(item).toString());
         }
-        nbt.putString("CachedDirection", this.getDirection().getName());
     }
 
     @Override
@@ -113,9 +117,6 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
         if (nbt.contains("RequiredContainer")) {
             this.requiredContainer = Registries.ITEM.get(Identifier.tryParse(nbt.getString("RequiredContainer")));
         }
-        @Nullable
-        Direction direction = Direction.byName(nbt.getString("CachedDirection"));
-        this.cachedDirection = direction != null ? direction : Direction.NORTH;
         super.readNbt(nbt, registryLookup);
     }
 
@@ -258,8 +259,8 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
     }
 
     protected Optional<RecipeEntry<BrewingRecipe>> getCurrentRecipe(World world) {
-        if (this.cachedRecipe != null) {
-            return Optional.of(this.cachedRecipe);
+        if (!this.cachedRecipe.isEmpty()) {
+            return this.cachedRecipe.getOptionalRecipeEntry();
         } else {
             return this.findMatchingRecipe(world);
         }
@@ -275,31 +276,28 @@ public class BrewingBarrelBlockEntity extends BlockEntity implements Implemented
     }
 
     protected void updateRecipeData(RecipeEntry<BrewingRecipe> recipe) {
-        if (this.cachedRecipe == null || !this.cachedRecipe.id().equals(recipe.id())) {
-            this.cachedRecipe = recipe;
+        if (this.cachedRecipe.isEmpty() || !this.cachedRecipe.getRecipeId().equals(recipe.id())) {
+            this.cachedRecipe.setRecipeEntry(recipe);
             this.requiredBrewingTime = recipe.value().brewingTime();
             this.brewingTime = 0;
         }
     }
 
     protected void resetBrewingData() {
-        this.cachedRecipe = null;
+        this.cachedRecipe.clear();
         this.requiredBrewingTime = 0;
         this.brewingTime = 0;
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Override
     public void tick(World world, BlockPos pos, BlockState state) {
-        if (state.contains(SkilletBlock.FACING)) {
-            this.cachedDirection = state.get(SkilletBlock.FACING);
-        }
-
-        if (this.startedBrewing && this.cachedRecipe != null) {
+        if (this.startedBrewing && !this.cachedRecipe.isEmpty()) {
             if (this.brewingTime < this.requiredBrewingTime) {
                 this.brewingTime++;
                 this.markDirty();
             } else {
-                BrewingRecipe brewingRecipe = this.cachedRecipe.value();
+                BrewingRecipe brewingRecipe = this.cachedRecipe.getRecipe();
 
                 if (this.fluidStorage.amount < brewingRecipe.basicFluid().getAmount()) {
                     this.resetBrewingData();

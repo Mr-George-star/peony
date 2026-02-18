@@ -283,6 +283,6 @@ public class PeonyChineseTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyTranslationKeys.REI_STEP, "步骤%d");
         builder.add(PeonyTranslationKeys.REI_DURATION_DECREMENT, "耐久损耗: %d");
         builder.add(PeonyTranslationKeys.REI_STIRRING_TIMES, "搅拌次数: %d");
-        builder.add(PeonyTranslationKeys.REI_BREWING_TIMES, "酿造时间: %d");
+        builder.add(PeonyTranslationKeys.REI_BREWING_TIMES, "酿造时间: %d秒");
     }
 }

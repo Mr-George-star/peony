@@ -41,7 +41,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-public class MillstoneBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, ComplexAccessibleInventory, BlockEntityTickerProvider {
+public class MillstoneBlockEntity extends BlockEntity implements ImplementedInventory, ComplexAccessibleInventory, BlockEntityTickerProvider {
     protected final DefaultedList<ItemStack> itemBeingMilled;
     protected final DefaultedList<ItemStack> outputStacks;
     protected final RecipeManager.MatchGetter<SingleStackRecipeInput, MillingRecipe> matchGetter;
@@ -91,7 +91,6 @@ public class MillstoneBlockEntity extends BlockEntity implements ImplementedInve
         this.outputStacks.set(0, stack);
     }
 
-    @Override
     public Direction getDirection() {
         if (this.world != null) {
             BlockState state = this.world.getBlockState(this.pos);
@@ -150,7 +149,6 @@ public class MillstoneBlockEntity extends BlockEntity implements ImplementedInve
         builder.add(DataComponentTypes.CONTAINER, ContainerComponent.fromStacks(this.getItems()));
     }
 
-    // todo: fix cannot insert full stack
     @Override
     public InteractionResult insert(InteractionContext context, ItemStack givenStack) {
         if (!this.outputStacks.isEmpty() && !this.getOutputStack().isEmpty() &&

@@ -10,6 +10,9 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
+@SuppressWarnings("unused")
 public interface RecipeStorage<I extends RecipeInput, R extends Recipe<I>> {
     static<I extends RecipeInput, R extends Recipe<I>> RecipeStorage<I, R> create(Class<R> recipeClass) {
         return new Impl<>(recipeClass);
@@ -18,9 +21,16 @@ public interface RecipeStorage<I extends RecipeInput, R extends Recipe<I>> {
     Identifier getRecipeId();
 
     @Nullable
-    R getCurrentRecipe();
+    R getRecipe();
 
-    void setCurrentRecipe(@NotNull RecipeEntry<R> recipe);
+    Optional<R> getOptionalRecipe();
+
+    @Nullable
+    RecipeEntry<R> getRecipeEntry();
+
+    Optional<RecipeEntry<R>> getOptionalRecipeEntry();
+
+    void setRecipeEntry(@NotNull RecipeEntry<R> recipe);
 
     boolean isEmpty();
 
@@ -34,31 +44,44 @@ public interface RecipeStorage<I extends RecipeInput, R extends Recipe<I>> {
         private static final Identifier DUMMY_ID = Identifier.of("dummy", "dummy");
 
         @Nullable
-        protected R currentRecipe;
-        protected Identifier currentRecipeId;
+        protected RecipeEntry<R> currentRecipe;
         private final Class<R> recipeClass;
 
         Impl(Class<R> recipeClass) {
             this.currentRecipe = null;
-            this.currentRecipeId = DUMMY_ID;
             this.recipeClass = recipeClass;
         }
 
         @Override
         public Identifier getRecipeId() {
-            return this.currentRecipeId;
+            return Optional.ofNullable(this.currentRecipe).map(RecipeEntry::id).orElse(DUMMY_ID);
         }
 
         @Nullable
         @Override
-        public R getCurrentRecipe() {
+        public R getRecipe() {
+            return Optional.ofNullable(this.currentRecipe).map(RecipeEntry::value).orElse(null);
+        }
+
+        @Override
+        public Optional<R> getOptionalRecipe() {
+            return Optional.ofNullable(this.currentRecipe).map(RecipeEntry::value);
+        }
+
+        @Nullable
+        @Override
+        public RecipeEntry<R> getRecipeEntry() {
             return this.currentRecipe;
         }
 
         @Override
-        public void setCurrentRecipe(@NotNull RecipeEntry<R> currentRecipe) {
-            this.currentRecipe = currentRecipe.value();
-            this.currentRecipeId = currentRecipe.id();
+        public Optional<RecipeEntry<R>> getOptionalRecipeEntry() {
+            return Optional.ofNullable(this.currentRecipe);
+        }
+
+        @Override
+        public void setRecipeEntry(@NotNull RecipeEntry<R> currentRecipe) {
+            this.currentRecipe = currentRecipe;
         }
 
         @Override
@@ -73,8 +96,8 @@ public interface RecipeStorage<I extends RecipeInput, R extends Recipe<I>> {
 
         @Override
         public void writeNbt(World world, NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-            if (this.currentRecipe != null && world != null) {
-                nbt.putString("CurrentRecipeId", this.currentRecipeId.toString());
+            if (this.getRecipeId() != null && world != null) {
+                nbt.putString("CurrentRecipeId", this.getRecipeId().toString());
             }
         }
 
@@ -84,17 +107,17 @@ public interface RecipeStorage<I extends RecipeInput, R extends Recipe<I>> {
             if (nbt.contains("CurrentRecipeId")) {
                 Identifier recipeId = Identifier.tryParse(nbt.getString("CurrentRecipeId"));
                 if (recipeId != null) {
-                    this.currentRecipeId = recipeId;
+                    R recipe = null;
                     if (world != null && !recipeId.equals(DUMMY_ID)) {
-                        this.currentRecipe = (R) world.getRecipeManager()
+                        recipe = (R) world.getRecipeManager()
                                 .get(recipeId)
                                 .map(RecipeEntry::value)
                                 .filter(this.recipeClass::isInstance)
                                 .orElse(null);
                     }
+                    this.currentRecipe = new RecipeEntry<>(recipeId, recipe);
                 } else {
-                    this.currentRecipeId = DUMMY_ID;
-                    this.currentRecipe = null;
+                    this.currentRecipe = new RecipeEntry<>(DUMMY_ID, null);
                 }
             }
         }

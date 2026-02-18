@@ -283,6 +283,6 @@ public class PeonyEnglishTranslationProvider extends FabricLanguageProvider {
         builder.add(PeonyTranslationKeys.REI_STEP, "Step %d");
         builder.add(PeonyTranslationKeys.REI_DURATION_DECREMENT, "Duration Decrement: %d");
         builder.add(PeonyTranslationKeys.REI_STIRRING_TIMES, "Stirring Times: %d");
-        builder.add(PeonyTranslationKeys.REI_BREWING_TIMES, "Brewing Times: %d");
+        builder.add(PeonyTranslationKeys.REI_BREWING_TIMES, "Brewing Times: %d Seconds");
     }
 }

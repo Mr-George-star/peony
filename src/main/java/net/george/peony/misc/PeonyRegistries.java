@@ -251,7 +251,6 @@ public class PeonyRegistries {
         registerReplacements();
         modifyLootTables();
         registerEvents();
-        ItemExchangeBehaviour.registerBehaviours();
 
         if (Peony.getConfig().debugCommands) {
             registerDebugCommands();

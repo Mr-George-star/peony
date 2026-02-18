@@ -60,7 +60,7 @@ import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings({"unused"})
-public class FermentationTankBlockEntity extends BlockEntity implements ImplementedInventory, ComplexAccessibleInventory, DirectionProvider, BlockEntityTickerProvider {
+public class FermentationTankBlockEntity extends BlockEntity implements ImplementedInventory, ComplexAccessibleInventory, BlockEntityTickerProvider {
     public static final List<Block> MUSHROOMS = Collections.unmodifiableList(Lists.newArrayList(
             Blocks.MUSHROOM_STEM, Blocks.BROWN_MUSHROOM_BLOCK, Blocks.RED_MUSHROOM_BLOCK
     ));
@@ -133,7 +133,6 @@ public class FermentationTankBlockEntity extends BlockEntity implements Implemen
         return this.inventory;
     }
 
-    @Override
     public Direction getDirection() {
         if (this.world != null) {
             BlockState state = this.world.getBlockState(this.pos);
@@ -570,7 +569,7 @@ public class FermentationTankBlockEntity extends BlockEntity implements Implemen
     private void startFermenting(RecipeEntry<FermentingRecipe> recipe) {
         this.isFermenting = true;
         this.fermentTime = recipe.value().fermentingTime();
-        this.recipeStorage.setCurrentRecipe(recipe);
+        this.recipeStorage.setRecipeEntry(recipe);
 
         if (this.world != null) {
             this.world.playSound(null, this.pos, SoundEvents.BLOCK_BREWING_STAND_BREW,
@@ -590,7 +589,7 @@ public class FermentationTankBlockEntity extends BlockEntity implements Implemen
     private void finishFermenting(World world) {
         this.isFermenting = false;
 
-        FermentingRecipe recipe = this.recipeStorage.getCurrentRecipe();
+        FermentingRecipe recipe = this.recipeStorage.getRecipe();
         if (recipe != null) {
             Output output = recipe.output();
 

@@ -21,8 +21,8 @@ import net.george.peony.api.util.CountdownManager;
 import net.george.peony.api.util.nbt.NbtSerializable;
 import net.george.peony.block.SkilletBlock;
 import net.george.peony.block.data.*;
-import net.george.peony.misc.PeonyDamageTypes;
 import net.george.peony.item.PeonyItems;
+import net.george.peony.misc.PeonyDamageTypes;
 import net.george.peony.networking.payload.ItemStackSyncS2CPayload;
 import net.george.peony.networking.payload.SkilletAnimationDataSyncS2CPayload;
 import net.george.peony.networking.payload.SkilletIngredientsSyncS2CPayload;
@@ -87,7 +87,7 @@ import java.util.function.Consumer;
  * - NBT persistence for game saves<br>
  */
 @SuppressWarnings({"unused"})
-public class SkilletBlockEntity extends BlockEntity implements ImplementedInventory, DirectionProvider, ComplexAccessibleInventory, BlockEntityTickerProvider {
+public class SkilletBlockEntity extends BlockEntity implements ImplementedInventory, ComplexAccessibleInventory, BlockEntityTickerProvider {
     /** Dummy recipe ID used for oil processing */
     protected static final Identifier DUMMY_RECIPE_ID = Peony.id("dummy_recipe");
 
@@ -103,7 +103,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     /** Dummy recipe used for oil processing stages */
     protected final SequentialCookingRecipe dummyRecipe = new SequentialCookingRecipe(550, false, null, List.of(), null);
 
-    /** Manages various countdown timers during cooking process */
+    /** Manages various countdown timers during the cooking process */
     protected CountdownManager countdownManager;
 
     /** Container required to extract the output (e.g., bowl for stew) */
@@ -111,10 +111,9 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     protected ItemConvertible requiredContainer;
 
     /** Cached recipe for performance optimization */
-    @Nullable
-    protected RecipeEntry<SequentialCookingRecipe> cachedRecipe = null;
+    protected RecipeStorage<SequentialCookingRecipeInput, SequentialCookingRecipe> cachedRecipe;
 
-    /** Main cooking context containing all cooking state */
+    /** Main cooking context containing all cooking states */
     public CookingContext context;
 
     /** Animation queue data during stir-frying */
@@ -127,9 +126,6 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     /** Record the last interaction time */
     private long lastInteractionTime;
 
-    /** Cached block direction for rendering and interactions */
-    protected Direction cachedDirection = Direction.NORTH;
-
     /**
      * Creates a new SkilletBlockEntity at the specified position and state.
      *
@@ -141,6 +137,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         this.inventory = DefaultedList.ofSize(2, ItemStack.EMPTY);
         this.addedIngredients = new ArrayList<>();
         this.matchGetter = RecipeManager.createCachedMatchGetter(PeonyRecipes.SEQUENTIAL_COOKING_TYPE);
+        this.cachedRecipe = RecipeStorage.create(SequentialCookingRecipe.class);
         this.countdownManager = CountdownManager.create();
         this.countdownManager.add("IngredientPlacement", 100);
         this.context = new CookingContext(this, this.inventory, this.countdownManager);
@@ -182,7 +179,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
      */
     public void setInputStack(ItemStack stack) {
         this.inventory.set(0, stack);
-        this.cachedRecipe = null;
+        this.cachedRecipe.clear();
         this.markDirty();
     }
 
@@ -205,14 +202,19 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         this.markDirty();
     }
 
-    @Override
     public Direction getDirection() {
-        return this.cachedDirection;
+        if (this.world != null) {
+            BlockState state = this.world.getBlockState(this.pos);
+            if (state.contains(SkilletBlock.FACING)) {
+                return state.get(SkilletBlock.FACING);
+            }
+        }
+        return Direction.NORTH;
     }
 
     @Nullable
     public RecipeEntry<SequentialCookingRecipe> getCachedRecipe() {
-        return this.cachedRecipe;
+        return this.cachedRecipe.getRecipeEntry();
     }
 
     /**
@@ -239,8 +241,6 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         NbtCompound contextNbt = new NbtCompound();
         this.context.writeNbt(contextNbt, registryLookup);
         nbt.put("CookingContext", contextNbt);
-
-        nbt.putString("CachedDirection", this.getDirection().getName());
 
         // Save countdown manager state
         NbtCompound countdownNbt = new NbtCompound();
@@ -270,16 +270,12 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             this.context.readNbt(nbt.getCompound("CookingContext"), registryLookup);
         }
 
-        @Nullable
-        Direction direction = Direction.byName(nbt.getString("CachedDirection"));
-        this.cachedDirection = direction != null ? direction : Direction.NORTH;
-
         // Read countdown manager state
         if (nbt.contains("CountdownManager")) {
             this.countdownManager.readNbt(nbt.getCompound("CountdownManager"), registryLookup);
         }
 
-        // Read required container
+        // Read the required container
         if (nbt.contains("RequiredContainer")) {
             this.requiredContainer = ItemStack.fromNbtOrEmpty(registryLookup, nbt).getItem();
             if (this.requiredContainer.asItem() == Items.AIR) {
@@ -366,24 +362,6 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         this.lastInteractedPlayer = user.getUuid();
         this.lastInteractionTime = context.world.getTime();
 
-//        ItemStack outputStack = this.getOutputStack();
-//        if (!outputStack.isEmpty()) {
-//            // If output exists and requires container, extract with container
-//            if (this.requiredContainer != null) {
-//                ItemStack heldStack = user.getStackInHand(context.hand);
-//                if (heldStack.getItem() == this.requiredContainer.asItem()) {
-//                    return this.extractOutputWithContainer(context, heldStack);
-//                }
-//                return InteractionResult.fail();
-//            }
-//
-//            // Direct extraction without container
-//            user.damage(PeonyDamageTypes.of(context.world, PeonyDamageTypes.SCALD), context.world.random.nextBetween(1, 2));
-//            this.setOutputStack(ItemStack.EMPTY);
-//            this.resetCookingState();
-//            return InteractionResult.success(Consumption.replace(outputStack));
-//        }
-
         ItemStack inputStack = this.getInputStack();
         if (!inputStack.isEmpty()) {
             user.damage(PeonyDamageTypes.of(context.world, PeonyDamageTypes.SCALD), context.world.random.nextBetween(1, 2));
@@ -454,8 +432,8 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
      * @param recipe the recipe to update to
      */
     protected void updateRecipeData(RecipeEntry<SequentialCookingRecipe> recipe) {
-        if (this.cachedRecipe == null || !this.cachedRecipe.id().equals(recipe.id())) {
-            this.cachedRecipe = recipe;
+        if (this.cachedRecipe.isEmpty() || !this.cachedRecipe.getRecipeId().equals(recipe.id())) {
+            this.cachedRecipe.setRecipeEntry(recipe);
             this.context.cachedRecipe = recipe;
             this.context.resetCookingTimers();
             this.countdownManager.reset("IngredientPlacement");
@@ -473,8 +451,8 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         if (!this.getInputStack().isEmpty()) {
             return this.getCurrentRecipe(world, this.getInputStack());
         }
-        if (this.cachedRecipe != null) {
-            return Optional.of(this.cachedRecipe);
+        if (!this.cachedRecipe.isEmpty()) {
+            return this.cachedRecipe.getOptionalRecipeEntry();
         }
         if (this.context.hasOil) {
             if (this.context.oilProcessingStage == 0) {
@@ -622,8 +600,8 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     protected void resetCookingVariables() {
         this.context.reset();
         this.requiredContainer = null;
-        this.cachedRecipe = null;
-        // Ensure state is correctly set to IDLE
+        this.cachedRecipe.clear();
+        // Ensure the state is correctly set to IDLE
         if (this.context.state != CookingStates.IDLE) {
             this.context.state = CookingStates.IDLE;
         }
@@ -780,17 +758,13 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
 
     @Override
     public void tick(World world, BlockPos pos, BlockState state) {
-        if (state.contains(SkilletBlock.FACING)) {
-            this.cachedDirection = state.get(SkilletBlock.FACING);
-        }
-
         // Debug logging for state tracking
         Peony.LOGGER.debug("Skillet tick - State: {}, Step: {}, Heating: {}/{}, HasIngredient: {}",
                 this.context.state, this.context.currentStepIndex,
                 this.context.heatingTime, this.context.requiredHeatingTime,
                 this.context.hasIngredient);
 
-        // Delegate to current state for processing
+        // Delegate to the current state for processing
         this.context.state.getState().tick(this.context, world, pos, state);
     }
 
@@ -869,7 +843,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
 
     /**
      * Starts a new cooking recipe with the given recipe and ingredient.
-     * Automatically chooses between HEATING and STIR_FRYING based on step requirements.
+     * Automatically choose between HEATING and STIR_FRYING based on step requirements.
      *
      * @param recipe the recipe to start
      * @param givenStack the ingredient stack
@@ -929,7 +903,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     }
 
     /**
-     * Cooking context containing all cooking state and references.
+     * Cooking context containing all cooking states and references.
      * This class manages the complete state of the cooking process.
      */
     public static class CookingContext implements NbtSerializable {
@@ -997,7 +971,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
          */
         public void setInputStack(ItemStack stack) {
             this.inventory.set(0, stack);
-            this.skillet.cachedRecipe = null;
+            this.skillet.cachedRecipe.clear();
             this.skillet.markDirty();
         }
 
@@ -1073,7 +1047,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
         }
 
         /**
-         * A convenient method for obtaining animation data
+         * A convenient method for collecting animation data
          * @return the animation data
          */
         public AnimationData getAnimationData() {
@@ -1285,7 +1259,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
             SkilletBlockEntity skillet = context.skillet;
             World world = interactionContext.world;
 
-            // If there are pre-processed common ingredient, try matching the recipe first.
+            // If there is a pre-processed common ingredient, try matching the recipe first.
             if (context.isCommonIngredientProcessed()) {
                 Optional<RecipeEntry<SequentialCookingRecipe>> recipe = skillet.getCurrentRecipe(world, givenStack, context.canMatchOilBasedRecipe);
                 if (recipe.isPresent()) {
@@ -1757,13 +1731,13 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
 
             // Check for timeout - use the step's required time as the stir-frying time limit
             if (context.stirFryingTime >= currentStep.getRequiredTime()) {
-                // Time ended, check if stir count is sufficient
+                // Time ended, check if stir count is enough
                 if (context.stirFryingCount >= context.requiredStirFryingCount) {
                     // Stir-frying successful, advance to next step
                     Peony.LOGGER.debug("Stir-frying completed successfully, advancing to next step");
                     advanceToNextStep(context, world, pos);
                 } else {
-                    // Stir-frying failed - not enough stirs within time limit
+                    // Stir-frying failed - not enough stirs within the time limit
                     Peony.LOGGER.debug("Stir frying failed: required {} times, but only {} times within time limit",
                             context.requiredStirFryingCount, context.stirFryingCount);
                     context.skillet.failCooking(world, pos);
@@ -1790,7 +1764,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                         context.stirFryingCount, context.requiredStirFryingCount,
                         context.stirFryingTime, currentStep.getRequiredTime());
 
-                // Check if required stir count is reached
+                // Check if the required stir count is reached
                 if (context.stirFryingCount >= context.requiredStirFryingCount) {
                     // Stir-frying complete, immediately advance to next step
                     Peony.LOGGER.debug("Stir frying completed successfully with tool");
@@ -1938,7 +1912,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
                     context.heatingTime = 0;
                     context.requiredHeatingTime = 0;
 
-                    // Check next step to determine which heating mode to use
+                    // Check the next step to determine which heating mode to use
                     CookingSteps.Step nextStep = context.getCurrentStep(world);
 
                     // Start ingredient placement countdown for next step
@@ -1954,8 +1928,8 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     }
 
     /**
-     * Waiting for ingredient state - waits for player to add next ingredient.
-     * After ingredient is added, automatically chooses between HEATING and STIR_FRYING modes.
+     * Waiting for ingredient state - waits for player to add the next ingredient.
+     * After ingredient is added, automatically choose between HEATING and STIR_FRYING modes.
      */
     @ApiStatus.NonExtendable
     public static class WaitingForIngredientState implements CookingState {
@@ -2025,7 +1999,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
     }
 
     /**
-     * Completed state - cooking process finished successfully.
+     * Completed state - the cooking process finished successfully.
      */
     @ApiStatus.NonExtendable
     public static class CompletedState implements CookingState {
@@ -2092,7 +2066,7 @@ public class SkilletBlockEntity extends BlockEntity implements ImplementedInvent
 
     /**
      * Interface for all cooking states in the skillet.
-     * Defines the contract for state behavior during cooking process.
+     * Defines the contract for state behavior during the cooking process.
      */
     public interface CookingState {
         /**

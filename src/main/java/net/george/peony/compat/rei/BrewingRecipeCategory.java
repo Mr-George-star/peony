@@ -55,7 +55,7 @@ public class BrewingRecipeCategory implements DisplayCategory<BrewingRecipeDispl
 
         widgets.add(Widgets.createRecipeBase(bounds));
         widgets.add(Widgets.createLabel(new Point(startX + 9, startY + 6),
-                        Text.translatable(PeonyTranslationKeys.REI_BREWING_TIMES, display.getBrewingTime()))
+                        Text.translatable(PeonyTranslationKeys.REI_BREWING_TIMES, display.getBrewingTime() / 20))
                 .noShadow().leftAligned().color(-12566464, -4473925));
         widgets.add(new FluidLabelWidget(new Point(startX + 9, startY + 17), FluidRecord.record(
                 display.getBasicFluid(), FluidConstants.BUCKET
